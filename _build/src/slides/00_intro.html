@@ -1,0 +1,69 @@
+<section class="dark title" data-title="Title" data-module="Opening">
+<div class="title-wrap">
+  <div>
+    <div class="t-kicker">3-hour course · theory &amp; practice</div>
+    <h1>Deep Learning for<br><em>Earth Observation</em></h1>
+    <div class="t-ar">التعلّم العميق لرصد الأرض</div>
+    <div class="t-sub">From Turing's learning machine and the first perceptron to CNNs, LSTMs, GANs, Transformers, geospatial foundation models, LLMs and agentic AI — with code for every model family.</div>
+    <div class="t-meta">
+      <span><b>Instructor</b>Chouaib El Hachimi</span>
+      <span><b>Format</b>Slides · demos · 11 notebooks</span>
+      <span><b>Case study</b>Informal-settlement mapping</span>
+    </div>
+  </div>
+  <div class="arch-window"><div class="aw-outline"></div><div class="aw-inner"></div><div class="aw-rose"></div></div>
+</div>
+<aside class="notes">Welcome. Three hours, two threads woven together: the theory of each model family, and a concrete Earth-observation (EO) application with code. Use → / Space to advance, M for the contents, N for these notes.</aside>
+</section>
+
+<section data-title="Course map" data-module="Opening" data-kind="theory" data-src="Timing is a guide for a 180-minute session; labs are live walk-throughs, full notebooks are for after class.">
+<h2>Course map — <em>180 minutes</em></h2>
+<div class="s-body">
+  <table class="tbl small">
+    <tr><th style="width:120px">Time</th><th>Part</th><th>Theory</th><th>Practice (EO)</th></tr>
+    <tr><td>0:00</td><td>Opening</td><td>Goals, roadmap</td><td>—</td></tr>
+    <tr><td>0:05</td><td>I · History of AI</td><td>Turing's learning machine, AI winters, classical ML, chips</td><td>Random forest on Sentinel-2</td></tr>
+    <tr><td>0:25</td><td>II · Learning maths</td><td>Loss, gradient descent, backprop, likelihood</td><td>Gradient-descent demo</td></tr>
+    <tr><td>0:35</td><td>III · Perceptron &amp; MLP</td><td>McCulloch–Pitts, Rosenblatt, XOR, universal approximation</td><td>Lab 1 · pixel classification</td></tr>
+    <tr><td>0:55</td><td>IV · CNNs</td><td>Convolution, ResNet, U-Net</td><td>Labs 2–3 · EuroSAT, LandCover.ai</td></tr>
+    <tr><td>1:20</td><td colspan="3" style="text-align:center;color:#8A6512;font-weight:600">Break · <bdi class="ar">استراحة</bdi> · 10 min</td></tr>
+    <tr><td>1:30</td><td>V–VI · RNN/LSTM &amp; GANs</td><td>BPTT, gates, minimax game, pix2pix</td><td>Labs 4–5 · ETo forecast, SAR→optical</td></tr>
+    <tr><td>1:55</td><td>VII · Transformers</td><td>Attention, ViT, MAE</td><td>Lab 6 · ViT on EuroSAT</td></tr>
+    <tr><td>2:10</td><td>VIII–IX · Geo foundation models</td><td>SSL, GeoFM generations, Earth-FM features</td><td>Labs 7–9 · Prithvi, AlphaEarth, informal settlements</td></tr>
+    <tr><td>2:40</td><td>X · LLMs &amp; agentic AI</td><td>Scaling, RAG, agents, LangGraph</td><td>Labs 10–11 · EO RAG &amp; agent</td></tr>
+  </table>
+</div>
+<aside class="notes">Point out that each part closes with an EO application. The labs are shown on slides in condensed form; the full, runnable notebooks are in the notebooks/ folder of the site (Colab-ready).</aside>
+</section>
+
+<section data-title="Learning outcomes" data-module="Opening" data-kind="theory" data-src="<b>Course books</b> · De Marchi &amp; Mitchell, <i>Hands-On Neural Networks</i> (Packt 2019) · Danka, <i>Mathematics of Machine Learning</i> (Packt 2025) · Rothman, <i>Transformers for NLP and Computer Vision</i>, 3rd ed. (Packt 2024) · Rodriguez, <i>Generative AI Foundations in Python</i> (Packt 2024)">
+<h2>By the end of this course you will be able to…</h2>
+<div class="s-body">
+  <div class="cols c3" style="height:auto">
+    <div class="card arch blue"><div class="icon">∑</div><h3>Explain</h3><p>how each family — MLP, CNN, RNN/LSTM, GAN, Transformer, foundation model, LLM agent — represents data and learns, with the key equation of each.</p></div>
+    <div class="card arch green"><div class="icon">⌘</div><h3>Choose</h3><p>the right architecture for an EO problem: pixels, scenes, segmentation, time series, image translation, multimodal cubes, documents or workflows.</p></div>
+    <div class="card arch clay"><div class="icon">▶</div><h3>Build</h3><p>working PyTorch, TerraTorch, Earth Engine, LangChain and LangGraph pipelines — and map informal settlements with foundation models.</p></div>
+  </div>
+  <div class="callout mt2"><div><b>How to read the slides.</b> Every slide carries a tag: <span class="tag theory">Theory</span> concepts &amp; maths, <span class="tag practice">Practice</span> EO applications, <span class="tag lab">Lab</span> code you can run (notebook link on the slide), <span class="tag case">Case study</span> informal settlements.</div></div>
+</div>
+<aside class="notes">Set expectations: this is a survey course with depth on the core equations and runnable code. Nobody needs to memorise APIs; the goal is to know which tool fits which EO problem and why.</aside>
+</section>
+
+<section data-title="AI, ML, DL and generative AI" data-module="Opening" data-kind="theory" data-src="Definitions after Russell &amp; Norvig; Samuel (1959) coined “machine learning”; LeCun, Bengio &amp; Hinton (2015) <i>Nature</i> 521:436 for deep learning.">
+<h2>Four nested ideas, one arch</h2>
+<div class="s-body">
+  <div class="cols c55">
+    <figure><img src="assets/img/nested_arches.svg" alt="Nested arches: AI contains ML contains DL contains generative AI" style="background:none;max-height:600px"></figure>
+    <div class="vcenter">
+      <ul class="list">
+        <li><b>Artificial intelligence</b> — any technique that makes machines act intelligently: search, logic, rules <i>and</i> learning.</li>
+        <li><b>Machine learning</b> — performance at a task improves with experience (data) instead of explicit programming.</li>
+        <li><b>Deep learning</b> — ML with many stacked, differentiable layers that <span class="hl-b">learn their own features</span> from raw signals (pixels, spectra, time series, text).</li>
+        <li><b>Generative AI &amp; foundation models</b> — very large models, usually Transformers, pre-trained on broad data and adapted to many tasks.</li>
+      </ul>
+      <div class="callout green mt"><div>In EO terms: a classical model sees <b>NDVI you computed</b>; a deep model learns its own “indices” from the 13 Sentinel-2 bands.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Use the arch metaphor: each inner arch is a special case of the outer one. Emphasise representation learning as the defining feature of deep learning.</aside>
+</section>

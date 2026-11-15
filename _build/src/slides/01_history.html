@@ -1,0 +1,227 @@
+<section class="dark" data-title="Part I — History of AI" data-module="I · History of AI">
+<div class="sec-wrap">
+  <div class="sec-arch" style="--sec-c:#2E4BC6"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>I</div></div>
+  <div class="sec-text">
+    <div class="time">0:05 – 0:25 · 20 min</div>
+    <h2>From Turing to tensor cores</h2>
+    <div class="ar">من تورينغ إلى الرقائق</div>
+    <ul>
+      <li>Turing's learning machine and the theory behind it</li>
+      <li>Symbolic AI, two winters, and the classical-ML era</li>
+      <li>Why deep learning took off: data, algorithms — and chips</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<section data-title="Timeline of AI 1943–2025" data-module="I · History of AI" data-kind="theory" data-src="McCulloch &amp; Pitts 1943 · Turing 1950 · Dartmouth 1956 · Rosenblatt 1958 · Minsky &amp; Papert 1969 · Rumelhart, Hinton &amp; Williams 1986 · LeCun et al. 1998 · Krizhevsky et al. 2012 · Vaswani et al. 2017 · Jakubik et al. 2023 (Prithvi) · Brown et al. 2025 (AlphaEarth Foundations)">
+<h2>Eighty years in one line</h2>
+<div class="s-body" style="top:170px">
+  <div class="timeline">
+    <div class="axis"></div>
+    <div class="tl-era" style="left:23%;width:12%;background:#14213D"></div>
+    <div class="tl-era" style="left:44%;width:9%;background:#14213D"></div>
+    <div class="tl-item up" style="left:3%"><div class="yr">1943</div><div class="ev">McCulloch–Pitts logical neuron</div></div>
+    <div class="tl-item down" style="left:10%"><div class="yr">1950</div><div class="ev">Turing: <i>Learning Machines</i></div></div>
+    <div class="tl-item up" style="left:15.5%"><div class="yr">1956–58</div><div class="ev">Dartmouth “AI”; Rosenblatt's perceptron</div></div>
+    <div class="tl-item down" style="left:24%"><div class="yr">1969</div><div class="ev">Minsky &amp; Papert: XOR limits → 1st winter</div></div>
+    <div class="tl-item up" style="left:34%"><div class="yr">1986</div><div class="ev">Back-propagation popularised</div></div>
+    <div class="tl-item down" style="left:41%"><div class="yr">1995–2001</div><div class="ev">SVM, random forests; 1997 LSTM</div></div>
+    <div class="tl-item up" style="left:49%"><div class="yr">1998</div><div class="ev">LeNet-5 reads cheques</div></div>
+    <div class="tl-item down" style="left:57%"><div class="yr">2009–12</div><div class="ev">ImageNet + GPUs → AlexNet</div></div>
+    <div class="tl-item up" style="left:64%"><div class="yr">2014–15</div><div class="ev">GANs · ResNet · U-Net</div></div>
+    <div class="tl-item down" style="left:71%"><div class="yr">2017</div><div class="ev"><i>Attention Is All You Need</i></div></div>
+    <div class="tl-item up" style="left:78.5%"><div class="yr">2020–22</div><div class="ev">GPT-3 · ViT · CLIP · ChatGPT</div></div>
+    <div class="tl-item down" style="left:86%"><div class="yr">2023</div><div class="ev">SAM · Prithvi GeoFM · open LLMs</div></div>
+    <div class="tl-item up" style="left:94%"><div class="yr">2024–25</div><div class="ev">Agents, MCP · AlphaEarth · Prithvi-EO-2.0</div></div>
+    <div class="tl-dot" style="left:3%"></div><div class="tl-dot" style="left:10%"></div><div class="tl-dot" style="left:15.5%"></div><div class="tl-dot win" style="left:24%"></div><div class="tl-dot" style="left:34%"></div><div class="tl-dot win" style="left:41%"></div><div class="tl-dot" style="left:49%"></div><div class="tl-dot" style="left:57%"></div><div class="tl-dot" style="left:64%"></div><div class="tl-dot" style="left:71%"></div><div class="tl-dot" style="left:78.5%"></div><div class="tl-dot" style="left:86%"></div><div class="tl-dot" style="left:94%"></div>
+  </div>
+</div>
+<aside class="notes">The dark bands on the axis mark the two “AI winters” (roughly mid-1970s and late-1980s to early-1990s) when funding and expectations collapsed. Note how EO models (Prithvi, AlphaEarth) arrive only after the general-purpose breakthroughs.</aside>
+</section>
+
+<section data-title="Turing's learning machine" data-module="I · History of AI" data-kind="theory" data-src="Turing, A. M. (1950). Computing Machinery and Intelligence. <i>Mind</i> 59(236):433–460, §7 “Learning Machines” · Turing (1948) <i>Intelligent Machinery</i>, NPL report (unorganised A- and B-type machines)">
+<h2>Alan Turing's <em>learning machine</em> (1950)</h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div>
+      <p class="small">In §7 of <i>Computing Machinery and Intelligence</i> Turing argues that programming an adult mind by hand is hopeless. Instead, build a <b>child machine</b> — little mechanism, many “blank sheets” — and <b>educate</b> it.</p>
+      <table class="tbl small">
+        <tr><th>Turing's idea</th><th>Modern counterpart</th></tr>
+        <tr><td>Child machine + education</td><td>Model with random init + training on data</td></tr>
+        <tr><td>Rewards &amp; punishments</td><td>Reinforcement learning, RLHF for LLMs</td></tr>
+        <tr><td>Changing “rules” during learning</td><td>Updating parameters θ</td></tr>
+        <tr><td>Random element in the machine</td><td>Stochastic gradient descent, dropout</td></tr>
+        <tr><td>Hereditary material · mutation · selection</td><td>Architecture search, evolutionary methods</td></tr>
+        <tr><td>Teacher ignorant of inner workings</td><td>The interpretability problem</td></tr>
+      </table>
+    </div>
+    <div class="rows">
+      <div class="eqbox">
+        <div class="xs" style="margin-bottom:6px">The theory in one loop — experience changes the machine:</div>
+        $$\underbrace{\theta_{t+1}}_{\text{new rules}} \;=\; \theta_t \;+\; \eta\; \underbrace{\mathcal{F}\big(\text{reward}_t,\ \text{error}_t\big)}_{\text{teacher's signal}}$$
+        <div class="xs">Same template as the perceptron rule (1958), back-prop (1986) and policy-gradient RL.</div>
+      </div>
+      <div class="card ink">
+        <h4>Unorganised machines (1948)</h4>
+        <p style="color:#DCE2F0">Turing's NPL report described networks of randomly connected two-input “neurons” whose connections can be switched on or off by training — a neural network <b style="color:var(--saffron)">a decade before the perceptron</b>.</p>
+      </div>
+      <div class="callout"><div>Turing also predicted the evaluation problem: the <b>imitation game</b> judges behaviour, not mechanism — still how we benchmark LLMs.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Key message: the core of modern ML — learn by adjusting internal parameters from feedback — is already in Turing 1950. Turing even anticipated that the teacher would not know exactly what happens inside the learner: today's interpretability problem. Mention his 1948 report on unorganised machines (published posthumously, 1968) as an early neural-network concept.</aside>
+</section>
+
+<section data-title="Symbolic AI and the AI winters" data-module="I · History of AI" data-kind="theory" data-src="Lighthill (1973) report · Minsky &amp; Papert (1969) <i>Perceptrons</i> · Feigenbaum's expert systems (MYCIN, 1970s) · De Marchi &amp; Mitchell (2019), Ch. 1">
+<h2>Rules first, then <em>two winters</em></h2>
+<div class="s-body">
+  <div class="cols c3">
+    <div class="card blue"><h4>1956–1974</h4><h3>Symbolic optimism</h3><p>Logic, search and hand-written rules (Logic Theorist, GPS). Perceptrons learned simple patterns. Claims ran far ahead of results.</p></div>
+    <div class="card clay"><h4>1974–1980 · winter I</h4><h3>Reality check</h3><p>Combinatorial explosion, tiny computers, the XOR critique of single-layer perceptrons and the UK Lighthill report cut funding.</p></div>
+    <div class="card sand"><h4>1980–1987</h4><h3>Expert systems</h3><p>Knowledge engineered as IF–THEN rules (MYCIN, XCON). Worked in narrow domains, but brittle and costly to maintain.</p></div>
+  </div>
+  <div class="cols c2 mt" style="height:auto">
+    <div class="card clay"><h4>1987–1993 · winter II</h4><p>Lisp-machine market collapses; rule bases do not scale. Meanwhile back-prop (1986) quietly revives neural networks.</p></div>
+    <div class="card green"><h4>Lesson for EO</h4><p>Decision-tree land-cover rules and spectral thresholds (e.g. NDWI &gt; 0 = water) are symbolic AI. They work locally and break across sensors, seasons and regions.</p></div>
+  </div>
+</div>
+<aside class="notes">Make the link to EO practice: many operational products still rely on thresholds and rule-based decision trees. They are transparent, but brittle when the domain shifts — exactly the failure mode that pushed AI toward learning from data.</aside>
+</section>
+
+<section data-title="Classical machine learning in EO" data-module="I · History of AI" data-kind="practice" data-src="Breiman (2001) Random Forests · Cortes &amp; Vapnik (1995) Support-Vector Networks · Belgiu &amp; Drăguţ (2016) <i>ISPRS J.</i> 114:24–31 (RF in remote sensing) · De Marchi &amp; Mitchell (2019), Ch. 1">
+<h2>The classical-ML era: <em>you design the features</em></h2>
+<div class="s-body">
+  <div class="cols c46">
+    <div class="rows">
+      <div class="flow">
+        <div class="step"><b>Raw bands</b>B2…B12</div><div class="arrow">→</div>
+        <div class="step"><b>Hand features</b>NDVI, NDWI, texture, stats</div><div class="arrow">→</div>
+        <div class="step"><b>Model</b>SVM · RF · XGBoost</div>
+      </div>
+      <ul class="list small">
+        <li><b>SVM</b> — maximise the margin; kernels give non-linear boundaries.</li>
+        <li><b>Random forest</b> — bagged decision trees; robust, fast, gives feature importance. Still the workhorse of land-cover mapping in Earth Engine.</li>
+        <li><b>Gradient boosting</b> — trees fitted to residuals; strong on tabular EO features.</li>
+      </ul>
+      <div class="callout clay"><div><b>Limit:</b> performance is capped by the features you thought of. Spatial context, shapes and temporal dynamics are hard to hand-craft.</div></div>
+    </div>
+    <pre class="py" data-file="classical_rf.py — Sentinel-2 pixels + indices → random forest" data-size="sm">
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GroupKFold, cross_val_score
+
+# X_bands: (n_pixels, 10) Sentinel-2 L2A reflectances
+# y: land-cover label, groups: id of the polygon each pixel came from
+def indices(X):
+    B2, B3, B4, B8, B11 = X[:, 0], X[:, 1], X[:, 2], X[:, 6], X[:, 8]
+    ndvi = (B8 - B4) / (B8 + B4 + 1e-6)
+    ndwi = (B3 - B8) / (B3 + B8 + 1e-6)
+    ndbi = (B11 - B8) / (B11 + B8 + 1e-6)   # built-up
+    return np.c_[X, ndvi, ndwi, ndbi]
+
+F = indices(X_bands)
+rf = RandomForestClassifier(n_estimators=300, n_jobs=-1,
+                            class_weight="balanced")
+# group-wise CV: pixels of one polygon never in train AND test
+scores = cross_val_score(rf, F, y, groups=groups,
+                         cv=GroupKFold(5), scoring="f1_macro")
+print(f"macro-F1 = {scores.mean():.3f} ± {scores.std():.3f}")
+</pre>
+  </div>
+</div>
+<aside class="notes">Show the code briefly. Two lessons carry through the whole course: (1) engineered indices are a form of prior knowledge; (2) evaluate with spatially grouped folds, otherwise neighbouring pixels leak between train and test and accuracy is inflated.</aside>
+</section>
+
+<section data-title="Hand-crafted vs learned features" data-module="I · History of AI" data-kind="theory" data-src="LeCun, Bengio &amp; Hinton (2015) Deep learning. <i>Nature</i> 521:436–444 · Zhu et al. (2017) Deep learning in remote sensing. <i>IEEE GRSM</i> 5(4):8–36">
+<h2>The shift: from <em>feature engineering</em> to representation learning</h2>
+<div class="s-body">
+  <div class="cols c2" style="height:auto">
+    <div class="card">
+      <h4>Classical pipeline</h4>
+      <div class="flow"><div class="step">Image</div><div class="arrow">→</div><div class="step" style="background:var(--terracotta-soft)"><b>Human</b>designs features</div><div class="arrow">→</div><div class="step">Shallow classifier</div></div>
+      <p class="mt">Knowledge lives in the <b>features</b>. New sensor or region ⇒ redesign.</p>
+    </div>
+    <div class="card">
+      <h4>Deep pipeline</h4>
+      <div class="flow"><div class="step">Image</div><div class="arrow">→</div><div class="step" style="background:var(--zellige-soft)"><b>Layers</b>edges → textures → objects</div><div class="arrow">→</div><div class="step">Linear head</div></div>
+      <p class="mt">Knowledge lives in the <b>weights</b>, learned end-to-end by gradient descent.</p>
+    </div>
+  </div>
+  <div class="cols c3 mt2" style="height:auto">
+    <div class="stat"><div class="n">1 loss</div><div class="l">one objective and one optimiser replace many manual design decisions</div></div>
+    <div class="stat"><div class="n" style="color:var(--zellige)">Reuse</div><div class="l">learned features transfer: one backbone serves many tasks</div></div>
+    <div class="stat"><div class="n" style="color:var(--terracotta)">Cost</div><div class="l">the price: data, compute, and less transparency</div></div>
+  </div>
+</div>
+<aside class="notes">The point: the deep pipeline is uniform (one loss, one optimiser) and its learned features transfer, which leads directly to foundation models later.</aside>
+</section>
+
+<section data-title="Three ingredients of the deep-learning revolution" data-module="I · History of AI" data-kind="theory" data-src="Deng et al. (2009) ImageNet · USGS opened the Landsat archive in 2008 · Copernicus free &amp; open data policy (Sentinel-1A launched 2014) · Glorot et al. (2011) ReLU · Srivastava et al. (2014) Dropout · Ioffe &amp; Szegedy (2015) BatchNorm · He et al. (2016) ResNet">
+<h2>Why now? <em>Data × algorithms × compute</em></h2>
+<div class="s-body">
+  <div class="cols c3">
+    <div class="card arch blue"><div class="icon">◈</div><h3>Data</h3>
+      <ul class="list compact small" style="text-align:left">
+        <li>ImageNet (2009): 14 M labelled images</li>
+        <li>Landsat archive opened free in 2008</li>
+        <li>Copernicus Sentinels: free &amp; open, petabytes per year</li>
+        <li>Labels from crowdsourcing &amp; OpenStreetMap</li>
+      </ul></div>
+    <div class="card arch green"><div class="icon">∂</div><h3>Algorithms</h3>
+      <ul class="list compact small" style="text-align:left">
+        <li>ReLU: gradients that do not vanish</li>
+        <li>Dropout, batch-norm, Adam</li>
+        <li>Residual connections (ResNet): 100+ layers</li>
+        <li>Self-supervised pre-training</li>
+      </ul></div>
+    <div class="card arch clay"><div class="icon">▦</div><h3>Compute</h3>
+      <ul class="list compact small" style="text-align:left">
+        <li>GPUs: thousands of cores for matrix maths</li>
+        <li>CUDA (2007) made them programmable</li>
+        <li>TPUs &amp; tensor cores (2016–17)</li>
+        <li>Cloud platforms: Earth Engine, Planetary Computer</li>
+      </ul></div>
+  </div>
+</div>
+<aside class="notes">All three were necessary. The 1986 back-prop algorithm already existed; what was missing was data at scale and hardware to multiply matrices quickly. Earth observation followed the same path a few years later once open archives and cloud computing met.</aside>
+</section>
+
+<section data-title="Chips: CPU, GPU, TPU" data-module="I · History of AI" data-kind="theory" data-src="Raina, Madhavan &amp; Ng (2009) Large-scale deep unsupervised learning using graphics processors, ICML · Krizhevsky, Sutskever &amp; Hinton (2012) NeurIPS (2× GTX 580) · Jouppi et al. (2017) TPU, ISCA · NVIDIA datasheets (peak dense throughput; precisions differ)">
+<h2>Deep learning is <em>matrix multiplication</em> — chips made it cheap</h2>
+<div class="s-body">
+  <div class="cols c46">
+    <div class="rows">
+      <table class="tbl small">
+        <tr><th>Chip</th><th>Design</th><th>Good at</th></tr>
+        <tr><td>CPU</td><td>Few powerful cores, big caches</td><td>Branchy, sequential code</td></tr>
+        <tr><td>GPU</td><td>Thousands of simple cores, SIMT</td><td>Parallel multiply–add on tensors</td></tr>
+        <tr><td>Tensor core</td><td>Matrix-multiply unit inside a GPU</td><td>Mixed precision (FP16/BF16/FP8)</td></tr>
+        <tr><td>TPU</td><td>Systolic array (Google, 2015–16)</td><td>Dense matmul at scale</td></tr>
+      </table>
+      <div class="eqbox small">One dense layer = one matmul: \(\mathbf{Y}=\mathbf{X}\mathbf{W}\). For a batch of 256 Sentinel-2 patches through ResNet-50 that is ≈ 1–2 TFLOP per forward pass — seconds on a CPU, milliseconds on a GPU.</div>
+      <div class="callout"><div><b>2012:</b> AlexNet trained on <b>two consumer GTX 580 GPUs</b> and won ImageNet by a wide margin — the moment the field switched.</div></div>
+    </div>
+    <figure class="framed"><img src="assets/img/chart_chips.svg" alt="Peak throughput of GPU generations"><figcaption>Peak dense throughput per accelerator (log scale). Precisions differ, so read as an order-of-magnitude trend.</figcaption></figure>
+  </div>
+</div>
+<aside class="notes">The ResNet-50 number: about 4 G multiply–adds (≈ 8 GFLOP) per 224×224 image, so a batch of 256 is on the order of 1–2 TFLOP. Emphasise orders of magnitude, not exact marketing numbers.</aside>
+</section>
+
+<section data-title="Compute growth" data-module="I · History of AI" data-kind="theory" data-src="Training-compute estimates from Epoch AI's “Notable AI Models” database and original papers; GPT-4 value is an external estimate · Sevilla et al. (2022) Compute trends across three eras of ML, IJCNN · Kaplan et al. (2020) Scaling laws">
+<h2>Training compute grew <em>~10 orders of magnitude</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <figure class="framed"><img src="assets/img/chart_compute.svg" alt="Training compute of landmark models on a log scale"></figure>
+    <div class="vcenter">
+      <ul class="list">
+        <li>Before 2010 compute followed Moore's law (doubling ≈ every 2 years).</li>
+        <li>In the deep-learning era it doubled roughly <b>every ~6 months</b> (Sevilla et al., 2022).</li>
+        <li><b>Scaling laws</b>: loss falls as a power law of parameters, data and compute — the bet behind LLMs and Earth foundation models.</li>
+        <li>Cost now matters: carbon-aware training is one of the “ideal Earth FM” features (Part VIII).</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<aside class="notes">Read the plot on a log scale: each gridline is 100×. Values are order-of-magnitude public estimates; GPT-4 is not officially disclosed (marked with *).</aside>
+</section>

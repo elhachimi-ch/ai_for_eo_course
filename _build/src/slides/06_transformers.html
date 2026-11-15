@@ -1,0 +1,152 @@
+<section class="dark" data-title="Part VII — Transformers" data-module="VII · Transformers">
+<div class="sec-wrap">
+  <div class="sec-arch" style="--sec-c:#2E4BC6"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>VII</div></div>
+  <div class="sec-text">
+    <div class="time">1:55 – 2:10 · 15 min</div>
+    <h2>Attention is all you need</h2>
+    <div class="ar">الانتباه هو كل ما تحتاجه</div>
+    <ul>
+      <li>Self-attention, multi-head attention, positional encoding</li>
+      <li>Encoder, decoder, encoder–decoder — BERT, GPT, T5</li>
+      <li>Vision Transformers, SAM, CLIP — and EO transformers</li>
+      <li>Lab 6 — ViT on EuroSAT and a temporal transformer</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<section data-title="The Transformer" data-module="VII · Transformers" data-kind="theory" data-src="Vaswani et al. (2017) Attention is all you need, NeurIPS (figure) · Rothman (2024) <i>Transformers for NLP and Computer Vision</i>, 3rd ed., Ch. 2 “Getting started with the architecture of the transformer model”">
+<h2>The Transformer <em>(Vaswani et al., 2017)</em></h2>
+<div class="s-body">
+  <div class="cols c37">
+    <figure class="framed"><img src="assets/img/transformer_vaswani2017.jpg" alt="Transformer architecture" style="max-height:600px"><figcaption>Encoder (left) · decoder (right)</figcaption></figure>
+    <div class="rows">
+      <div class="eqbox">$$\operatorname{Attention}(\mathbf{Q},\mathbf{K},\mathbf{V})=\operatorname{softmax}\!\left(\frac{\mathbf{Q}\mathbf{K}^{\top}}{\sqrt{d_k}}\right)\mathbf{V}$$
+      <div class="xs" style="text-align:center">\(\mathbf{Q}=\mathbf{X}\mathbf{W}_Q,\;\mathbf{K}=\mathbf{X}\mathbf{W}_K,\;\mathbf{V}=\mathbf{X}\mathbf{W}_V\) — every token asks (Q), advertises (K), and shares (V).</div></div>
+      <div class="cols c2" style="height:auto">
+        <div class="card"><h4>Multi-head</h4><p class="small">\(h\) heads in parallel, each with its own projections, then concatenated: one head may track spectral similarity, another spatial proximity.</p></div>
+        <div class="card"><h4>Positional encoding</h4><p class="small">Attention is order-blind, so add position: \(PE_{(p,2i)}=\sin\!\big(p/10000^{2i/d}\big)\). In EO: pixel position, acquisition date, lat/lon.</p></div>
+        <div class="card"><h4>Block</h4><p class="small">\(\mathbf{x}\!+\!\mathrm{MHA}(\mathrm{LN}(\mathbf{x}))\), then \(\mathbf{x}\!+\!\mathrm{FFN}(\mathrm{LN}(\mathbf{x}))\) — residuals again.</p></div>
+        <div class="card clay"><h4>Cost</h4><p class="small">Attention is \(O(n^2)\) in the number of tokens: the bottleneck for large images and long time series.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+<aside class="notes">No recurrence, no convolution: every token looks at every other token in one step, so long-range dependencies are one hop away and training parallelises perfectly on GPUs — that is why it scaled. The figure is from the original paper (as used in Chouaib's GeoFM deck).</aside>
+</section>
+
+<section data-title="Attention explorer" data-module="VII · Transformers" data-kind="practice" data-src="Interactive demo with hand-made 4-D embeddings (illustrative, not a trained model) · Rothman (2024), Ch. 2 &amp; Ch. 9 (interpretability of attention)">
+<h2>Attention explorer — <em>who looks at whom?</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="attn" data-tokens="Sentinel-2|sees|flooded|fields|near|the|river|after|storm">
+      <div class="xs">Hover or click a token to make it the query. Shading = attention weight.</div>
+      <div class="agrid"></div>
+      <div class="ctrl"><label>temperature <input type="range" name="temp" min="0.2" max="3" step="0.1" value="1"> <b class="tv">1.0</b></label></div>
+      <div class="readout"></div>
+      <div class="eqbox small">\(\alpha_{ij}=\dfrac{\exp(\mathbf{q}_i\cdot\mathbf{k}_j/\sqrt{d})}{\sum_{l}\exp(\mathbf{q}_i\cdot\mathbf{k}_l/\sqrt{d})},\qquad \mathbf{z}_i=\sum_j \alpha_{ij}\,\mathbf{v}_j\)</div>
+    </div>
+    <div class="rows">
+      <div class="card"><h4>Tokens in EO</h4><ul class="list compact small"><li><b>Words</b> in reports and metadata</li><li><b>Image patches</b> (16×16 px) — ViT</li><li><b>Dates</b> in a pixel's time series</li><li><b>Bands / sensors</b> — spectral or multimodal tokens</li></ul></div>
+      <div class="callout"><div>Lower temperature (sharper softmax) ⇒ a token attends to a few others; higher ⇒ attention spreads out.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Click “flooded”: it attends to “river” and “storm”. The embeddings here are hand-made for illustration; in a real model they are learned. The same mechanism lets a pixel at a given date attend to the most informative other dates (e.g., peak of season).</aside>
+</section>
+
+<section data-title="Transformer families and ViT" data-module="VII · Transformers" data-kind="theory" data-src="Devlin et al. (2019) BERT · Radford et al. (2018, 2019) GPT · Raffel et al. (2020) T5 · Dosovitskiy et al. (2021) ViT, ICLR · Liu et al. (2021) Swin · Radford et al. (2021) CLIP · Kirillov et al. (2023) SAM · Rothman (2024), Ch. 5–7 &amp; 16">
+<h2>Three families and the <em>Vision Transformer</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="rows">
+      <table class="tbl small">
+        <tr><th>Family</th><th>Objective</th><th>Examples</th></tr>
+        <tr><td>Encoder-only</td><td>masked-token prediction</td><td>BERT, ViT, Prithvi encoder</td></tr>
+        <tr><td>Decoder-only</td><td>next-token prediction</td><td>GPT, Llama, Qwen</td></tr>
+        <tr><td>Encoder–decoder</td><td>sequence-to-sequence</td><td>T5, original Transformer</td></tr>
+      </table>
+      <div class="card"><h4>Beyond text</h4><ul class="list compact small"><li><b>CLIP</b>: align images and captions (contrastive) ⇒ zero-shot classification by text prompt</li><li><b>SAM</b>: promptable segmentation (points, boxes) trained on 1 B masks</li><li><b>Swin</b>: windowed attention, hierarchical — CNN-like efficiency</li></ul></div>
+    </div>
+    <div class="rows">
+      <svg viewBox="0 0 600 270" class="diagram" style="height:270px" font-family="Inter">
+        <g><rect x="10" y="20" width="200" height="200" fill="#B5502E" rx="8"/>
+        <g stroke="#FBF7F0" stroke-width="3"><line x1="60" y1="20" x2="60" y2="220"/><line x1="110" y1="20" x2="110" y2="220"/><line x1="160" y1="20" x2="160" y2="220"/><line x1="10" y1="70" x2="210" y2="70"/><line x1="10" y1="120" x2="210" y2="120"/><line x1="10" y1="170" x2="210" y2="170"/></g></g>
+        <text x="110" y="250" text-anchor="middle" font-size="15" fill="#14213D">image → 16×16 patches</text>
+        <g fill="#2E4BC6"><rect x="250" y="40" width="26" height="60" rx="5" fill="#C99A2E"/><rect x="282" y="40" width="26" height="60" rx="5"/><rect x="314" y="40" width="26" height="60" rx="5"/><rect x="346" y="40" width="26" height="60" rx="5"/><rect x="378" y="40" width="26" height="60" rx="5"/><rect x="410" y="40" width="26" height="60" rx="5"/></g>
+        <text x="263" y="125" text-anchor="middle" font-size="13" fill="#8A6512">[CLS]</text><text x="380" y="125" text-anchor="middle" font-size="13" fill="#14213D">patch tokens + position</text>
+        <rect x="250" y="150" width="186" height="60" rx="12" fill="#14213D"/><text x="343" y="186" text-anchor="middle" fill="#C99A2E" font-size="17" font-weight="600">Encoder × L</text>
+        <path d="M436 180 L480 180" stroke="#14213D" stroke-width="2.5"/><rect x="480" y="155" width="110" height="50" rx="10" fill="#E2F1EC" stroke="#0F6B5C" stroke-width="2"/><text x="535" y="186" text-anchor="middle" font-size="16">class / mask</text>
+      </svg>
+      <div class="eqbox small">A 224×224 image with 16×16 patches ⇒ \(14\times14 = 196\) tokens. Each patch is flattened (\(16\cdot16\cdot C\)) and linearly projected to \(d\) dims.</div>
+      <div class="callout blue small"><div>ViTs have weaker built-in priors than CNNs ⇒ they need <b>more data or pre-training</b> — the opening for self-supervised EO foundation models.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">For multispectral data, patch embedding simply sees C = 6, 10 or 13 channels per patch — that is how Prithvi and SatMAE ingest Sentinel/HLS bands.</aside>
+</section>
+
+<section data-title="Transformers for EO" data-module="VII · Transformers" data-kind="practice" data-src="Cong et al. (2022) SatMAE, NeurIPS · Reed et al. (2023) Scale-MAE, ICCV · Tseng et al. (2023) Presto · Tarasiou et al. (2023) TSViT, CVPR · Liu et al. (2024) RemoteCLIP, <i>IEEE TGRS</i> · Hong et al. (2024) SpectralGPT, <i>IEEE TPAMI</i>">
+<h2>Transformers meet <em>Earth observation</em></h2>
+<div class="s-body">
+  <div class="cols c4" style="height:auto">
+    <div class="card arch blue"><div class="icon">▦</div><h3>Spatial</h3><p class="small">ViT / Swin backbones for scenes and segmentation; SatMAE and Scale-MAE pre-train with masking and ground-sample-distance awareness.</p></div>
+    <div class="card arch green"><div class="icon">⟳</div><h3>Temporal</h3><p class="small">Attention over acquisition dates handles clouds and irregular revisits: TSViT, Presto (pixel time series).</p></div>
+    <div class="card arch clay"><div class="icon">≋</div><h3>Spectral</h3><p class="small">Tokens per band group (SpectralGPT); wavelength-aware patch embeddings (DOFA) accept any sensor.</p></div>
+    <div class="card arch sand"><div class="icon">✎</div><h3>Vision–language</h3><p class="small">RemoteCLIP, GeoChat-style assistants: search imagery with text, caption scenes, answer questions.</p></div>
+  </div>
+  <div class="callout mt2"><div><b>Rule of thumb.</b> Little labelled data and one sensor → a pre-trained CNN is hard to beat. Many sensors, long time series, or many tasks → Transformer-based <b>foundation models</b> pay off (Part VIII).</div></div>
+</div>
+<aside class="notes">This slide bridges into foundation models: all four directions are combined in the current generation of GeoFMs.</aside>
+</section>
+
+<section data-title="Lab 6 — ViT and temporal transformer" data-module="VII · Transformers" data-kind="lab" data-src="Notebook <b>notebooks/lab06_vit_eurosat.ipynb</b> · timm (Wightman) · PyTorch <code>nn.TransformerEncoder</code> · Book code: github.com/Denis2054/Transformers-for-NLP-and-Computer-Vision-3rd-Edition (Ch. 2, 16)">
+<h2>Lab 6 · Attention from scratch, <em>ViT</em> and a temporal encoder</h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="rows">
+      <pre class="py" data-file="lab06 — scaled dot-product attention" data-size="sm">
+def attention(Q, K, V, mask=None):
+    d = Q.size(-1)
+    scores = Q @ K.transpose(-2, -1) / d ** 0.5
+    if mask is not None:
+        scores = scores.masked_fill(mask == 0, float("-inf"))
+    w = scores.softmax(dim=-1)          # (B, n, n)
+    return w @ V, w
+</pre>
+      <pre class="py" data-file="lab06 — fine-tune a pre-trained ViT on EuroSAT" data-size="sm">
+import timm
+model = timm.create_model("vit_small_patch16_224.augreg_in21k",
+                          pretrained=True, num_classes=10)
+cfg = timm.data.resolve_data_config({}, model=model)
+train_tf = timm.data.create_transform(**cfg, is_training=True)
+opt = torch.optim.AdamW(model.parameters(), lr=5e-5,
+                        weight_decay=0.05)
+# same loop as Lab 2; warm-up + cosine schedule recommended
+</pre>
+    </div>
+    <pre class="py" data-file="lab06 — transformer for pixel time series (crop type)" data-size="sm">
+class PixelTSFormer(nn.Module):
+    """Sentinel-2 pixel time series (T dates x C bands) -> class."""
+    def __init__(self, n_bands=10, d=64, n_cls=9, max_doy=366):
+        super().__init__()
+        self.inp = nn.Linear(n_bands, d)
+        self.doy = nn.Embedding(max_doy + 1, d)   # date encoding
+        layer = nn.TransformerEncoderLayer(
+            d, nhead=4, dim_feedforward=128,
+            dropout=0.1, batch_first=True)
+        self.enc = nn.TransformerEncoder(layer, num_layers=3)
+        self.cls = nn.Linear(d, n_cls)
+
+    def forward(self, x, doy, pad_mask=None):
+        # x: (B, T, C)  doy: (B, T) day-of-year of each image
+        z = self.inp(x) + self.doy(doy)
+        z = self.enc(z, src_key_padding_mask=pad_mask)
+        return self.cls(z.mean(1))
+
+# irregular dates & cloudy observations: just mask them out
+</pre>
+  </div>
+</div>
+<aside class="notes">The day-of-year embedding is how temporal transformers deal with irregular acquisitions: positions are real dates, not indices. Cloudy dates are dropped with the padding mask instead of being interpolated — one reason attention works well for optical time series.</aside>
+</section>

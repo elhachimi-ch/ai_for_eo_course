@@ -1,0 +1,298 @@
+<section class="dark" data-title="Part VIII — Geospatial foundation models" data-module="VIII · Geo foundation models">
+<div class="sec-wrap">
+  <div class="sec-arch" style="--sec-c:#0F6B5C"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>VIII</div></div>
+  <div class="sec-text">
+    <div class="time">2:10 – 2:30 · 20 min</div>
+    <h2>Foundation models for Earth</h2>
+    <div class="ar">النماذج التأسيسية لرصد الأرض</div>
+    <ul>
+      <li>Self-supervised learning → foundation models → GeoFMs</li>
+      <li>Three generations: RGB → multispectral → multimodal</li>
+      <li>MAE, contrastive, DINO, JEPA — and the 11 features of an ideal Earth FM</li>
+      <li>Labs 7–8 — Prithvi-EO-2.0 with TerraTorch, AlphaEarth embeddings</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<section data-title="From ML paradigms to foundation models" data-module="VIII · Geo foundation models" data-kind="theory" data-src="Adapted from C. El Hachimi, <i>From Machine Learning to Foundation Models</i> (GeoFM seminar slides) · He et al. (2022) MAE · Assran et al. (2023) I-JEPA · Oquab et al. (2024) DINOv2">
+<h2>From machine learning to <em>foundation models</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="rows">
+      <table class="tbl">
+        <tr><th>Paradigm</th><th>Data</th><th>Objective</th><th>EO example</th></tr>
+        <tr><td>Supervised</td><td>labelled</td><td>learn input → output mapping</td><td>land-cover classification</td></tr>
+        <tr><td>Unsupervised</td><td>no labels</td><td>discover hidden patterns</td><td>clustering, PCA</td></tr>
+        <tr><td>Reinforcement</td><td>agent + environment</td><td>maximise cumulative reward</td><td>irrigation optimisation</td></tr>
+        <tr><td>Self-supervised</td><td>unlabelled</td><td>learn representations from pretext tasks</td><td>MAE, JEPA, DINO</td></tr>
+      </table>
+      <div class="callout"><div>Supervised learning is limited by <b>expensive labels</b>. SSL learns from the <b>massive unlabelled EO archives</b> — and becomes the base of foundation models.</div></div>
+    </div>
+    <div class="vcenter">
+      <div class="flow" style="flex-direction:column;gap:8px">
+        <div class="step" style="background:var(--majorelle-soft);text-align:center"><b>Self-supervised learning</b>labels come from the data itself</div>
+        <div class="arrow" style="height:30px">↓</div>
+        <div class="step" style="background:var(--zellige-soft);text-align:center"><b>Foundation models</b>GPT, Llama · DINOv2, SAM</div>
+        <div class="arrow" style="height:30px">↓</div>
+        <div class="step" style="background:var(--terracotta-soft);text-align:center"><b>Geo foundation models</b>Prithvi, TerraMind, Galileo, AnySat, AlphaEarth</div>
+      </div>
+    </div>
+  </div>
+</div>
+<aside class="notes">This table follows the opening slide of Chouaib's GeoFM seminar deck. The punchline: EO is the ideal setting for SSL — petabytes of imagery, very few labels.</aside>
+</section>
+
+<section data-title="What is a foundation model" data-module="VIII · Geo foundation models" data-kind="theory" data-src="Bommasani et al. (2021) On the opportunities and risks of foundation models, arXiv:2108.07258 · Xiong, Z. et al. (2024) Neural plasticity-inspired multimodal foundation model for EO (DOFA), arXiv:2403.15356 (figure) · El Hachimi, GeoFM seminar slides">
+<h2>What is a <em>foundation model</em>?</h2>
+<div class="s-body">
+  <div class="cols c46">
+    <div class="rows">
+      <div class="card ink"><h4>Definition</h4><p style="color:#E5E9F4;font-size:22px">A model <b style="color:var(--saffron)">pre-trained on massive datasets</b> with self-supervised objectives and <b style="color:var(--saffron)">adaptable to many downstream tasks</b>.</p></div>
+      <ol class="steps small" style="margin-top:6px">
+        <li><b>Massive EO archive</b> — petabytes of unlabelled imagery</li>
+        <li><b>Self-supervised pre-training</b> — masking, contrast, distillation</li>
+        <li><b>General geospatial representation</b> — one encoder</li>
+        <li><b>Fine-tuning</b> → many downstream tasks</li>
+      </ol>
+      <div><span class="pill">NLP · GPT, Llama</span><span class="pill">Vision · DINOv2, SAM</span><span class="pill">Geo · Prithvi, TerraMind, Galileo, AnySat</span></div>
+    </div>
+    <figure class="framed"><img src="assets/img/dofa_xiong2024.jpg" alt="DOFA: one model for many sensors and downstream tasks"><figcaption>DOFA: a unified multimodal Earth FM — many sensors in, many tasks out (Xiong et al., 2024)</figcaption></figure>
+  </div>
+</div>
+<aside class="notes">Definition and figure taken from the GeoFM seminar deck. DOFA's idea: a wavelength-conditioned patch embedding lets one encoder accept optical, multispectral, hyperspectral and SAR inputs.</aside>
+</section>
+
+<section data-title="GeoFM landscape: three generations" data-module="VIII · Geo foundation models" data-kind="theory" data-src="Jakubik et al. (2023) Prithvi, arXiv:2310.18660 (figure) · Szwarcman et al. (2024) Prithvi-EO-2.0, arXiv:2412.02732 · Brown et al. (2025) AlphaEarth Foundations, Google DeepMind (figure) · El Hachimi, GeoFM seminar slides">
+<h2>The GeoFM landscape: <em>three generations</em></h2>
+<div class="s-body">
+  <div class="cols c3" style="height:auto">
+    <div class="card blue"><h4>Generation 1 · single modality</h4><p class="small"><b>SatMAE, Scale-MAE, RemoteCLIP</b><br>Input: RGB · Goal: visual representation learning</p></div>
+    <div class="card green"><h4>Generation 2 · multispectral</h4><p class="small"><b>Prithvi, TerraFM</b><br>Input: multi-band EO imagery (time series) · Goal: better EO understanding</p></div>
+    <div class="card clay"><h4>Generation 3 · multimodal</h4><p class="small"><b>AnySat, Galileo, TerraMind, AlphaEarth</b><br>Input: S1, S2, Landsat, climate, DEM… · Goal: universal Earth representations</p></div>
+  </div>
+  <div class="cols c55 mt" style="height:330px">
+    <figure class="framed"><img src="assets/img/prithvi_jakubik2023.jpg" alt="Prithvi architecture" style="max-height:280px"><figcaption>Prithvi-EO-1.0: spatio-temporal masked autoencoder on HLS (NASA &amp; IBM; Jakubik et al., 2023)</figcaption></figure>
+    <figure class="framed"><img src="assets/img/alphaearth_deepmind2025.jpg" alt="AlphaEarth embedding field" style="max-height:280px"><figcaption>AlphaEarth Foundations: a global 64-D embedding field (Google DeepMind, 2025)</figcaption></figure>
+  </div>
+  <p class="small mt" style="text-align:center"><b class="hl-t">Key trend:</b> single sensor → multi-sensor → multimodal → <b>foundation Earth models</b></p>
+</div>
+<aside class="notes">Prithvi-EO-2.0 (300M and 600M parameters) was trained on 4.2 M global HLS time-series samples and adds temporal and location embeddings. AlphaEarth publishes precomputed annual 10 m embeddings for the whole land surface in Earth Engine — we use them in Lab 8 and the case study.</aside>
+</section>
+
+<section data-title="SSL methods for GeoFMs" data-module="VIII · Geo foundation models" data-kind="theory" data-src="He et al. (2022) MAE · Radford et al. (2021) CLIP; Oord et al. (2018) InfoNCE · Caron et al. (2021) DINO; Oquab et al. (2024) DINOv2 · LeCun (2022) A path towards autonomous machine intelligence (figure) · Assran et al. (2023) I-JEPA · El Hachimi, GeoFM seminar slides">
+<h2>Four ways to learn <em>without labels</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="rows">
+      <div class="cols c2" style="height:auto;gap:16px">
+        <div class="card"><h4>Reconstruction · MAE, SatMAE</h4><p class="small">Mask ~75% of patches, reconstruct pixels → fine spatial detail.<br>\(\mathcal{L}=\tfrac{1}{|M|}\sum_{p\in M}\lVert \hat{\mathbf{x}}_p-\mathbf{x}_p\rVert^2\)</p></div>
+        <div class="card"><h4>Contrastive · CLIP, RemoteCLIP</h4><p class="small">Pull matching pairs together, push others apart → semantics.<br>\(\mathcal{L}=-\log\frac{e^{\mathrm{sim}(z_i,z_i^+)/\tau}}{\sum_j e^{\mathrm{sim}(z_i,z_j)/\tau}}\)</p></div>
+        <div class="card"><h4>Distillation · DINO, DINOv2</h4><p class="small">Student matches a momentum teacher on different crops/views → strong semantic features, no negatives.</p></div>
+        <div class="card"><h4>Predictive · JEPA</h4><p class="small">Predict the <b>latent representation</b> of masked regions, not pixels → abstract “world-model” features.</p></div>
+      </div>
+      <div class="callout green small"><div>In EO a natural “positive pair” is the <b>same place seen by two sensors or on two dates</b> — free supervision from geography.</div></div>
+    </div>
+    <figure class="framed"><img src="assets/img/jepa_lecun2022.jpg" alt="LeCun's cognitive architecture with JEPA world model"><figcaption>JEPA as the world-model module of an autonomous agent (LeCun, 2022)</figcaption></figure>
+  </div>
+</div>
+<aside class="notes">Four families from the seminar deck, with the defining loss for the two simplest. The EO-specific twist on contrastive learning (SeCo, CROMA, DeCUR) is to use co-located multi-sensor or multi-temporal views as positives.</aside>
+</section>
+
+<section data-title="MAE vs JEPA" data-module="VIII · Geo foundation models" data-kind="theory" data-src="El Hachimi, GeoFM seminar slides · He et al. (2022) · Assran et al. (2023) · LeCun (2022)">
+<h2>MAE vs JEPA — <em>pixels or meaning?</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <table class="tbl">
+      <tr><th>Aspect</th><th>MAE</th><th>JEPA</th></tr>
+      <tr><td>Learns by</td><td>reconstruction</td><td>prediction</td></tr>
+      <tr><td>Target</td><td>pixels</td><td>representations</td></tr>
+      <tr><td>Objective</td><td>recover the missing image</td><td>predict latent context / future</td></tr>
+      <tr><td>Focus</td><td>low-level details</td><td>high-level semantics</td></tr>
+      <tr><td>Sensitivity to noise</td><td>high</td><td>lower</td></tr>
+      <tr><td>Physical-reasoning potential</td><td>moderate</td><td>high</td></tr>
+    </table>
+    <div class="rows">
+      <div class="card ink"><h4>Why JEPA for EO?</h4><p style="color:#E5E9F4" class="small">Earth observation is full of <b style="color:var(--saffron)">clouds, noise, missing observations</b> and <b style="color:var(--saffron)">multi-sensor inconsistencies</b>. Spending capacity on reconstructing every noisy pixel is wasteful; predicting representations may be more meaningful.</p></div>
+      <div class="eqbox small">JEPA objective (schematic): \(\;\mathcal{L}=\big\lVert\, g_\phi\big(s_\theta(\mathbf{x}_{\text{context}}),\,\text{pos}\big)-\operatorname{sg}\!\big[\bar{s}(\mathbf{x}_{\text{target}})\big]\big\rVert^2\)<br><span class="xs">context encoder \(s_\theta\), predictor \(g_\phi\), EMA target encoder \(\bar{s}\), stop-gradient sg.</span></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">From the seminar deck. Open question for discussion: does predicting in latent space make models more robust to clouds and sensor artefacts in practice? This is an active research area.</aside>
+</section>
+
+<section data-title="Eleven features of an ideal Earth FM" data-module="VIII · Geo foundation models" data-kind="theory" data-src="Zhu, X. X., Xiong, Z., Wang, Y., Stewart, A. J., Heidler, K., Wang, Y., Yuan, Z., Dujardin, T., Xu, Q. &amp; Shi, Y. (2026) On the foundations of Earth foundation models. <i>Communications Earth &amp; Environment</i>, doi:10.1038/s43247-025-03127-x">
+<h2>Zhu et al. (2026): <em>11 features</em> of an ideal Earth FM</h2>
+<div class="s-body tight">
+  <div class="grid11">
+    <div class="f hd"><span class="no">1</span><b>Geolocation embedding</b>knows where each observation was taken</div>
+    <div class="f hd"><span class="no">2</span><b>Balanced geography</b>not dominated by Europe &amp; North America</div>
+    <div class="f hd"><span class="no">3</span><b>Scale awareness</b>sub-metre imagery to global climate grids</div>
+    <div class="f hd"><span class="no">4</span><b>Wavelength embedding</b>any band layout, even unseen sensors</div>
+    <div class="f hd"><span class="no">5</span><b>Time variable</b>separates natural variability from human impact</div>
+    <div class="f hd"><span class="no">6</span><b>Multisensory</b>shared + source-specific representations</div>
+    <div class="f hd"><span class="no">7</span><b>Task-agnostic</b>label-efficient, robust, transferable</div>
+    <div class="f hd"><span class="no">8</span><b>Carbon-minimised</b>efficient compute, renewable energy</div>
+    <div class="f hd2"><span class="no">9</span><b>Uncertainty</b>quantified; flags out-of-distribution input</div>
+    <div class="f hd2"><span class="no">10</span><b>Physical consistency</b>conservation, symmetry, causality</div>
+    <div class="f hd2"><span class="no">11</span><b>AI assistant</b>natural-language access to Earth data</div>
+    <div class="f" style="background:var(--ink);color:#E5E9F4"><b style="color:var(--saffron)">Legend</b><span style="color:#C9D2F3">blue = must-have (1–8)</span><br><span style="color:#E8D7A8">gold = highly desirable (9–11)</span></div>
+  </div>
+  <div class="callout clay mt"><div>The paper's diagnosis: most current models <b>cover only a few basic features</b> — often just “large ViT + masked pre-training on one sensor”.</div></div>
+</div>
+<aside class="notes">This is the course's key reading for Part VIII (Communications Earth &amp; Environment, 2026; preprint arXiv:2405.04285). Ask participants to score Prithvi-EO-2.0 and AlphaEarth against the 11 features: Prithvi has location/time embeddings (1, 5) but one sensor family; AlphaEarth is multisensory (6) but delivered as fixed annual embeddings.</aside>
+</section>
+
+<section data-title="Earth FMs: categories, evaluation, what next" data-module="VIII · Geo foundation models" data-kind="theory" data-src="Zhu et al. (2026) <i>Commun. Earth Environ.</i> doi:10.1038/s43247-025-03127-x (figure as used in El Hachimi's seminar slides) · Lacoste et al. (2023) GEO-Bench">
+<h2>Categories, evaluation and <em>what comes after</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="rows">
+      <table class="tbl small">
+        <tr><th>Category</th><th>Examples</th></tr>
+        <tr><td>EO FMs</td><td>SatMAE, Scale-MAE, CROMA, Presto, Prithvi, SpectralGPT, SkySense, DOFA</td></tr>
+        <tr><td>Weather &amp; climate</td><td>FourCastNet, Pangu-Weather, GraphCast, ClimaX, NeuralGCM, FuXi, GenCast</td></tr>
+        <tr><td>Vision–language EO</td><td>RemoteCLIP, SkyScript, EarthGPT</td></tr>
+        <tr><td>Climate language</td><td>ClimateBert, ClimateGPT</td></tr>
+      </table>
+      <div class="card"><h4>Evaluate fairly</h4><ul class="list compact small"><li>Diverse modalities, regions (oceans, polar, Global South), and periods</li><li>Realistic conditions — don't keep only clear-sky scenes</li><li>Standardised adaptation: linear probe, fine-tune, PEFT; few- and zero-shot</li><li>Benchmarks: GEO-Bench, PhilEO, WeatherBench 2, ClimateBench</li></ul></div>
+    </div>
+    <div class="rows">
+      <figure class="framed" style="height:330px"><img src="assets/img/earth_fm_zhu2026.jpg" alt="Scheme of an Earth foundation model" style="max-height:310px"></figure>
+      <div class="card sand"><h4>After foundation models</h4><p class="small">Energy-efficient adaptation · FM-enabled science (link EO with weather/climate) · machine unlearning · continual learning · adversarial defences · interpretability · RAG over geo-temporal data.</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">The figure shows data sources on the left, downstream tasks on the right, with physical consistency and data assimilation linking EO, weather and climate foundation components. Benchmarks listed are those discussed by Zhu et al.</aside>
+</section>
+
+<section data-title="Current limitations of GeoFMs" data-module="VIII · Geo foundation models" data-kind="theory" data-src="El Hachimi, GeoFM seminar slides · Zhu et al. (2026) <i>Commun. Earth Environ.</i>">
+<h2>GeoFMs are <em>not yet Earth-system models</em></h2>
+<div class="s-body">
+  <div class="cols c2" style="height:auto">
+    <div class="card clay"><h4>1 · Physics ignorance</h4><p class="small">Most GeoFMs learn statistical correlations (<i>higher NDVI ↔ higher biomass</i>), not photosynthesis, water balance, energy balance or radiative transfer.</p></div>
+    <div class="card clay"><h4>2 · EO treated as computer vision</h4><p class="small">Methods inherited from CV — image reconstruction, contrastive learning, object recognition. But EO is not photographs: it is <b>time series, spatio-temporal, multi-resolution, multimodal, physical signal</b>.</p></div>
+    <div class="card clay"><h4>3 · Weak interpretability</h4><p class="small">Hard to explain predictions and hard to relate embeddings to physical processes.</p></div>
+    <div class="card clay"><h4>4 · Poor transferability</h4><p class="small">Performance drops across climate zones, ecosystems and continents — exactly the shift Africa and the Global South face.</p></div>
+  </div>
+  <div class="callout mt"><div><b>Research direction:</b> from “Can we learn representations from Earth observations?” to “Can we learn <b>physically meaningful</b> representations of Earth-system processes?”</div></div>
+</div>
+<aside class="notes">Four limitations exactly as in the seminar deck. The fourth point matters for Moroccan and African applications: models pre-trained mostly on North-American/European data transfer poorly — a reason to fine-tune and to validate locally.</aside>
+</section>
+
+<section data-title="AtlasGeoFM: physics-aware learning" data-module="VIII · Geo foundation models" data-kind="case" data-src="El Hachimi, GeoFM seminar slides (AtlasGeoFM methodology) · Hersbach et al. (2020) ERA5; Muñoz-Sabater et al. (2021) ERA5-Land · Allen et al. (1998) FAO-56">
+<h2>Research example: <em>AtlasGeoFM</em> — physics-aware GeoFM</h2>
+<div class="s-body">
+  <div class="cols c37">
+    <div class="rows">
+      <div class="card ink"><h4>Idea</h4><p class="small" style="color:#E5E9F4">Embed high-level models of <b style="color:var(--saffron)">balances</b> (energy, water cycle) and time-series dynamics into representation learning.</p></div>
+      <div class="card"><h4>Inputs</h4><p class="small">ERA5-Land meteorology + PM-ETo, with lat/lon and day-of-year context.</p></div>
+      <div class="card"><h4>Training</h4><p class="small">Pre-train an encoder-only Transformer (MLM-like masking), then fine-tune: ETo nowcasting, gap-filling, anomaly detection. Benchmarked against semi-physical models and ML.</p></div>
+    </div>
+    <figure class="framed"><img src="assets/img/atlasgeofm_method.jpg" alt="AtlasGeoFM methodology"></figure>
+  </div>
+</div>
+<aside class="notes">This is the instructor's own research direction (from the seminar deck) and links back to Lab 4: the LSTM ETo forecaster is the small, supervised version; AtlasGeoFM is the self-supervised, physics-aware, multi-task version.</aside>
+</section>
+
+<section data-title="Adapting foundation models" data-module="VIII · Geo foundation models" data-kind="theory" data-src="Hu et al. (2022) LoRA, ICLR · Rodriguez (2024) <i>Generative AI Foundations in Python</i>, Ch. 5 (PEFT, LoRA, AdaLoRA) · Rothman (2024), Ch. 11 (embeddings as an alternative to fine-tuning) · Google Earth Engine catalog: GOOGLE/SATELLITE_EMBEDDING/V1/ANNUAL">
+<h2>Four ways to <em>use</em> a foundation model</h2>
+<div class="s-body">
+  <div class="cols c4" style="height:auto">
+    <div class="card arch blue"><div class="icon">①</div><h3>Embeddings</h3><p class="small">Freeze, extract vectors, train a light model (RF, k-NN, MLP). No GPU needed. e.g. AlphaEarth: 64-D, unit-length, 10 m, annual.</p></div>
+    <div class="card arch green"><div class="icon">②</div><h3>Linear probe</h3><p class="small">Freeze the encoder, train one linear layer — the standard test of representation quality.</p></div>
+    <div class="card arch sand"><div class="icon">③</div><h3>PEFT / LoRA</h3><p class="small">Train small adapters, keep 99% of weights frozen: \(\mathbf{W}=\mathbf{W}_0+\mathbf{B}\mathbf{A}\), rank \(r\ll d\).</p></div>
+    <div class="card arch clay"><div class="icon">④</div><h3>Full fine-tune</h3><p class="small">Encoder + decoder (U-Net/UPerNet) end-to-end. Best accuracy with enough labels and GPU.</p></div>
+  </div>
+  <div class="callout mt2"><div><b>Decision rule:</b> few labels &amp; no GPU → ①; benchmark a model → ②; moderate labels, limited GPU → ③; many labels, pixel-precise task → ④. Always compare with a CNN baseline.</div></div>
+</div>
+<aside class="notes">LoRA: with d = 1024 and r = 8, an adapter for one weight matrix has 2·1024·8 = 16 k parameters instead of 1 M. The same PEFT idea is used to adapt LLMs (Part X).</aside>
+</section>
+
+<section data-title="Lab 7 — Prithvi-EO-2.0 with TerraTorch" data-module="VIII · Geo foundation models" data-kind="lab" data-src="Notebook <b>notebooks/lab07_prithvi_terratorch.ipynb</b> · TerraTorch (IBM / torchgeo) · Prithvi-EO-2.0 on Hugging Face (ibm-nasa-geospatial) · HLS Burn Scars dataset · Szwarcman et al. (2024)">
+<h2>Lab 7 · Fine-tune <em>Prithvi-EO-2.0</em> with TerraTorch</h2>
+<div class="s-body">
+  <div class="cols c64">
+    <pre class="py" data-file="lab07_prithvi_terratorch.ipynb" data-size="xs">
+import lightning.pytorch as pl
+from terratorch.datamodules import GenericNonGeoSegmentationDataModule
+from terratorch.tasks import SemanticSegmentationTask
+
+BANDS = ["BLUE", "GREEN", "RED", "NIR_NARROW", "SWIR_1", "SWIR_2"]
+dm = GenericNonGeoSegmentationDataModule(
+    batch_size=4, num_workers=2, num_classes=2,
+    train_data_root="burn_scars/training", val_data_root="burn_scars/validation",
+    test_data_root="burn_scars/validation",
+    img_grep="*_merged.tif", label_grep="*.mask.tif",
+    means=MEANS, stds=STDS,                      # computed in the notebook
+    dataset_bands=BANDS, output_bands=BANDS,
+    no_data_replace=0, no_label_replace=-1)
+
+model = SemanticSegmentationTask(
+    model_factory="EncoderDecoderFactory",
+    model_args=dict(
+        backbone="prithvi_eo_v2_300", backbone_pretrained=True,
+        backbone_bands=BANDS, backbone_num_frames=1,
+        necks=[{"name": "SelectIndices", "indices": [5, 11, 17, 23]},
+               {"name": "ReshapeTokensToImage"},
+               {"name": "LearnedInterpolateToPyramidal"}],
+        decoder="UNetDecoder", decoder_channels=[512, 256, 128, 64],
+        head_dropout=0.1, num_classes=2),
+    loss="dice", optimizer="AdamW", lr=1e-4,
+    ignore_index=-1, freeze_backbone=False)
+
+trainer = pl.Trainer(max_epochs=10, accelerator="auto",
+                     precision="16-mixed", log_every_n_steps=5)
+trainer.fit(model, datamodule=dm)
+trainer.test(model, datamodule=dm)
+</pre>
+    <div class="rows">
+      <div class="card"><h4>What happens</h4><ul class="list compact small"><li>ViT-L encoder pre-trained with a spatio-temporal MAE on HLS</li><li><b>Neck</b> picks 4 intermediate layers and reshapes tokens into a feature pyramid</li><li><b>UNet decoder</b> + head produce the burn-scar mask</li></ul></div>
+      <div class="card sand"><h4>Try</h4><ul class="list compact small"><li><code>freeze_backbone=True</code> (linear-probe-like)</li><li><code>prithvi_eo_v2_300_tl</code> + time/location metadata</li><li>Swap the dataset for Sen1Floods11 or your own Moroccan chips</li></ul></div>
+      <div class="callout clay small"><div>Needs a GPU (Colab T4 works with batch 2–4 and mixed precision).</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">The configuration mirrors TerraTorch's official burn-scar fine-tuning example; check the TerraTorch version (≥1.0) if argument names differ. The same code works from a YAML config with `terratorch fit -c config.yaml`.</aside>
+</section>
+
+<section data-title="Lab 8 — AlphaEarth embeddings" data-module="VIII · Geo foundation models" data-kind="lab" data-src="Notebook <b>notebooks/lab08_alphaearth_embeddings.ipynb</b> · Earth Engine dataset GOOGLE/SATELLITE_EMBEDDING/V1/ANNUAL (Google &amp; Google DeepMind) · Brown et al. (2025) AlphaEarth Foundations, arXiv:2507.22291">
+<h2>Lab 8 · <em>AlphaEarth</em> embeddings — no GPU needed</h2>
+<div class="s-body">
+  <div class="cols c55">
+    <pre class="py" data-file="lab08 — similarity search (Earth Engine Python API)" data-size="sm">
+import ee
+ee.Authenticate(); ee.Initialize(project="YOUR-GCP-PROJECT")
+
+aoi = ee.Geometry.Rectangle([-7.75, 33.45, -7.45, 33.65])  # Casablanca
+emb = (ee.ImageCollection("GOOGLE/SATELLITE_EMBEDDING/V1/ANNUAL")
+       .filterDate("2024-01-01", "2025-01-01")
+       .filterBounds(aoi).mosaic().clip(aoi))
+bands = emb.bandNames()                      # A00 ... A63
+
+# reference: mean embedding at a few example locations
+pts_ref = [[-7.552, 33.563], [-7.523, 33.571]]
+refs = ee.FeatureCollection(
+    [ee.Feature(ee.Geometry.Point(p)) for p in pts_ref])
+ref = emb.reduceRegion(ee.Reducer.mean(), refs.geometry(), 10)
+ref_img = ee.Image.constant(ref.values(bands)).rename(bands)
+
+# vectors are unit-length: dot product = cosine similarity
+sim = emb.multiply(ref_img).reduce(ee.Reducer.sum()).rename("sim")
+</pre>
+    <div class="rows">
+      <pre class="py" data-file="lab08 — supervised map from a few labels" data-size="sm">
+pts = ee.FeatureCollection("projects/YOUR/assets/labels")  # 'class'
+train = emb.sampleRegions(pts, properties=["class"], scale=10)
+clf = ee.Classifier.smileRandomForest(200).train(
+          train, "class", bands)
+landcover = emb.classify(clf)
+# change: 1 - cos(emb_2018, emb_2024) highlights new construction
+</pre>
+      <div class="card green"><h4>Why this is powerful</h4><p class="small">A year of multi-sensor observations is already compressed into 64 numbers per 10 m pixel. A few dozen labels + a random forest can produce a usable map in minutes.</p></div>
+      <div class="callout clay small"><div>Limits: 10 m and annual — individual small buildings are not resolved; embeddings are not physically interpretable band by band.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">The example reference points are placeholders: replace them with locations you have checked on VHR imagery. All 64 bands must be used together — individual axes have no physical meaning.</aside>
+</section>

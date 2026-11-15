@@ -1,0 +1,175 @@
+<section class="dark" data-title="Part II — The maths of learning" data-module="II · Learning maths">
+<div class="sec-wrap">
+  <div class="sec-arch" style="--sec-c:#0F6B5C"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>II</div></div>
+  <div class="sec-text">
+    <div class="time">0:25 – 0:35 · 10 min</div>
+    <h2>Learning is optimisation</h2>
+    <div class="ar">التعلّم تحسين</div>
+    <ul>
+      <li>EO data as tensors — the data cube</li>
+      <li>Loss functions and gradient descent (live demo)</li>
+      <li>The chain rule, back-propagation and likelihood</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<section data-title="EO data as tensors" data-module="II · Learning maths" data-kind="theory" data-src="Danka (2025) <i>Mathematics of Machine Learning</i>, Part I (vectors, matrices) · ESA Sentinel-2 User Handbook · Mahecha et al. (2020) Earth system data cubes, <i>Earth Syst. Dyn.</i> 11:201–234">
+<h2>Everything is a <em>tensor</em>: the EO data cube</h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="center">
+      <svg viewBox="0 0 560 470" class="diagram" style="max-height:560px">
+        <defs><pattern id="px" width="22" height="22" patternUnits="userSpaceOnUse"><rect width="22" height="22" fill="none" stroke="#C9D2F3" stroke-width="1"/></pattern></defs>
+        <g transform="translate(70,40)">
+          <g opacity=".35"><polygon points="90,0 390,0 330,60 30,60" fill="#2E4BC6"/><polygon points="330,60 390,0 390,280 330,340" fill="#14213D"/><rect x="30" y="60" width="300" height="280" fill="#2E4BC6"/></g>
+          <g transform="translate(-30,30)" opacity=".6"><polygon points="90,0 390,0 330,60 30,60" fill="#0F6B5C"/><polygon points="330,60 390,0 390,280 330,340" fill="#0A4E43"/><rect x="30" y="60" width="300" height="280" fill="#0F6B5C"/></g>
+          <g transform="translate(-60,60)"><polygon points="90,0 390,0 330,60 30,60" fill="#C99A2E"/><polygon points="330,60 390,0 390,280 330,340" fill="#8A6512"/><rect x="30" y="60" width="300" height="280" fill="#B5502E"/><rect x="30" y="60" width="300" height="280" fill="url(#px)"/></g>
+        </g>
+        <text x="130" y="455" font-family="Inter" font-size="18" fill="#14213D" font-weight="600">W (x)</text>
+        <text x="20" y="260" font-family="Inter" font-size="18" fill="#14213D" font-weight="600" transform="rotate(-90 20 260)">H (y)</text>
+        <text x="420" y="430" font-family="Inter" font-size="18" fill="#14213D" font-weight="600">C bands →</text>
+        <text x="430" y="60" font-family="Inter" font-size="18" fill="#B5502E" font-weight="700">T dates ↗</text>
+      </svg>
+    </div>
+    <div class="rows">
+      <div class="eqbox">$$\mathcal{X}\in\mathbb{R}^{B\times T\times C\times H\times W}$$<div class="xs" style="text-align:center">batch × time × channels (bands) × height × width</div></div>
+      <table class="tbl small">
+        <tr><th>Model input</th><th>Shape</th><th>Example</th></tr>
+        <tr><td>Pixel spectrum</td><td>\(C\)</td><td>13 Sentinel-2 bands</td></tr>
+        <tr><td>Image patch</td><td>\(C\times H\times W\)</td><td>EuroSAT 13×64×64</td></tr>
+        <tr><td>Pixel time series</td><td>\(T\times C\)</td><td>daily ERA5 weather, 365×6</td></tr>
+        <tr><td>Image time series</td><td>\(T\times C\times H\times W\)</td><td>Prithvi: 4×6×224×224</td></tr>
+      </table>
+      <div class="callout blue"><div>Each architecture in this course is a different <b>inductive bias</b> about which axes matter: MLP (C), CNN (H, W), RNN (T), Transformer (any set of tokens).</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">This slide is the key that unlocks the rest of the course: we will meet each family through which axes of this cube it is designed to exploit.</aside>
+</section>
+
+<section data-title="Loss and empirical risk" data-module="II · Learning maths" data-kind="theory" data-src="Danka (2025), Ch. 13 Optimization &amp; Ch. 17 Optimization in multiple variables · Goodfellow, Bengio &amp; Courville (2016) <i>Deep Learning</i>, Ch. 5 &amp; 8">
+<h2>Training = minimising a <em>loss</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="rows">
+      <div class="eqbox">
+        <div class="xs">Empirical risk minimisation (with regularisation):</div>
+        $$\hat{\theta} \;=\; \arg\min_{\theta}\; \frac{1}{N}\sum_{i=1}^{N} \ell\big(f_\theta(\mathbf{x}_i),\,y_i\big) \;+\; \lambda\,\Omega(\theta)$$
+      </div>
+      <table class="tbl small">
+        <tr><th>Task</th><th>Loss \(\ell\)</th><th>EO example</th></tr>
+        <tr><td>Regression</td><td>MSE \((\hat y-y)^2\), MAE</td><td>ETo, biomass, soil moisture</td></tr>
+        <tr><td>Classification</td><td>Cross-entropy \(-\log p_{y}\)</td><td>Land cover, crop type</td></tr>
+        <tr><td>Segmentation</td><td>CE + Dice / focal</td><td>Buildings, floods, slums</td></tr>
+        <tr><td>Generation</td><td>Adversarial, L1, diffusion</td><td>SAR→optical, cloud removal</td></tr>
+      </table>
+    </div>
+    <div class="rows">
+      <div class="card"><h4>Generalisation, not memorisation</h4><p>We minimise the loss on training data but care about <b>unseen places and dates</b>. Regularisers \(\Omega\) (weight decay), dropout, augmentation and early stopping fight over-fitting.</p></div>
+      <div class="card clay"><h4>EO trap · spatial autocorrelation</h4><p>Neighbouring pixels are near-duplicates. Random train/test splits leak information and inflate accuracy. Split by <b>blocks, polygons, tiles or cities</b> (spatial cross-validation).</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">The class imbalance in EO (e.g., 2% slum pixels) motivates Dice/focal losses in segmentation. Spatial CV will come back in the informal-settlement case study as leave-one-city-out evaluation.</aside>
+</section>
+
+<section data-title="Gradient descent (interactive)" data-module="II · Learning maths" data-kind="theory" data-src="Cauchy (1847) · Robbins &amp; Monro (1951) stochastic approximation · Kingma &amp; Ba (2015) Adam · Danka (2025), Ch. 13 “The basics of gradient descent”">
+<h2>Gradient descent — <em>walk downhill</em></h2>
+<div class="s-body">
+  <div class="cols c46">
+    <div class="rows">
+      <div class="eqbox">$$\theta_{t+1} = \theta_t - \eta\,\nabla_\theta \mathcal{L}(\theta_t)$$</div>
+      <ul class="list small">
+        <li><b>Learning rate η</b>: too small = slow, too big = divergence or oscillation. Try it →</li>
+        <li><b>Stochastic GD</b>: estimate \(\nabla\mathcal{L}\) on a mini-batch of 32–512 patches; noise helps escape poor minima.</li>
+        <li><b>Momentum / Adam</b>: average past gradients and rescale per parameter — the default optimisers today (AdamW for Transformers).</li>
+        <li>Non-convex loss: start point and η decide which valley you land in.</li>
+      </ul>
+    </div>
+    <div class="demo" data-demo="gd">
+      <canvas width="760" height="400"></canvas>
+      <div class="ctrl">
+        <label>η <input type="range" name="lr" min="0.02" max="1.6" step="0.02" value="0.30"> <b class="lrv"></b></label>
+        <label>start θ₀ <select name="x0"><option value="2.6">2.6</option><option value="-2.8">−2.8</option><option value="0.3">0.3</option></select></label>
+        <button class="btn" data-act="step">Step</button><button class="btn gold" data-act="run">Run 40</button><button class="btn ghost" data-act="reset">Reset</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Live demo: with η = 0.3 from θ₀ = 2.6 the ball reaches the right-hand minimum. Push η to about 1.2+ and it oscillates or jumps valleys. Start at −2.8 to land in the deeper left minimum. This is the whole of training, in one dimension.</aside>
+</section>
+
+<section data-title="Chain rule and back-propagation" data-module="II · Learning maths" data-kind="theory" data-src="Rumelhart, Hinton &amp; Williams (1986) <i>Nature</i> 323:533–536 · Danka (2025), Ch. 12 Differentiation (the chain rule) &amp; Ch. 16 Derivatives and gradients · De Marchi &amp; Mitchell (2019), Ch. 2">
+<h2>Back-propagation = the <em>chain rule</em>, applied backwards</h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="center">
+      <svg viewBox="0 0 640 330" class="diagram" font-family="Inter" style="max-height:420px">
+        <g font-size="18" text-anchor="middle">
+          <circle cx="60" cy="80" r="36" fill="#E6EAFA" stroke="#2E4BC6" stroke-width="2"/><text x="60" y="86">x</text>
+          <circle cx="60" cy="240" r="36" fill="#E6EAFA" stroke="#2E4BC6" stroke-width="2"/><text x="60" y="246">w</text>
+          <rect x="170" y="125" width="110" height="70" rx="14" fill="#fff" stroke="#14213D" stroke-width="2"/><text x="225" y="166">z = wx + b</text>
+          <rect x="340" y="125" width="110" height="70" rx="14" fill="#fff" stroke="#14213D" stroke-width="2"/><text x="395" y="166">ŷ = σ(z)</text>
+          <rect x="510" y="125" width="110" height="70" rx="14" fill="#F7E6DE" stroke="#B5502E" stroke-width="2"/><text x="565" y="166">L = (ŷ−y)²</text>
+        </g>
+        <g stroke="#14213D" stroke-width="2.5" fill="none" marker-end="url(#ar)">
+          <path d="M96 90 L170 145"/><path d="M96 230 L170 175"/><path d="M280 160 L340 160"/><path d="M450 160 L510 160"/>
+        </g>
+        <g stroke="#B5502E" stroke-width="2.5" fill="none" stroke-dasharray="7 6" marker-end="url(#ar2)">
+          <path d="M565 205 C 520 290, 440 290, 395 205"/><path d="M395 205 C 350 290, 270 290, 225 205"/><path d="M200 200 C 160 270, 120 270, 96 250"/>
+        </g>
+        <g font-size="16" fill="#B5502E" font-weight="600" text-anchor="middle">
+          <text x="480" y="300">∂L/∂ŷ = 2(ŷ−y)</text><text x="310" y="300">∂ŷ/∂z = σ(1−σ)</text><text x="120" y="300">∂z/∂w = x</text>
+        </g>
+        <g font-size="15" fill="#2E4BC6" font-weight="600" text-anchor="middle"><text x="310" y="110">forward →</text><text x="480" y="110">forward →</text></g>
+        <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#14213D"/></marker>
+        <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#B5502E"/></marker></defs>
+      </svg>
+    </div>
+    <div class="rows">
+      <div class="eqbox">$$\frac{\partial L}{\partial w} = \frac{\partial L}{\partial \hat y}\cdot\frac{\partial \hat y}{\partial z}\cdot\frac{\partial z}{\partial w} = 2(\hat y - y)\,\sigma(z)\big(1-\sigma(z)\big)\,x$$</div>
+      <ul class="list small">
+        <li><b>Forward pass</b> computes and caches every intermediate value.</li>
+        <li><b>Backward pass</b> multiplies local derivatives from the loss back to each weight — one sweep gives <i>all</i> gradients at ≈ the cost of one forward pass.</li>
+        <li>PyTorch/JAX do this automatically (<b>autograd</b>): you write the forward pass, <code>loss.backward()</code> does the rest.</li>
+        <li>Products of many small factors (σ′ ≤ 0.25) ⇒ <span class="hl-t">vanishing gradients</span> in deep or recurrent nets — the motivation for ReLU, ResNets and LSTMs.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<aside class="notes">Walk the dashed red arrows right to left. The final bullet sets up three later stories: ReLU (Part III), residual connections (Part IV) and LSTM gates (Part V) are all fixes for the vanishing-gradient problem.</aside>
+</section>
+
+<section data-title="Likelihood, softmax and cross-entropy" data-module="II · Learning maths" data-kind="theory" data-src="Danka (2025), Part IV Probability theory — Ch. 19 Random variables and distributions, Ch. 20 The expected value; maximum likelihood estimation">
+<h2>Why cross-entropy? <em>Maximum likelihood</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="rows">
+      <div class="eqbox">
+        <div class="xs">Softmax turns scores (logits) into class probabilities:</div>
+        $$p_k(\mathbf{x}) = \frac{e^{z_k}}{\sum_{j=1}^{K} e^{z_j}}$$
+      </div>
+      <div class="eqbox">
+        <div class="xs">Maximising the likelihood of the labels = minimising cross-entropy:</div>
+        $$\arg\max_\theta \prod_i p_\theta(y_i\mid\mathbf{x}_i) \;=\; \arg\min_\theta \; -\sum_i \log p_\theta(y_i\mid\mathbf{x}_i)$$
+      </div>
+    </div>
+    <div class="rows">
+      <div class="card"><h4>Worked example · one EuroSAT patch</h4>
+        <table class="tbl small" style="margin-top:6px">
+          <tr><th>Class</th><th>Logit z</th><th>p</th></tr>
+          <tr><td>Residential</td><td>2.1</td><td>0.71</td></tr>
+          <tr><td>Industrial</td><td>1.0</td><td>0.24</td></tr>
+          <tr><td>Pasture</td><td>−1.0</td><td>0.03</td></tr>
+          <tr><td>River</td><td>−1.5</td><td>0.02</td></tr>
+        </table>
+        <p class="small mt">True label Residential ⇒ loss = −log 0.71 = <b>0.34</b>. Had it been River ⇒ −log 0.02 = <b>3.9</b>: confident mistakes are punished hard.</p>
+      </div>
+      <div class="callout green"><div>MSE ⇔ Gaussian noise likelihood; cross-entropy ⇔ categorical likelihood. Choosing a loss is choosing a <b>noise model</b>.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Check the arithmetic live if you like: exp(2.1)=8.17, exp(1)=2.72, exp(−1)=0.37, exp(−1.5)=0.22; sum 11.48; probabilities 0.71, 0.24, 0.03, 0.02.</aside>
+</section>

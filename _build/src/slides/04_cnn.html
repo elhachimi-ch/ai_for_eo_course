@@ -1,0 +1,233 @@
+<section class="dark" data-title="Part IV — Convolutional networks" data-module="IV · CNNs">
+<div class="sec-wrap">
+  <div class="sec-arch" style="--sec-c:#2E4BC6"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>IV</div></div>
+  <div class="sec-text">
+    <div class="time">0:55 – 1:20 · 25 min</div>
+    <h2>Seeing space: CNNs</h2>
+    <div class="ar">الشبكات الالتفافية</div>
+    <ul>
+      <li>Convolution: locality, weight sharing, equivariance (live demo)</li>
+      <li>From LeNet to ResNet and U-Net</li>
+      <li>EO tasks: scenes, segmentation, detection, change</li>
+      <li>Labs 2–3 — EuroSAT transfer learning, U-Net on LandCover.ai</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<section data-title="Why convolution" data-module="IV · CNNs" data-kind="theory" data-src="LeCun et al. (1998) Gradient-based learning applied to document recognition, <i>Proc. IEEE</i> 86:2278 · De Marchi &amp; Mitchell (2019), Ch. 3 · Goodfellow et al. (2016), Ch. 9">
+<h2>Three priors that make images learnable</h2>
+<div class="s-body">
+  <div class="cols c3" style="height:auto">
+    <div class="card arch blue"><div class="icon">◎</div><h3>Locality</h3><p>A pixel is explained by its neighbours: a roof edge, a field boundary, a river bank. Each neuron looks at a small window (3×3).</p></div>
+    <div class="card arch green"><div class="icon">⧉</div><h3>Weight sharing</h3><p>The same filter slides over the whole image. A “bright-line detector” is useful everywhere — so learn it once.</p></div>
+    <div class="card arch clay"><div class="icon">⇄</div><h3>Equivariance</h3><p>Shift the input, the feature map shifts the same way. A building is a building in any corner of the tile.</p></div>
+  </div>
+  <div class="cols c2 mt2" style="height:auto">
+    <div class="eqbox small"><b>MLP</b> on a 13×64×64 EuroSAT patch with 256 hidden units: \(13\cdot64\cdot64\cdot256 \approx\) <b class="hl-t">13.6 M</b> weights in the first layer alone.</div>
+    <div class="eqbox small"><b>Conv</b> layer, 64 filters of 3×3 over 13 bands: \(3\cdot3\cdot13\cdot64 =\) <b class="hl-g">7 488</b> weights — and it works on any image size.</div>
+  </div>
+</div>
+<aside class="notes">The numbers make the point: convolution is a massive reduction in parameters by building in the right assumptions about images. 13·64·64 = 53 248 inputs × 256 = 13.6 M.</aside>
+</section>
+
+<section data-title="Convolution (interactive)" data-module="IV · CNNs" data-kind="theory" data-src="Interactive demo on a synthetic scene (fields, river, road, buildings) · Dumoulin &amp; Visin (2016) A guide to convolution arithmetic, arXiv:1603.07285">
+<h2>Convolution in action — <em>filters are feature detectors</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="conv">
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div><div class="xs">input scene</div><canvas class="src" width="300" height="300" style="width:390px;height:390px;image-rendering:pixelated"></canvas></div>
+        <div><div class="xs">feature map</div><canvas class="dst" width="300" height="300" style="width:390px;height:390px;image-rendering:pixelated"></canvas></div>
+      </div>
+      <div class="ctrl">
+        <button class="btn ghost" data-k="identity">identity</button><button class="btn ghost" data-k="blur">blur</button><button class="btn ghost" data-k="sharpen">sharpen</button>
+        <button class="btn ghost" data-k="sobelX">Sobel x</button><button class="btn ghost" data-k="sobelY">Sobel y</button><button class="btn ghost" data-k="laplace">Laplacian</button>
+      </div>
+    </div>
+    <div class="rows">
+      <div class="eqbox">$$(\mathbf{I}\ast\mathbf{K})_{i,j}=\sum_{c}\sum_{m,n}\mathbf{I}_{c,\,i+m,\,j+n}\,\mathbf{K}_{c,m,n}+b$$</div>
+      <div class="card"><h4>Kernel</h4><div class="kernel readout" style="font-size:22px;line-height:1.6;text-align:center"></div></div>
+      <div class="eqbox small">Output size: \(\;W_{out}=\left\lfloor\frac{W-K+2P}{S}\right\rfloor+1\)<br>e.g. 64-px tile, K = 3, P = 1, S = 2 ⇒ 32 px.</div>
+      <div class="callout"><div>In a CNN the kernel values are <b>not</b> hand-picked: they are weights learned by back-prop.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Click Sobel x / y: the road and field boundaries light up — the same edge features that classical remote sensing computed by hand. In a trained CNN the first layer learns filters very much like these, deeper layers combine them into textures and objects.</aside>
+</section>
+
+<section data-title="CNN building blocks" data-module="IV · CNNs" data-kind="theory" data-src="Zeiler &amp; Fergus (2014) Visualizing and understanding convolutional networks, ECCV · De Marchi &amp; Mitchell (2019), Ch. 3 (pooling, padding, stride)">
+<h2>Building blocks and the <em>feature hierarchy</em></h2>
+<div class="s-body">
+  <div class="flow" style="height:150px">
+    <div class="step" style="background:var(--majorelle-soft)"><b>Input</b>13×64×64 bands</div><div class="arrow">→</div>
+    <div class="step"><b>Conv 3×3 + BN + ReLU</b>edges, colour contrasts</div><div class="arrow">→</div>
+    <div class="step"><b>Pool / stride 2</b>÷2 resolution, ×2 channels</div><div class="arrow">→</div>
+    <div class="step"><b>Conv blocks</b>textures: crops, roofs, water</div><div class="arrow">→</div>
+    <div class="step"><b>Deep blocks</b>objects &amp; layouts</div><div class="arrow">→</div>
+    <div class="step" style="background:var(--terracotta-soft)"><b>Head</b>global pool + linear</div>
+  </div>
+  <div class="cols c3 mt2" style="height:auto">
+    <div class="card"><h4>Receptive field</h4><p class="small">Each layer widens what a neuron “sees”. Two 3×3 convs see 5×5; with down-sampling a deep neuron covers hundreds of metres on Sentinel-2.</p></div>
+    <div class="card"><h4>Pooling</h4><p class="small">Max/average pooling summarise a window: robustness to small shifts, cheaper compute. Global average pooling feeds the classifier.</p></div>
+    <div class="card"><h4>Normalisation</h4><p class="small">Batch-norm stabilises training; with multispectral data, normalise inputs per band with dataset statistics.</p></div>
+  </div>
+  <div class="callout blue mt"><div><b>Resolution matters in EO:</b> a 3×3 kernel is 30 m on Sentinel-2 but 1.5 m on 50-cm imagery. Choose the backbone depth and input size for the size of the objects you want to see.</div></div>
+</div>
+<aside class="notes">Highlight the EO-specific consideration: the same network “sees” very different ground areas depending on GSD. For informal settlements (small, dense roofs) you need sub-metre to ~3 m imagery or much deeper context.</aside>
+</section>
+
+<section data-title="CNN architectures" data-module="IV · CNNs" data-kind="theory" data-src="LeCun 1998 · Krizhevsky 2012 · Simonyan &amp; Zisserman 2015 · Szegedy 2015 · He et al. 2016 (CVPR) · Ronneberger et al. 2015 (MICCAI) · Tan &amp; Le 2019 · Liu et al. 2022 ConvNeXt · De Marchi &amp; Mitchell (2019), Ch. 3 &amp; 6">
+<h2>A short family tree of <em>CNN architectures</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <table class="tbl small">
+      <tr><th>Year</th><th>Model</th><th>Key idea</th></tr>
+      <tr><td>1998</td><td>LeNet-5</td><td>Conv + pooling + FC, trained end-to-end</td></tr>
+      <tr><td>2012</td><td>AlexNet</td><td>ReLU, dropout, GPUs, data augmentation</td></tr>
+      <tr><td>2014</td><td>VGG / GoogLeNet</td><td>Deep stacks of 3×3; multi-branch Inception</td></tr>
+      <tr><td>2015</td><td><b>ResNet</b></td><td>Residual connections: 50–152 layers train fine</td></tr>
+      <tr><td>2015</td><td><b>U-Net</b></td><td>Encoder–decoder + skip connections for pixel masks</td></tr>
+      <tr><td>2017–19</td><td>DenseNet, EfficientNet</td><td>Feature reuse; compound scaling of width/depth/res</td></tr>
+      <tr><td>2022</td><td>ConvNeXt</td><td>CNN modernised with Transformer-era design</td></tr>
+    </table>
+    <div class="rows">
+      <div class="eqbox">
+        <div class="xs">Residual block — learn the <i>change</i>, keep an identity highway for gradients:</div>
+        $$\mathbf{y} = \mathcal{F}(\mathbf{x};\{\mathbf{W}_i\}) + \mathbf{x}$$
+      </div>
+      <div class="card green"><h4>Why ResNet matters</h4><p class="small">\(\partial\mathbf{y}/\partial\mathbf{x} = \partial\mathcal{F}/\partial\mathbf{x} + \mathbf{I}\): the “+I” keeps gradients alive through very deep nets — the same trick lives inside every Transformer block.</p></div>
+      <div class="callout"><div>ResNet-18/50 remain the most used EO backbones; SSL4EO-S12 provides Sentinel-1/2 pre-trained weights.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Emphasise ResNet and U-Net — they are the two architectures participants will use most in EO practice. Residual connections reappear in Transformers.</aside>
+</section>
+
+<section data-title="CNNs in Earth observation" data-module="IV · CNNs" data-kind="practice" data-src="Helber et al. 2019 (EuroSAT) · Sumbul et al. 2019 (BigEarthNet) · Boguszewski et al. 2021 (LandCover.ai) · Van Etten et al. 2018 (SpaceNet) · Xia et al. 2018 (DOTA) · Daudt et al. 2018 (OSCD) · Bonafilia et al. 2020 (Sen1Floods11)">
+<h2>What CNNs do in <em>Earth observation</em></h2>
+<div class="s-body">
+  <table class="tbl">
+    <tr><th>Task</th><th>Output</th><th>Typical model</th><th>Benchmark data</th></tr>
+    <tr><td>Scene classification</td><td>one label per tile</td><td>ResNet, EfficientNet</td><td>EuroSAT, BigEarthNet</td></tr>
+    <tr><td>Semantic segmentation</td><td>label per pixel</td><td>U-Net, DeepLabv3+</td><td>LandCover.ai, Sen1Floods11</td></tr>
+    <tr><td>Object detection</td><td>boxes (rotated)</td><td>Faster R-CNN, YOLO</td><td>DOTA, xView</td></tr>
+    <tr><td>Building footprints</td><td>instance masks</td><td>Mask R-CNN, U-Net</td><td>SpaceNet</td></tr>
+    <tr><td>Change detection</td><td>change mask</td><td>Siamese U-Net</td><td>OSCD, LEVIR-CD</td></tr>
+    <tr><td>Super-resolution / regression</td><td>image or value per pixel</td><td>SRCNN, ResNet regressors</td><td>Sentinel-2 ↔ VHR pairs</td></tr>
+  </table>
+  <div class="callout green mt"><div>Example in Morocco: map cereal fields vs orchards in the Haouz plain (segmentation), detect new buildings around Casablanca (change detection), estimate flood extent after storms (Sentinel-1 segmentation).</div></div>
+</div>
+<aside class="notes">These Moroccan examples are illustrative ideas for projects, not published results. Encourage participants to choose a local problem for their own practice.</aside>
+</section>
+
+<section data-title="Lab 2 — EuroSAT transfer learning" data-module="IV · CNNs" data-kind="lab" data-src="Notebook <b>notebooks/lab02_cnn_eurosat_resnet.ipynb</b> · torchvision EuroSAT (RGB) · TorchGeo <code>ResNet18_Weights.SENTINEL2_ALL_MOCO</code> (Wang et al. 2023, SSL4EO-S12) · De Marchi &amp; Mitchell (2019), Ch. 6 Transfer learning">
+<h2>Lab 2 · <em>Transfer learning</em>: ImageNet ResNet → EuroSAT</h2>
+<div class="s-body">
+  <div class="cols c55">
+    <pre class="py" data-file="lab02_cnn_eurosat_resnet.ipynb" data-size="sm">
+import torch, torch.nn as nn
+from torchvision import datasets, transforms, models
+
+tf = transforms.Compose([
+    transforms.Resize(224), transforms.RandomHorizontalFlip(),
+    transforms.RandomVerticalFlip(), transforms.ToTensor(),
+    transforms.Normalize([0.485, 0.456, 0.406],
+                         [0.229, 0.224, 0.225])])
+ds = datasets.EuroSAT("data", transform=tf, download=True)
+train_ds, val_ds = torch.utils.data.random_split(
+    ds, [0.8, 0.2], generator=torch.Generator().manual_seed(42))
+
+model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
+model.fc = nn.Linear(model.fc.in_features, 10)   # new head
+
+# stage 1: freeze backbone, train the head (fast)
+for n, p in model.named_parameters():
+    p.requires_grad = n.startswith("fc")
+opt = torch.optim.AdamW(filter(lambda p: p.requires_grad,
+                               model.parameters()), lr=1e-3)
+# stage 2: unfreeze all, lr=1e-4, a few more epochs
+</pre>
+    <div class="rows">
+      <div class="card"><h4>Why it works</h4><p class="small">Early ImageNet filters (edges, textures) are generic. Only the head is task-specific. With 27 000 EuroSAT patches, fine-tuning typically reaches high-90s % accuracy — far above the spectral MLP.</p></div>
+      <div class="card sand"><h4>Going multispectral</h4><p class="small">Swap the first conv to 13 inputs, or load Sentinel-2 self-supervised weights:</p>
+<pre class="py" data-file="13-band backbone" data-size="xs">
+from torchgeo.models import ResNet18_Weights, resnet18
+m = resnet18(ResNet18_Weights.SENTINEL2_ALL_MOCO)  # 13 bands
+</pre></div>
+      <div class="callout clay small"><div>The random split here is fine for EuroSAT (patches from many places) but would leak in a single-region map — use spatial blocks there.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Expected results: published EuroSAT benchmarks with fine-tuned ResNets are around 98–99% accuracy (Helber et al. 2019). The notebook prints the confusion matrix; compare with Lab 1b where built-up classes were confused.</aside>
+</section>
+
+<section data-title="U-Net and Lab 3" data-module="IV · CNNs" data-kind="lab" data-src="Ronneberger, Fischer &amp; Brox (2015) U-Net, MICCAI · Notebook <b>notebooks/lab03_unet_landcoverai.ipynb</b> · LandCover.ai (Boguszewski et al. 2021) via TorchGeo · segmentation_models_pytorch">
+<h2>Lab 3 · <em>U-Net</em> semantic segmentation</h2>
+<div class="s-body">
+  <div class="cols c46">
+    <div class="rows">
+      <svg viewBox="0 0 560 300" class="diagram" style="height:300px" font-family="Inter">
+        <g fill="#2E4BC6"><rect x="20" y="20" width="22" height="200" rx="4"/><rect x="50" y="20" width="22" height="200" rx="4"/>
+        <rect x="95" y="80" width="30" height="130" rx="4"/><rect x="133" y="80" width="30" height="130" rx="4"/>
+        <rect x="185" y="140" width="38" height="70" rx="4"/><rect x="231" y="140" width="38" height="70" rx="4"/></g>
+        <rect x="262" y="230" width="48" height="45" rx="4" fill="#14213D"/>
+        <g fill="#0F6B5C"><rect x="300" y="140" width="38" height="70" rx="4"/><rect x="346" y="140" width="38" height="70" rx="4"/>
+        <rect x="405" y="80" width="30" height="130" rx="4"/><rect x="443" y="80" width="30" height="130" rx="4"/>
+        <rect x="492" y="20" width="22" height="200" rx="4"/><rect x="520" y="20" width="22" height="200" rx="4" fill="#B5502E"/></g>
+        <g stroke="#C99A2E" stroke-width="3" stroke-dasharray="8 6" fill="none"><path d="M72 40 L492 40"/><path d="M163 100 L405 100"/><path d="M269 160 L300 160"/></g>
+        <g stroke="#14213D" stroke-width="2" fill="none"><path d="M60 222 L105 212"/><path d="M150 212 L200 212"/><path d="M250 212 L270 232"/><path d="M305 232 L320 212"/><path d="M365 212 L415 212"/><path d="M460 212 L500 222"/></g>
+        <g font-size="14" fill="#14213D" font-weight="600"><text x="20" y="245">encoder ↓ context</text><text x="420" y="245">decoder ↑ detail</text><text x="200" y="32" fill="#8A6512">skip connections (copy + concat)</text><text x="262" y="295">bottleneck</text></g>
+      </svg>
+      <ul class="list small">
+        <li>Encoder (often a pre-trained ResNet) captures <b>what</b>; decoder recovers <b>where</b>.</li>
+        <li>Skips pass fine edges to the decoder ⇒ crisp field and building boundaries.</li>
+        <li>Loss: cross-entropy + Dice for rare classes; metric: <b>IoU</b> = TP / (TP + FP + FN).</li>
+      </ul>
+    </div>
+    <pre class="py" data-file="lab03_unet_landcoverai.ipynb" data-size="sm">
+import torch, torch.nn as nn
+import segmentation_models_pytorch as smp
+from torchgeo.datasets import LandCoverAI
+from torch.utils.data import DataLoader
+
+train = LandCoverAI("data", split="train", download=True)
+dl = DataLoader(train, batch_size=8, shuffle=True)
+
+# 5 classes: background, building, woodland, water, road
+model = smp.Unet("resnet34", encoder_weights="imagenet",
+                 in_channels=3, classes=5)
+ce, dice = nn.CrossEntropyLoss(), smp.losses.DiceLoss("multiclass")
+opt = torch.optim.AdamW(model.parameters(), lr=3e-4)
+
+for batch in dl:
+    x = batch["image"].float() / 255.0       # (B,3,512,512)
+    y = batch["mask"].long()                 # (B,512,512)
+    logits = model(x)                        # (B,5,512,512)
+    loss = ce(logits, y) + dice(logits, y)
+    opt.zero_grad(); loss.backward(); opt.step()
+
+tp, fp, fn, tn = smp.metrics.get_stats(logits.argmax(1), y,
+                     mode="multiclass", num_classes=5)
+print("mIoU", smp.metrics.iou_score(tp, fp, fn, tn, reduction="macro"))
+</pre>
+  </div>
+</div>
+<aside class="notes">U-Net is the default architecture for EO segmentation and the decoder pattern reappears on top of foundation models (UPerNet / U-Net decoders in TerraTorch). LandCover.ai has 25–50 cm aerial orthophotos of Poland; buildings and roads are the hard, small classes.</aside>
+</section>
+
+<section class="dark" data-title="Break" data-module="Break">
+<div class="sec-wrap">
+  <div class="sec-arch" style="--sec-c:#C99A2E"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num" style="font-size:96px;top:360px"><small>Pause</small>☕</div></div>
+  <div class="sec-text">
+    <div class="time">1:20 – 1:30 · 10 min</div>
+    <h2>Break · mint tea</h2>
+    <div class="ar">استراحة — أتاي بالنعناع</div>
+    <ul>
+      <li>Open <b>notebooks/</b> and launch Lab 2 in Colab (GPU runtime)</li>
+      <li>Question to ponder: which axis of the data cube have we <i>not</i> used yet?</li>
+      <li>Next: time (RNN/LSTM), then generation (GANs)</li>
+    </ul>
+  </div>
+</div>
+</section>

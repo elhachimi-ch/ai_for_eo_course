@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deep Learning for Earth Observation · From Perceptrons to Foundation Models & Agents</title>
+<meta name="description" content="A 3-hour theory + practice course: history of AI, perceptron, MLP, CNN, RNN/LSTM, GANs, Transformers, geospatial foundation models, informal-settlement mapping, LLMs, RAG and LangGraph agents for Earth observation.">
+<link rel="icon" href="assets/img/star_badge.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div id="progress"></div>
+
+<main id="stage">
+<!--SLIDES-->
+</main>
+
+<nav id="toolbar" aria-label="Slide controls">
+  <button id="btnMenu" title="Contents (M)"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span class="lbl">Contents</span></button>
+  <button id="btnFirst" title="First slide (Home)"><svg viewBox="0 0 24 24"><path d="M18 18l-6-6 6-6M8 6v12"/></svg></button>
+  <button id="btnPrev" class="nav" title="Previous (←)"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>Prev</button>
+  <span id="counter">1 / {{N}}</span>
+  <button id="btnNext" class="nav" title="Next (→ / Space)">Next<svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+  <span class="sep"></span>
+  <button id="btnNotes" title="Speaker notes (N)"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"/></svg><span class="lbl">Notes</span></button>
+  <button id="btnFull" title="Fullscreen (F)"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+  <span class="sep"></span>
+  <a href="downloads/DL4EO_course.pdf" download title="Download the full deck as PDF"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span class="lbl">PDF</span></a>
+  <a href="downloads/DL4EO_course.pptx" download title="Download the full deck as PowerPoint"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span class="lbl">PPTX</span></a>
+  <a href="notebooks/" title="Practical notebooks (code)"><svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg><span class="lbl">Code</span></a>
+  <button id="btnPrint" title="Open print view (Save as PDF from browser)"><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/></svg></button>
+  <button id="btnHelp" title="Keyboard shortcuts (?)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 2-2.5 2-2.5 4M12 17h.01"/></svg></button>
+</nav>
+
+<aside id="toc" aria-label="Table of contents">
+  <h3>Course contents</h3>
+  <div class="sub">Deep Learning for Earth Observation · 3 hours · {{N}} slides</div>
+  <div id="tocList"></div>
+</aside>
+
+<aside id="notesPanel"><h4>Speaker notes</h4><div id="notesBody"></div></aside>
+
+<div id="help"><div class="box">
+  <h3 style="font:600 26px/1.2 var(--serif);margin:0 0 12px">Keyboard shortcuts</h3>
+  <kbd>→</kbd> <kbd>Space</kbd> next &nbsp;·&nbsp; <kbd>←</kbd> previous &nbsp;·&nbsp; <kbd>Home</kbd>/<kbd>End</kbd> first/last<br>
+  <kbd>M</kbd> contents &nbsp;·&nbsp; <kbd>N</kbd> speaker notes &nbsp;·&nbsp; <kbd>F</kbd> fullscreen &nbsp;·&nbsp; <kbd>Esc</kbd> close<br><br>
+  <b>Downloads.</b> PDF and PPTX buttons fetch the pre-built decks from <code>downloads/</code>. The printer button opens a print view — use your browser's <i>Save as PDF</i> (landscape, no margins, background graphics on).<br><br>
+  <b>Deep links.</b> Every slide has its own URL, e.g. <code>#/42</code>.
+</div></div>
+
+<script src="assets/js/deck.js"></script>
+</body>
+</html>

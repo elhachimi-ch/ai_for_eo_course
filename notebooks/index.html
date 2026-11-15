@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notebooks · Deep Learning for Earth Observation</title>
+<link rel="icon" href="../assets/img/star_badge.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:"Lora";src:url(../assets/fonts/Lora.woff) format("woff");font-weight:400 700}
+@font-face{font-family:"Inter";src:url(../assets/fonts/Inter-Regular.woff) format("woff");font-weight:400}
+@font-face{font-family:"Inter";src:url(../assets/fonts/Inter-SemiBold.woff) format("woff");font-weight:600}
+:root{--ink:#14213D;--maj:#2E4BC6;--zel:#0F6B5C;--ter:#B5502E;--saf:#C99A2E;--ivory:#FBF7F0;--line:#E3D8C3}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,sans-serif;color:var(--ink);background:var(--ivory)}
+header{background:var(--ink) url(../assets/img/zellige_gold.svg) repeat;background-size:120px;color:#fff;padding:48px 6vw 40px;position:relative}
+header::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,33,61,.97),rgba(20,33,61,.75))}
+header>*{position:relative;z-index:1}
+header .k{font:600 13px/1 Inter;letter-spacing:.22em;text-transform:uppercase;color:var(--saf)}
+header h1{font:600 44px/1.1 Lora,serif;margin:14px 0 10px}
+header p{max-width:820px;color:#D5DCEC;line-height:1.5;margin:0}
+header a{color:var(--saf)}
+main{padding:34px 6vw 60px;max-width:1200px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px}
+.nb{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:8px;box-shadow:0 6px 18px rgba(20,33,61,.06)}
+.nb .n{font:600 12px/1 Inter;letter-spacing:.16em;text-transform:uppercase;color:var(--ter)}
+.nb h3{font:600 21px/1.25 Lora,serif;margin:0}
+.nb p{margin:0;font-size:15px;line-height:1.45;color:#3A4560}
+.nb .tags{display:flex;gap:6px;flex-wrap:wrap}
+.nb .tags span{font:600 11px/1 Inter;letter-spacing:.06em;text-transform:uppercase;background:#E6EAFA;color:var(--maj);padding:5px 8px;border-radius:999px}
+.nb .tags span.gpu{background:#F7E6DE;color:var(--ter)}
+.nb .act{display:flex;gap:8px;margin-top:auto;padding-top:6px}
+.nb .act a{font:600 14px/1 Inter;text-decoration:none;border-radius:999px;padding:9px 14px}
+.nb .act a.colab{background:var(--saf);color:var(--ink)}
+.nb .act a.dl{border:1.5px solid var(--ink);color:var(--ink)}
+.note{background:#F8EED5;border-radius:12px;padding:14px 18px;margin:0 0 24px;line-height:1.5;font-size:15px}
+code{background:#F2EADB;padding:1px 6px;border-radius:4px}
+</style>
+</head>
+<body>
+<header>
+  <div class="k">Deep Learning for Earth Observation · practical part</div>
+  <h1>Colab-ready notebooks</h1>
+  <p>Eleven labs, one per model family, from a perceptron on Sentinel-2 spectra to a LangGraph agent that queries the Planetary Computer. <a href="../">← back to the slides</a></p>
+</header>
+<main>
+  <div class="note" id="colabNote">“Open in Colab” links point to this repository on GitHub (detected from the page address). If you host the site elsewhere, download the notebook and upload it to <a href="https://colab.research.google.com">Colab</a>.</div>
+  <div class="grid" id="grid"></div>
+</main>
+<script>
+const NB = [
+ ["lab01_perceptron_mlp_sentinel2","Perceptron & MLP on Sentinel-2 spectra","Rosenblatt's rule in NumPy (water vs vegetation), then a PyTorch MLP on 13-band EuroSAT-MS spectra vs a random forest.",["Part III","CPU ok"]],
+ ["lab02_cnn_eurosat_resnet","CNN transfer learning on EuroSAT","Two-stage fine-tuning of an ImageNet ResNet-18; bonus linear probe with 13-band SSL4EO-S12 weights.",["Part IV","GPU"]],
+ ["lab03_unet_landcoverai","U-Net segmentation on LandCover.ai","ResNet-34 U-Net, cross-entropy + Dice, per-class IoU on aerial orthophotos.",["Part IV","GPU"]],
+ ["lab04_lstm_eto_forecasting","LSTM forecast of reference ETo","30 days of ERA5 weather → next-week FAO-56 ETo at Marrakech; temporal split; persistence and climatology baselines.",["Part V","CPU ok"]],
+ ["lab05_pix2pix_sar_to_optical","pix2pix: Sentinel-1 → Sentinel-2","Builds a paired dataset from the Planetary Computer and trains a cGAN; PSNR/SSIM on a held-out area.",["Part VI","GPU"]],
+ ["lab06_vit_eurosat","Attention, ViT and a temporal Transformer","Attention from scratch, ViT-S/16 fine-tuning with attention maps, and a date-aware Transformer for cloudy pixel time series.",["Part VII","GPU"]],
+ ["lab07_prithvi_terratorch","Prithvi-EO-2.0 with TerraTorch","Fine-tune the NASA/IBM geospatial foundation model for burn-scar segmentation (HLS).",["Part VIII","GPU"]],
+ ["lab08_alphaearth_embeddings","AlphaEarth embeddings in Earth Engine","Similarity search, few-label random-forest mapping and change detection with 64-D annual embeddings.",["Part VIII","Earth Engine"]],
+ ["lab09_informal_settlements_fm","Informal settlements × foundation models","Three tiers: AlphaEarth + RF (leave-one-city-out), frozen DINOv2 few-shot tiles, LoRA segmentation + SAM refinement.",["Part IX","GPU","your labels"]],
+ ["lab10_rag_eo_documents","RAG over EO documents","LangChain + FAISS + bge embeddings; cited answers; retrieval evaluation; local (Ollama) or hosted LLM.",["Part X","CPU ok"]],
+ ["lab11_langgraph_eo_agent","A Sentinel-2 agent in LangGraph","Geocode → STAC search → cloud-masked NDVI, as a StateGraph with memory and human-in-the-loop.",["Part X","LLM API or Ollama"]],
+];
+// Detect https://USER.github.io/REPO/notebooks/ → github.com/USER/REPO
+let gh = null;
+const m = location.hostname.match(/^([^.]+)\.github\.io$/);
+if (m) { const repo = location.pathname.split("/").filter(Boolean)[0]; gh = repo && repo !== "notebooks" ? `${m[1]}/${repo}` : `${m[1]}/${m[1]}.github.io`; }
+const branch = "main";
+document.getElementById("grid").innerHTML = NB.map(([f, t, d, tags], i) => `
+  <div class="nb"><div class="n">Lab ${i + 1}</div><h3>${t}</h3><p>${d}</p>
+  <div class="tags">${tags.map(x => `<span class="${/GPU/.test(x) ? "gpu" : ""}">${x}</span>`).join("")}</div>
+  <div class="act">${gh ? `<a class="colab" href="https://colab.research.google.com/github/${gh}/blob/${branch}/notebooks/${f}.ipynb" target="_blank" rel="noopener">Open in Colab</a>` : ""}
+  <a class="dl" href="${f}.ipynb" download>Download .ipynb</a></div></div>`).join("");
+if (gh) document.getElementById("colabNote").innerHTML = `Colab links point to <code>github.com/${gh}</code> (branch <code>${branch}</code>). Use a GPU runtime for labs marked GPU.`;
+</script>
+</body>
+</html>

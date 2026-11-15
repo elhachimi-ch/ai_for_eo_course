@@ -1,0 +1,102 @@
+<section data-title="Which model for which EO problem" data-module="Wrap-up" data-kind="theory" data-src="Synthesis of the course">
+<h2>Cheat-sheet: <em>which model for which EO problem?</em></h2>
+<div class="s-body">
+  <table class="tbl small">
+    <tr><th>Your data / question</th><th>Start with</th><th>Upgrade to</th><th>Lab</th></tr>
+    <tr><td>Pixel spectra, tabular features</td><td>Random forest · MLP</td><td>FM embeddings + MLP</td><td>1, 8</td></tr>
+    <tr><td>Image patches → one label</td><td>Pre-trained ResNet</td><td>ViT / GeoFM, linear probe or LoRA</td><td>2, 6</td></tr>
+    <tr><td>Pixel-wise maps</td><td>U-Net (ResNet encoder)</td><td>Prithvi / Clay + UNet/UPerNet decoder; SAM refinement</td><td>3, 7, 9</td></tr>
+    <tr><td>Time series (weather, NDVI)</td><td>LSTM / GRU</td><td>Temporal Transformer; physics-aware FM</td><td>4, 6</td></tr>
+    <tr><td>Translate / fill images</td><td>pix2pix (cGAN)</td><td>Diffusion models</td><td>5</td></tr>
+    <tr><td>Few labels, many places</td><td>AlphaEarth embeddings + RF</td><td>Few-shot FM, semi-supervised, test-time adaptation</td><td>8, 9</td></tr>
+    <tr><td>Documents, reports, specs</td><td>RAG</td><td>Multimodal RAG (text + image embeddings)</td><td>10</td></tr>
+    <tr><td>Multi-step workflows</td><td>Tool-calling agent</td><td>LangGraph multi-agent + human-in-the-loop</td><td>11</td></tr>
+  </table>
+  <div class="callout mt"><div>Always: a <b>simple baseline</b>, <b>spatial/temporal splits</b>, a <b>map</b> of the errors, and a statement of <b>uncertainty</b>.</div></div>
+</div>
+<aside class="notes">Leave this slide up during the final Q&amp;A — it summarises the whole course in decision form.</aside>
+</section>
+
+<section data-title="Practical notebooks and resources" data-module="Wrap-up" data-kind="lab" data-src="Book code repositories as provided for the course (links.txt) · All notebooks are Colab-ready; GPU recommended for Labs 2, 3, 5, 6, 7 and 9C">
+<h2>Notebooks &amp; <em>resources</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <table class="tbl small">
+      <tr><th>#</th><th>Notebook</th><th>Model</th></tr>
+      <tr><td>1</td><td>lab01_perceptron_mlp_sentinel2</td><td>Perceptron, MLP</td></tr>
+      <tr><td>2</td><td>lab02_cnn_eurosat_resnet</td><td>CNN transfer learning</td></tr>
+      <tr><td>3</td><td>lab03_unet_landcoverai</td><td>U-Net</td></tr>
+      <tr><td>4</td><td>lab04_lstm_eto_forecasting</td><td>LSTM</td></tr>
+      <tr><td>5</td><td>lab05_pix2pix_sar_to_optical</td><td>cGAN</td></tr>
+      <tr><td>6</td><td>lab06_vit_eurosat</td><td>Attention, ViT, temporal Transformer</td></tr>
+      <tr><td>7</td><td>lab07_prithvi_terratorch</td><td>GeoFM fine-tuning</td></tr>
+      <tr><td>8</td><td>lab08_alphaearth_embeddings</td><td>Embedding fields</td></tr>
+      <tr><td>9</td><td>lab09_informal_settlements_fm</td><td>FM case study</td></tr>
+      <tr><td>10</td><td>lab10_rag_eo_documents</td><td>RAG</td></tr>
+      <tr><td>11</td><td>lab11_langgraph_eo_agent</td><td>Agent</td></tr>
+    </table>
+    <div class="rows">
+      <div class="card"><h4>Course books &amp; code</h4><ul class="list compact small">
+        <li>De Marchi &amp; Mitchell — <i>Hands-On Neural Networks</i> · github.com/PacktPublishing/hands-on-neural-networks</li>
+        <li>Rothman — <i>Transformers for NLP and Computer Vision</i>, 3rd ed. · github.com/Denis2054/Transformers-for-NLP-and-Computer-Vision-3rd-Edition</li>
+        <li>Rodriguez — <i>Generative AI Foundations in Python</i> · github.com/PacktPublishing/Generative-AI-Foundations-in-Python</li>
+        <li>Danka — <i>Mathematics of Machine Learning</i> (linear algebra, calculus, probability)</li></ul></div>
+      <div class="card"><h4>Tools</h4><p class="small">PyTorch · TorchGeo · TerraTorch · segmentation-models-pytorch · timm · Hugging Face · Earth Engine · Planetary Computer · LangChain · LangGraph</p></div>
+      <a class="lab-link" href="notebooks/">Open the notebooks folder →</a>
+    </div>
+  </div>
+</div>
+<aside class="notes">Point participants to the notebooks/ folder of this website. The README explains how to open each notebook in Colab from the GitHub repository.</aside>
+</section>
+
+<section data-title="Key references" data-module="Wrap-up" data-kind="theory" data-src="Full citations in the speaker notes and the README">
+<h2>Key references</h2>
+<div class="s-body tight">
+  <div class="cols c2" style="height:auto;gap:28px">
+    <ul class="list compact xs" style="font-size:15.5px;color:var(--ink-2)">
+      <li>Turing, A. M. (1950). Computing machinery and intelligence. <i>Mind</i> 59:433–460.</li>
+      <li>McCulloch, W. &amp; Pitts, W. (1943). A logical calculus of the ideas immanent in nervous activity. <i>Bull. Math. Biophys.</i> 5:115–133.</li>
+      <li>Rosenblatt, F. (1958). The perceptron. <i>Psychological Review</i> 65:386–408.</li>
+      <li>Rumelhart, D., Hinton, G. &amp; Williams, R. (1986). Learning representations by back-propagating errors. <i>Nature</i> 323:533–536.</li>
+      <li>LeCun, Y., Bengio, Y. &amp; Hinton, G. (2015). Deep learning. <i>Nature</i> 521:436–444.</li>
+      <li>Hochreiter, S. &amp; Schmidhuber, J. (1997). Long short-term memory. <i>Neural Computation</i> 9:1735–1780.</li>
+      <li>Goodfellow, I. et al. (2014). Generative adversarial nets. NeurIPS.</li>
+      <li>He, K. et al. (2016). Deep residual learning. CVPR · Ronneberger, O. et al. (2015). U-Net. MICCAI.</li>
+      <li>Vaswani, A. et al. (2017). Attention is all you need. NeurIPS.</li>
+      <li>Dosovitskiy, A. et al. (2021). An image is worth 16×16 words (ViT). ICLR.</li>
+      <li>He, K. et al. (2022). Masked autoencoders are scalable vision learners. CVPR.</li>
+    </ul>
+    <ul class="list compact xs" style="font-size:15.5px;color:var(--ink-2)">
+      <li><b>Zhu, X. X. et al. (2026). On the foundations of Earth foundation models. <i>Commun. Earth Environ.</i> doi:10.1038/s43247-025-03127-x</b></li>
+      <li>Jakubik, J. et al. (2023). Foundation models for generalist geospatial AI (Prithvi). arXiv:2310.18660.</li>
+      <li>Szwarcman, D. et al. (2024). Prithvi-EO-2.0. arXiv:2412.02732.</li>
+      <li>Xiong, Z. et al. (2024). Neural plasticity-inspired foundation model for EO (DOFA). arXiv:2403.15356.</li>
+      <li>Brown, C. F. et al. (2025). AlphaEarth Foundations. arXiv:2507.22291.</li>
+      <li>LeCun, Y. (2022). A path towards autonomous machine intelligence. OpenReview.</li>
+      <li>Zhang, X. et al. (2024). UV-SAM: adapting SAM for urban village identification. AAAI.</li>
+      <li>Mukhtar, M. T. et al. (2026). SLUM-i. arXiv:2602.04525 · GRAM (2025) arXiv:2511.10300.</li>
+      <li>Kuffer, M., Pfeffer, K. &amp; Sliuzas, R. (2016). Slums from space. <i>Remote Sensing</i> 8:455.</li>
+      <li>Lewis, P. et al. (2020). Retrieval-augmented generation. NeurIPS · Yao, S. et al. (2023). ReAct. ICLR.</li>
+      <li>Hu, E. et al. (2022). LoRA. ICLR · Ouyang, L. et al. (2022). InstructGPT. NeurIPS.</li>
+    </ul>
+  </div>
+</div>
+<aside class="notes">Each content slide lists its own sources in the footer. The Zhu et al. (2026) paper is the recommended reading for the foundation-model part.</aside>
+</section>
+
+<section class="dark" data-title="Thank you" data-module="Wrap-up">
+<div class="title-wrap">
+  <div>
+    <div class="t-kicker">Questions &amp; discussion</div>
+    <h1>Thank you<br><em>— شكراً</em></h1>
+    <div class="t-sub">From Turing's child machine to agents that query satellites: the same loop — represent, predict, compare, update — applied to ever richer views of the Earth.</div>
+    <div class="t-meta">
+      <span><b>Slides</b>PDF · PPTX from the site toolbar</span>
+      <span><b>Code</b>11 Colab-ready notebooks</span>
+      <span><b>Reading</b>Zhu et al. (2026) <i>Commun. Earth Environ.</i></span>
+    </div>
+  </div>
+  <div class="arch-window"><div class="aw-outline"></div><div class="aw-inner"></div><div class="aw-rose"></div></div>
+</div>
+<aside class="notes">Open floor. Suggested discussion prompts: Which of the 11 Earth-FM features matters most for Morocco? Where would an agent help your current workflow — and where would it be dangerous?</aside>
+</section>
