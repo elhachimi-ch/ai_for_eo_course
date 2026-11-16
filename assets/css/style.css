@@ -248,6 +248,9 @@ table.tbl.small{font-size:17px}
 .btn.gold{background:var(--saffron);color:var(--ink)}
 .btn.ghost{background:transparent;border:1.5px solid var(--ink);color:var(--ink)}
 .btn.green{background:var(--zellige)}.btn.clay{background:var(--terracotta)}
+.btn.ghost.gold{background:var(--saffron);border-color:var(--saffron);color:var(--ink)}
+.btn.sm{font-size:14px;padding:8px 13px}
+.btn:disabled,.demo input:disabled{opacity:.4;cursor:default}
 .demo input[type=range]{accent-color:var(--terracotta);width:200px}
 .readout{font:500 16px/1.35 var(--mono);color:var(--ink-2)}
 
@@ -321,3 +324,30 @@ body.export .code .bar button{display:none}
 .diagram{width:100%;height:100%}
 .lab-link{display:inline-flex;align-items:center;gap:8px;font:600 16px/1 var(--sans);color:var(--terracotta);text-decoration:none;border:1.5px solid var(--terracotta);border-radius:999px;padding:8px 14px}
 .lab-link:hover{background:var(--terracotta);color:#fff}
+
+/* ---------- optional Arabic (settings.toml) ---------- */
+.sec-text h2 + ul{margin-top:26px}
+
+/* ---------- classical-ML & vision demos ---------- */
+.demo .ctrl .sep{width:1px;height:26px;background:var(--line);margin:0 2px}
+.demo .ctrl label{display:inline-flex;align-items:center;gap:6px}
+.demo select{font:500 15px var(--sans);padding:5px 8px;border-radius:8px;border:1.5px solid var(--ink);background:#fff;color:var(--ink)}
+.demo .readout{min-height:22px}
+pre.rules{margin:0;font:500 14.5px/1.42 var(--mono);color:var(--ink-2);white-space:pre;overflow:hidden;max-height:250px}
+.timeline.compact .tl-item{width:180px}
+.timeline.compact .tl-item .ev{font-size:16px}
+/* pixel zoom */
+.pxgrid{display:grid;grid-template-columns:repeat(5,64px);grid-auto-rows:64px;gap:3px}
+.pxgrid div{border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font:600 12.5px/1.3 var(--mono)}
+.pxgrid div.c{outline:3px solid var(--saffron);outline-offset:1px}
+/* convolution step by step */
+.cv-row{display:flex;align-items:center;gap:12px}
+.cv-row .op{font:600 34px/1 var(--serif);color:var(--saffron)}
+.cgrid{display:grid;gap:2px}
+.cgrid div{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font:600 14px/1 var(--mono);border-radius:4px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.cgrid.k{grid-template-columns:repeat(3,44px)}
+.cgrid.k div{width:44px;height:44px;background:var(--saffron-soft);border-color:#EBD9A8;font-size:16px}
+.cgrid div.pad{border-style:dashed;color:#9AA3B5}
+.cgrid div.win{outline:3px solid var(--saffron);outline-offset:-1px;position:relative;z-index:1}
+.cgrid div.cur{outline:3px solid var(--ink);outline-offset:-1px}
+.readout.calc{font-size:14.5px;min-height:42px}

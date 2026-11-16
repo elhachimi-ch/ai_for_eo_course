@@ -20,8 +20,10 @@
   }
   window.__initDemos = initDemos;
 
+  /* demos from demos_ml.js / demos_vision.js are already registered here */
+  const DEMOS = (window.DECK_DEMOS = window.DECK_DEMOS || {});
+
   /* Perceptron playground: click = class A, shift/right-click = class B */
-  const DEMOS = {};
   DEMOS.perceptron = function (root) {
     const cv = root.querySelector("canvas"), ctx = cv.getContext("2d");
     const W = cv.width, H = cv.height, out = root.querySelector(".readout");
@@ -146,6 +148,7 @@
     const K = {
       identity: [[0,0,0],[0,1,0],[0,0,0]],
       blur: [[1/9,1/9,1/9],[1/9,1/9,1/9],[1/9,1/9,1/9]],
+      gauss: [[1/16,2/16,1/16],[2/16,4/16,2/16],[1/16,2/16,1/16]],
       sharpen: [[0,-1,0],[-1,5,-1],[0,-1,0]],
       sobelX: [[-1,0,1],[-2,0,2],[-1,0,1]],
       sobelY: [[-1,-2,-1],[0,0,0],[1,2,1]],
@@ -162,14 +165,30 @@
       }
       ctx.putImageData(id, 0, 0);
     }
+    // speckled copy for the (non-linear) median filter
+    const noisy = img.map((v) => { const u = rnd(); return u < 0.06 ? 0 : u > 0.94 ? 1 : v; });
     function apply(name) {
-      const k = K[name], o = new Float32Array(N * N);
+      const o = new Float32Array(N * N);
+      if (name === "median") {
+        const w = new Float32Array(9);
+        for (let y = 1; y < N - 1; y++) for (let x = 1; x < N - 1; x++) {
+          let q = 0; for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) w[q++] = noisy[(y + j) * N + x + i];
+          o[y * N + x] = w.sort()[4];
+        }
+        paint(sc, noisy, false); paint(dc, o, false);
+        kOut.innerHTML = "median of the 3×3 window<br><span style='font-size:16px'>non-linear: not a convolution<br>(input shown with salt-and-pepper noise)</span>";
+        root.querySelectorAll("button[data-k]").forEach((b) => b.classList.toggle("gold", b.dataset.k === name));
+        return;
+      }
+      const k = K[name];
       for (let y = 1; y < N - 1; y++) for (let x = 1; x < N - 1; x++) {
         let a = 0; for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) a += k[j + 1][i + 1] * img[(y + j) * N + x + i];
         o[y * N + x] = a;
       }
+      paint(sc, img, false);
       paint(dc, o, name.startsWith("sobel") || name === "laplace");
-      kOut.innerHTML = k.map((r) => r.map((v) => (Math.abs(v - 1 / 9) < 1e-6 ? "1/9" : v)).join("&nbsp;&nbsp;")).join("<br>");
+      const frac = (v) => (Math.abs(v - 1 / 9) < 1e-6 ? "1/9" : Math.abs(v * 16 - Math.round(v * 16)) < 1e-6 && v % 1 ? `${Math.round(v * 16)}/16` : v);
+      kOut.innerHTML = k.map((r) => r.map(frac).join("&nbsp;&nbsp;")).join("<br>");
       root.querySelectorAll("button[data-k]").forEach((b) => b.classList.toggle("gold", b.dataset.k === name));
     }
     paint(sc, img, false);

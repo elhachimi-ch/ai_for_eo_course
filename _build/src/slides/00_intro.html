@@ -1,36 +1,36 @@
-<section class="dark title" data-title="Title" data-module="Opening">
+<section class="dark title" data-title="Title" data-module="Opening" data-part="opening">
 <div class="title-wrap">
   <div>
-    <div class="t-kicker">3-hour course · theory &amp; practice</div>
+    <div class="t-kicker">{{duration}} course · theory &amp; practice</div>
     <h1>Deep Learning for<br><em>Earth Observation</em></h1>
-    <div class="t-ar">التعلّم العميق لرصد الأرض</div>
+    <div class="t-ar" data-lang="ar">التعلّم العميق لرصد الأرض</div>
     <div class="t-sub">From Turing's learning machine and the first perceptron to CNNs, LSTMs, GANs, Transformers, geospatial foundation models, LLMs and agentic AI — with code for every model family.</div>
     <div class="t-meta">
-      <span><b>Instructor</b>Chouaib El Hachimi</span>
+      <span><b>Instructor</b>{{instructor}}</span>
       <span><b>Format</b>Slides · demos · 11 notebooks</span>
       <span><b>Case study</b>Informal-settlement mapping</span>
     </div>
   </div>
   <div class="arch-window"><div class="aw-outline"></div><div class="aw-inner"></div><div class="aw-rose"></div></div>
 </div>
-<aside class="notes">Welcome. Three hours, two threads woven together: the theory of each model family, and a concrete Earth-observation (EO) application with code. Use → / Space to advance, M for the contents, N for these notes.</aside>
+<aside class="notes">Welcome. {{hours}}, two threads woven together: the theory of each model family, and a concrete Earth-observation (EO) application with code. Use → / Space to advance, M for the contents, N for these notes.</aside>
 </section>
 
-<section data-title="Course map" data-module="Opening" data-kind="theory" data-src="Timing is a guide for a 180-minute session; labs are live walk-throughs, full notebooks are for after class.">
-<h2>Course map — <em>180 minutes</em></h2>
+<section data-title="Course map" data-module="Opening" data-kind="theory" data-src="Timing is a guide for a {{total_min}}-minute session; labs are live walk-throughs, full notebooks are for after class.">
+<h2>Course map — <em>{{total_min}} minutes</em></h2>
 <div class="s-body">
   <table class="tbl small">
     <tr><th style="width:120px">Time</th><th>Part</th><th>Theory</th><th>Practice (EO)</th></tr>
-    <tr><td>0:00</td><td>Opening</td><td>Goals, roadmap</td><td>—</td></tr>
-    <tr><td>0:05</td><td>I · History of AI</td><td>Turing's learning machine, AI winters, classical ML, chips</td><td>Random forest on Sentinel-2</td></tr>
-    <tr><td>0:25</td><td>II · Learning maths</td><td>Loss, gradient descent, backprop, likelihood</td><td>Gradient-descent demo</td></tr>
-    <tr><td>0:35</td><td>III · Perceptron &amp; MLP</td><td>McCulloch–Pitts, Rosenblatt, XOR, universal approximation</td><td>Lab 1 · pixel classification</td></tr>
-    <tr><td>0:55</td><td>IV · CNNs</td><td>Convolution, ResNet, U-Net</td><td>Labs 2–3 · EuroSAT, LandCover.ai</td></tr>
-    <tr><td>1:20</td><td colspan="3" style="text-align:center;color:#8A6512;font-weight:600">Break · <bdi class="ar">استراحة</bdi> · 10 min</td></tr>
-    <tr><td>1:30</td><td>V–VI · RNN/LSTM &amp; GANs</td><td>BPTT, gates, minimax game, pix2pix</td><td>Labs 4–5 · ETo forecast, SAR→optical</td></tr>
-    <tr><td>1:55</td><td>VII · Transformers</td><td>Attention, ViT, MAE</td><td>Lab 6 · ViT on EuroSAT</td></tr>
-    <tr><td>2:10</td><td>VIII–IX · Geo foundation models</td><td>SSL, GeoFM generations, Earth-FM features</td><td>Labs 7–9 · Prithvi, AlphaEarth, informal settlements</td></tr>
-    <tr><td>2:40</td><td>X · LLMs &amp; agentic AI</td><td>Scaling, RAG, agents, LangGraph</td><td>Labs 10–11 · EO RAG &amp; agent</td></tr>
+    <tr><td>{{start:opening}}</td><td>Opening</td><td>Goals, roadmap</td><td>—</td></tr>
+    <tr><td>{{start:I}}</td><td>I · History of AI<span data-require="classical_ml"> &amp; classical ML</span></td><td>Turing's learning machine, AI winters, classical ML<span data-require="classical_ml"> (naive Bayes, trees, random forests, boosting, SVM)</span>, chips</td><td>Random forest on Sentinel-2<span data-require="classical_ml"> · 6 ML playgrounds</span></td></tr>
+    <tr><td>{{start:II}}</td><td>II · Learning maths</td><td>Loss, gradient descent, backprop, likelihood</td><td>Gradient-descent demo</td></tr>
+    <tr><td>{{start:III}}</td><td>III · Perceptron &amp; MLP</td><td>McCulloch–Pitts, Rosenblatt, XOR, universal approximation</td><td>Lab 1 · pixel classification</td></tr>
+    <tr><td>{{start:IV}}</td><td>IV · <span data-require="cv_fundamentals">Vision &amp; </span>CNNs</td><td><span data-require="cv_fundamentals">RGB / multi- / hyperspectral images, thresholding, filtering, SAR speckle · </span>Convolution, ResNet, U-Net</td><td><span data-require="cv_fundamentals">Vision demos · </span>Labs 2–3 · EuroSAT, LandCover.ai</td></tr>
+    <tr><td>{{start:break}}</td><td colspan="3" style="text-align:center;color:#8A6512;font-weight:600">Break<span data-lang="ar"> · <bdi class="ar">استراحة</bdi></span> · {{min:break}} min</td></tr>
+    <tr><td>{{start:V}}</td><td>V–VI · RNN/LSTM &amp; GANs</td><td>BPTT, gates, minimax game, pix2pix</td><td>Labs 4–5 · ETo forecast, SAR→optical</td></tr>
+    <tr><td>{{start:VII}}</td><td>VII · Transformers</td><td>Attention, ViT, MAE</td><td>Lab 6 · ViT on EuroSAT</td></tr>
+    <tr><td>{{start:VIII}}</td><td>VIII–IX · Geo foundation models</td><td>SSL, GeoFM generations, Earth-FM features</td><td>Labs 7–9 · Prithvi, AlphaEarth, informal settlements</td></tr>
+    <tr><td>{{start:X}}</td><td>X · LLMs &amp; agentic AI</td><td>Scaling, RAG, agents, LangGraph</td><td>Labs 10–11 · EO RAG &amp; agent</td></tr>
   </table>
 </div>
 <aside class="notes">Point out that each part closes with an EO application. The labs are shown on slides in condensed form; the full, runnable notebooks are in the notebooks/ folder of the site (Colab-ready).</aside>
@@ -40,7 +40,7 @@
 <h2>By the end of this course you will be able to…</h2>
 <div class="s-body">
   <div class="cols c3" style="height:auto">
-    <div class="card arch blue"><div class="icon">∑</div><h3>Explain</h3><p>how each family — MLP, CNN, RNN/LSTM, GAN, Transformer, foundation model, LLM agent — represents data and learns, with the key equation of each.</p></div>
+    <div class="card arch blue"><div class="icon">∑</div><h3>Explain</h3><p>how each family — classical learners (Bayes, trees, ensembles, SVM), MLP, CNN, RNN/LSTM, GAN, Transformer, foundation model, LLM agent — represents data and learns, with the key equation of each.</p></div>
     <div class="card arch green"><div class="icon">⌘</div><h3>Choose</h3><p>the right architecture for an EO problem: pixels, scenes, segmentation, time series, image translation, multimodal cubes, documents or workflows.</p></div>
     <div class="card arch clay"><div class="icon">▶</div><h3>Build</h3><p>working PyTorch, TerraTorch, Earth Engine, LangChain and LangGraph pipelines — and map informal settlements with foundation models.</p></div>
   </div>

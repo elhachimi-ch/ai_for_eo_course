@@ -1,0 +1,39 @@
+# Course settings, read by build.py.
+# After editing, rebuild the site:   cd _build && python build.py
+# (and re-run export.py + make_pptx.js if you also want fresh PDF/PPTX downloads)
+
+# Arabic subtitles on the title, section and closing slides.
+# false = English only: the Arabic text and the Arabic web font are left out of the build.
+arabic = false
+
+# Shown on the title slide; also written as the author of the PPTX.
+instructor = "Chouaib El Hachimi"
+
+# Optional teaching blocks. Switching one off removes its slides, its lines on the
+# course map and section slides, and its minutes from the schedule.
+[modules]
+classical_ml = true      # Part I  · naive Bayes, decision trees, bagging & random forests, boosting, SVM (live demos)
+cv_fundamentals = true   # Part IV · pixels, RGB / multispectral / hyperspectral, grayscale, thresholding,
+                         #           convolution step by step, filtering, SAR speckle filtering (live demos)
+
+# Minutes per part, in teaching order. Section-slide times, the course map and the
+# total duration ("3½-hour course") are computed from these numbers.
+[schedule]
+opening = 5
+I = 20
+II = 10
+III = 20
+IV = 25
+break = 10
+V = 15
+VI = 10
+VII = 15
+VIII = 20
+IX = 10
+X = 17
+wrap = 3
+
+# Extra minutes added to a part when its optional block is switched on.
+[schedule.modules]
+classical_ml = 15        # added to Part I
+cv_fundamentals = 15     # added to Part IV

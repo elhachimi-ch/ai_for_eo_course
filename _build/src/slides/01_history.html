@@ -1,13 +1,14 @@
-<section class="dark" data-title="Part I — History of AI" data-module="I · History of AI">
+<section class="dark" data-title="Part I — History of AI" data-module="I · History of AI" data-part="I" data-extra="classical_ml">
 <div class="sec-wrap">
   <div class="sec-arch" style="--sec-c:#2E4BC6"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>I</div></div>
   <div class="sec-text">
-    <div class="time">0:05 – 0:25 · 20 min</div>
+    <div class="time">{{slot:I}}</div>
     <h2>From Turing to tensor cores</h2>
-    <div class="ar">من تورينغ إلى الرقائق</div>
+    <div class="ar" data-lang="ar">من تورينغ إلى الرقائق</div>
     <ul>
       <li>Turing's learning machine and the theory behind it</li>
       <li>Symbolic AI, two winters, and the classical-ML era</li>
+      <li data-require="classical_ml">Classical learners, live: naive Bayes, decision trees, bagging &amp; random forests, boosting, SVM — with the maths</li>
       <li>Why deep learning took off: data, algorithms — and chips</li>
     </ul>
   </div>
@@ -89,7 +90,223 @@
 <aside class="notes">Make the link to EO practice: many operational products still rely on thresholds and rule-based decision trees. They are transparent, but brittle when the domain shifts — exactly the failure mode that pushed AI toward learning from data.</aside>
 </section>
 
-<section data-title="Classical machine learning in EO" data-module="I · History of AI" data-kind="practice" data-src="Breiman (2001) Random Forests · Cortes &amp; Vapnik (1995) Support-Vector Networks · Belgiu &amp; Drăguţ (2016) <i>ISPRS J.</i> 114:24–31 (RF in remote sensing) · De Marchi &amp; Mitchell (2019), Ch. 1">
+<section data-title="The classical-ML era" data-module="I · Classical ML" data-kind="theory" data-require="classical_ml" data-src="Maron (1961) · Vapnik &amp; Lerner (1963) · Breiman et al. (1984) CART · Quinlan (1986; 1993) · Boser, Guyon &amp; Vapnik (1992) · Cortes &amp; Vapnik (1995) · Ho (1995) · Breiman (1996; 2001) · Freund &amp; Schapire (1997) · Friedman (2001) · Chen &amp; Guestrin (2016) · Grinsztajn et al. (2022) NeurIPS — full references on the following slides">
+<h2>The classical-ML era: <em>statistics meets computing</em></h2>
+<div class="s-body">
+  <div style="height:300px">
+    <div class="timeline compact">
+      <div class="axis"></div>
+      <div class="tl-era" style="left:24%;width:70%;background:#C99A2E"></div>
+      <div class="tl-item up" style="left:5%"><div class="yr">1961</div><div class="ev">Maron: naive Bayes sorts documents</div></div>
+      <div class="tl-item down" style="left:16%"><div class="yr">1963</div><div class="ev">Vapnik &amp; Lerner: optimal separating hyperplane</div></div>
+      <div class="tl-item up" style="left:27%"><div class="yr">1984</div><div class="ev">CART: classification &amp; regression trees</div></div>
+      <div class="tl-item down" style="left:38%"><div class="yr">1986–93</div><div class="ev">Quinlan: ID3 → C4.5, entropy-based trees</div></div>
+      <div class="tl-item up" style="left:49%"><div class="yr">1992–95</div><div class="ev">Kernel trick; soft-margin SVM</div></div>
+      <div class="tl-item down" style="left:60%"><div class="yr">1995–97</div><div class="ev">AdaBoost; Ho's random decision forests</div></div>
+      <div class="tl-item up" style="left:71%"><div class="yr">1996–2001</div><div class="ev">Breiman: bagging → random forests</div></div>
+      <div class="tl-item down" style="left:82%"><div class="yr">2001</div><div class="ev">Friedman: gradient boosting machine</div></div>
+      <div class="tl-item up" style="left:93%"><div class="yr">2016–18</div><div class="ev">XGBoost · LightGBM · CatBoost</div></div>
+      <div class="tl-dot" style="left:5%"></div><div class="tl-dot" style="left:16%"></div><div class="tl-dot" style="left:27%"></div><div class="tl-dot" style="left:38%"></div><div class="tl-dot" style="left:49%"></div><div class="tl-dot" style="left:60%"></div><div class="tl-dot" style="left:71%"></div><div class="tl-dot" style="left:82%"></div><div class="tl-dot" style="left:93%"></div>
+    </div>
+  </div>
+  <div class="cols c3 mt" style="height:auto">
+    <div class="card blue"><h4>The paradigm</h4><p class="small">Hand-designed features → a <b>shallow</b> model with a clean objective (often convex) and guarantees from <b>statistical learning theory</b>: control the capacity, not just the training error.</p></div>
+    <div class="card green"><h4>In remote sensing</h4><p class="small">Gaussian <b>maximum-likelihood</b> classifier (1970s–90s) → <b>SVM</b> for hyperspectral data (2000s) → <b>random forest</b> as the default in Earth Engine (2010s).</p></div>
+    <div class="card sand"><h4>Still alive</h4><p class="small">On tabular features, tuned tree ensembles still match or beat deep nets (Grinsztajn et al., 2022). Cheap, strong baselines for every EO project.</p></div>
+  </div>
+</div>
+<aside class="notes">The shaded band marks the classical era (mid-1980s to the deep-learning switch around 2012). The five families on the next slides are the ones you will meet in every EO paper and in Earth Engine: naive Bayes / maximum likelihood, decision trees, bagging and random forests, boosting, SVM. Each slide has a live demo and the one or two equations that matter.</aside>
+</section>
+
+<section data-title="Naive Bayes and the maximum-likelihood classifier (interactive)" data-module="I · Classical ML" data-kind="theory" data-require="classical_ml" data-src="Bayes (1763) · Maron (1961) · Duda, Hart &amp; Stork (2001) <i>Pattern Classification</i>, Ch. 2–3 · Domingos &amp; Pazzani (1997) <i>Mach. Learn.</i> 29:103 · Richards (2013) <i>Remote Sensing Digital Image Analysis</i>, 5th ed., Ch. 8 · Toy (Red, NIR) samples generated in the browser">
+<h2>Naive Bayes — <em>classify by probability</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="nb">
+      <canvas width="660" height="420" style="width:660px;height:420px;cursor:crosshair"></canvas>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-mode="naive">Naive Bayes · diagonal Σ</button><button class="btn sm ghost" data-mode="full">Max. likelihood · full Σ</button>
+        <span class="sep"></span><span class="xs">click adds:</span>
+        <button class="btn sm ghost" data-c="0">water</button><button class="btn sm ghost" data-c="1">vegetation</button><button class="btn sm ghost" data-c="2">soil</button>
+        <button class="btn sm ghost" data-act="reset">Reset</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">
+        $$P(k\mid\mathbf{x})=\frac{P(k)\,p(\mathbf{x}\mid k)}{\sum_{k'}P(k')\,p(\mathbf{x}\mid k')}\;\overset{\text{naive}}{\propto}\;P(k)\prod_{j=1}^{d}p(x_j\mid k)$$
+        $$p(x_j\mid k)=\mathcal{N}\big(x_j;\,\mu_{kj},\sigma^2_{kj}\big),\qquad \hat y=\arg\max_k\Big[\log P(k)+\sum_j\log p(x_j\mid k)\Big]$$
+      </div>
+      <div class="card"><h4>“Naive” = bands independent given the class</h4><p class="small">Each class is a product of 1-D Gaussians, so its ellipses stay <b>aligned with the axes</b>. Training = means and variances per class: one pass, works with a handful of pixels.</p></div>
+      <div class="card green"><h4>EO classic · maximum-likelihood classifier</h4><p class="small">Keep the full covariance: \(p(\mathbf{x}\mid k)\propto|\Sigma_k|^{-1/2}e^{-\frac12(\mathbf{x}-\boldsymbol\mu_k)^\top\Sigma_k^{-1}(\mathbf{x}-\boldsymbol\mu_k)}\). Ellipses tilt along the <b>soil line</b>; boundaries become quadratic. The standard supervised classifier of remote sensing for decades.</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Demo: start in naive mode — the soil / built-up cloud is elongated along the soil line, but the naive ellipses cannot tilt, so they spread probability over empty space and bulge towards the vegetation cloud. Switch to full Σ: the ellipses rotate onto the soil line and the boundary bends (dark rings mark misclassified pixels). Add a few soil pixels near the vegetation tip to see the two models disagree. Hover anywhere to read the three posteriors; click to add training pixels of the selected class and watch the class prior and the boundary move. Note that correlated bands violate the naive assumption, which makes the probabilities over-confident even when the argmax is right (Domingos &amp; Pazzani 1997).</aside>
+</section>
+
+<section data-title="Decision trees (interactive)" data-module="I · Classical ML" data-kind="theory" data-require="classical_ml" data-src="Breiman, Friedman, Olshen &amp; Stone (1984) <i>CART</i> · Quinlan (1986) ID3; (1993) C4.5 · Hastie, Tibshirani &amp; Friedman (2009) <i>Elements of Statistical Learning</i>, §9.2 · Friedl &amp; Brodley (1997) <i>Remote Sens. Environ.</i> 61:399">
+<h2>Decision trees — <em>learned IF–THEN rules</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="tree">
+      <canvas width="660" height="440" style="width:660px;height:440px"></canvas>
+      <div class="ctrl">
+        <label>max depth <input type="range" name="depth" min="1" max="12" step="1" value="2"> <b class="dv"></b></label>
+        <select name="crit"><option value="gini">Gini</option><option value="entropy">Entropy</option></select>
+        <label><input type="checkbox" name="test"> show test pixels</label>
+        <button class="btn sm ghost" data-act="new">New sample</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">
+        $$\text{Gini}(S)=1-\sum_k p_k^2\qquad H(S)=-\sum_k p_k\log_2 p_k$$
+        $$\Delta I(j,t)=I(S)-\tfrac{|S_L|}{|S|}\,I(S_L)-\tfrac{|S_R|}{|S|}\,I(S_R)$$
+        <div class="xs">Greedy: at every node try each band \(j\) and threshold \(t\) (split \(x_j\le t\)); keep the largest impurity drop \(\Delta I\); recurse.</div>
+      </div>
+      <div class="card"><h4>The learned rules (top two levels)</h4><pre class="rules"></pre></div>
+      <div class="callout clay"><div>Deeper ⇒ training accuracy → 100 %, test accuracy falls: <b>high variance</b>. A new sample gives a different tree — the problem ensembles solve.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">The tree is the learned version of the expert's threshold rules from the previous slide (NDVI &gt; 0.3 …). Demo: depth 1–3 gives readable rules and a sensible map. Push depth to 10+: every noisy label gets its own little box (7 % of the labels are deliberately flipped), training accuracy hits 100 % and the test accuracy (tick “show test pixels”) drops. Click “New sample” at depth 10 to show how unstable the tree is.</aside>
+</section>
+
+<section data-title="Bagging and random forests (interactive)" data-module="I · Classical ML" data-kind="theory" data-require="classical_ml" data-src="Breiman (1996) Bagging predictors, <i>Mach. Learn.</i> 24:123 · Ho (1995) ICDAR · Breiman (2001) Random forests, <i>Mach. Learn.</i> 45:5 · Hastie et al. (2009), §8.7 &amp; Ch. 15 · Belgiu &amp; Drăguţ (2016) <i>ISPRS J.</i> 114:24 · Strobl et al. (2007) <i>BMC Bioinformatics</i> 8:25">
+<h2>Bagging &amp; random forests — <em>many noisy trees, one calm vote</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="forest">
+      <canvas width="660" height="440" style="width:660px;height:440px"></canvas>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-mode="tree">1 deep tree</button><button class="btn sm ghost" data-mode="bag">Bagging</button><button class="btn sm ghost" data-mode="rf">Random forest</button>
+        <label>trees B <input type="range" name="B" min="1" max="100" step="1" value="50"> <b class="bv"></b></label>
+        <button class="btn sm ghost" data-act="new">New sample</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">
+        $$\mathbb{E}\big[(y-\hat f)^2\big]=\text{Bias}^2+\text{Variance}+\sigma^2_\varepsilon$$
+        $$\hat f_{\text{bag}}(\mathbf{x})=\operatorname{vote}\{T_b(\mathbf{x})\}_{b=1}^{B},\qquad \operatorname{Var}\big[\bar T\big]=\rho\,\sigma^2+\frac{1-\rho}{B}\,\sigma^2$$
+      </div>
+      <div class="card"><h4>Two sources of randomness</h4><ul class="list compact small">
+        <li><b>Bootstrap</b>: each tree sees \(n\) pixels drawn with replacement; averaging \(B\) trees shrinks the \(\tfrac{1-\rho}{B}\) term.</li>
+        <li><b>Random features</b>: each split tries only \(m\approx\sqrt{p}\) bands, so trees decorrelate and \(\rho\) drops.</li>
+        <li><b>Out-of-bag</b>: \((1-\tfrac1n)^n\to e^{-1}\approx\) 37 % of pixels are unused by each tree — a free validation set.</li></ul></div>
+      <div class="callout green"><div><b>EO workhorse</b> (<code>ee.Classifier.smileRandomForest</code>): robust to label noise and to 100+ stacked features. Prefer <b>permutation</b> importance — impurity importance is biased.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Demo: “1 deep tree” shows the jagged, over-fitted map from the previous slide. Switch to Bagging and slide B from 1 to 100: the islands melt away, the colour intensity (vote share) shows where the forest is unsure, and test accuracy rises. Random forest adds feature subsampling (here one random band per split, because we only have two). OOB accuracy tracks test accuracy without any held-out data. Bias is unchanged — that is what boosting attacks next.</aside>
+</section>
+
+<section data-title="Boosting: AdaBoost (interactive)" data-module="I · Classical ML" data-kind="theory" data-require="classical_ml" data-src="Schapire (1990) <i>Mach. Learn.</i> 5:197 · Freund &amp; Schapire (1997) <i>J. Comput. Syst. Sci.</i> 55:119 · Friedman, Hastie &amp; Tibshirani (2000) <i>Ann. Stat.</i> 28:337 · Hastie et al. (2009), Ch. 10">
+<h2>Boosting I · AdaBoost — <em>learn from your mistakes</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="adaboost">
+      <canvas width="660" height="420" style="width:660px;height:420px"></canvas>
+      <div class="ctrl">
+        <button class="btn sm" data-act="step">+1 learner</button><button class="btn sm gold" data-act="run">+25</button><button class="btn sm ghost" data-act="reset">Reset</button>
+        <span class="sep"></span>
+        <button class="btn sm ghost" data-ds="ring">Ring</button><button class="btn sm ghost" data-ds="xor">Seasons (XOR)</button><button class="btn sm ghost" data-ds="linear">Linear</button>
+        <span class="sep"></span>
+        <button class="btn sm ghost" data-wl="1">stumps</button><button class="btn sm ghost" data-wl="2">depth-2 trees</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">
+        $$\varepsilon_t=\sum_i w_i\,\mathbb{1}\big[h_t(\mathbf{x}_i)\neq y_i\big],\qquad \alpha_t=\tfrac12\ln\frac{1-\varepsilon_t}{\varepsilon_t}$$
+        $$w_i\leftarrow\frac{w_i\,e^{-\alpha_t\,y_i\,h_t(\mathbf{x}_i)}}{Z_t},\qquad H(\mathbf{x})=\operatorname{sign}\Big(\sum_{t=1}^{T}\alpha_t\,h_t(\mathbf{x})\Big)$$
+      </div>
+      <div class="card"><h4>Sequential, not parallel</h4><p class="small">Each weak learner — a one-split <b>stump</b> (dashed gold line) — trains on re-weighted pixels: the ones the ensemble still gets wrong grow bigger. AdaBoost is stage-wise minimisation of the exponential loss \(e^{-yF(\mathbf{x})}\).</p></div>
+      <div class="card clay"><h4>Try it</h4><p class="small"><b>Seasons (XOR)</b>: single-season crops vs bare land and orchards in (NDVI March, NDVI July). A sum of stumps uses one band at a time and cannot model the interaction — switch to depth-2 trees. Bagging cuts <b>variance</b>; boosting cuts <b>bias</b>, but it chases mislabelled pixels.</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Demo: on the ring, press +1 a few times. Each stump is a single threshold; the misclassified pixels swell; α is large when ε is small. Press +25: the staircase boundary wraps the ring. Then Seasons (XOR) with stumps — training error stays high because an additive model of single-band rules cannot express “high in March XOR high in July”. Switch to depth-2 trees and it is solved in a few rounds. In practice, boosting on noisy reference polygons can over-fit the label noise; gradient boosting with shrinkage and early stopping is the modern form.</aside>
+</section>
+
+<section data-title="Boosting: gradient boosting and XGBoost (interactive)" data-module="I · Classical ML" data-kind="theory" data-require="classical_ml" data-src="Friedman (2001) Greedy function approximation: a gradient boosting machine, <i>Ann. Stat.</i> 29:1189 · Chen &amp; Guestrin (2016) XGBoost, KDD · Ke et al. (2017) LightGBM, NeurIPS · Prokhorenkova et al. (2018) CatBoost, NeurIPS · Synthetic NDVI profile of a rain-fed cereal parcel (September–August season) with cloud-contaminated dips">
+<h2>Boosting II · Gradient boosting — <em>fit the residuals, step by step</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="gboost">
+      <canvas width="660" height="440" style="width:660px;height:440px"></canvas>
+      <div class="ctrl">
+        <button class="btn sm" data-act="step">+1 tree</button><button class="btn sm gold" data-act="run">+20</button><button class="btn sm ghost" data-act="reset">Reset</button>
+        <label>ν <input type="range" name="nu" min="0.05" max="1" step="0.05" value="0.3" style="width:130px"> <b class="nv"></b></label>
+        <label>depth <select name="depth"><option>1</option><option selected>2</option><option>3</option></select></label>
+        <label>loss <select name="loss"><option value="l2">squared</option><option value="l1">absolute</option></select></label>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">
+        $$r_i^{(m)}=-\left[\frac{\partial\,\ell\big(y_i,F(\mathbf{x}_i)\big)}{\partial F(\mathbf{x}_i)}\right]_{F=F_{m-1}}$$
+        $$h_m=\arg\min_h\sum_i\big(r_i^{(m)}-h(\mathbf{x}_i)\big)^2,\qquad F_m=F_{m-1}+\nu\,h_m$$
+        <div class="xs">Squared loss ⇒ \(r_i=y_i-F(\mathbf{x}_i)\): literally fit the residuals. Absolute loss ⇒ \(r_i=\operatorname{sign}(y_i-F)\): cloudy dips stop pulling the curve down.</div>
+      </div>
+      <div class="card ink"><h4>XGBoost · LightGBM · CatBoost</h4><p class="small" style="color:#DCE2F0">Newton (second-order) steps and regularised leaves, \(\mathcal{L}=\sum_i\ell(y_i,\hat y_i)+\sum_k\big(\gamma T_k+\tfrac12\lambda\lVert\mathbf{w}_k\rVert^2\big)\); histogram splits, missing-value handling, GPU training.</p></div>
+      <div class="callout green"><div>The go-to model for <b>tabular EO regression</b>: yield, ET, soil moisture, biomass from bands, weather and terrain features.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Demo: each click fits a small tree (gold, bottom panel) to the current residuals (blue bars) and adds ν times it to the model (terracotta). With ν = 1 it fits fast but chases noise; ν = 0.1–0.3 needs more trees and generalises better (shrinkage). Now look at the cloud dips: with squared loss the curve sags towards them; switch to absolute loss — the gradient is only the sign of the residual, so outliers have bounded influence. The loss you choose is the gradient you fit: that is the whole idea of gradient boosting, and of deep learning too.</aside>
+</section>
+
+<section data-title="Support vector machines (interactive)" data-module="I · Classical ML" data-kind="theory" data-require="classical_ml" data-src="Vapnik &amp; Lerner (1963) · Boser, Guyon &amp; Vapnik (1992) COLT · Cortes &amp; Vapnik (1995) <i>Mach. Learn.</i> 20:273 · Platt (1998) Sequential minimal optimization · Schölkopf &amp; Smola (2002) <i>Learning with Kernels</i> · Melgani &amp; Bruzzone (2004) <i>IEEE TGRS</i> 42:1778 · Mountrakis, Im &amp; Ogole (2011) <i>ISPRS J.</i> 66:247">
+<h2>Support vector machines — <em>the widest street</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="svm">
+      <canvas width="660" height="420" style="width:660px;height:420px;cursor:crosshair"></canvas>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-ds="linear">Water vs vegetation</button><button class="btn sm ghost" data-ds="xor">Seasons (XOR)</button><button class="btn sm ghost" data-ds="ring">Ring</button>
+        <span class="sep"></span>
+        <button class="btn sm ghost" data-k="lin">linear</button><button class="btn sm ghost" data-k="rbf">RBF kernel</button>
+        <label>C <input type="range" name="C" min="-2" max="3" step="0.25" value="1" style="width:110px"> <b class="cv"></b></label>
+        <label>γ <input type="range" name="g" min="-0.5" max="2.5" step="0.25" value="1" style="width:110px"> <b class="gv"></b></label>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">
+        $$\min_{\mathbf{w},b,\boldsymbol\xi}\ \tfrac12\lVert\mathbf{w}\rVert^2+C\sum_i\xi_i\quad\text{s.t.}\quad y_i(\mathbf{w}^\top\mathbf{x}_i+b)\ge1-\xi_i,\ \ \xi_i\ge0$$
+        <div class="xs" style="text-align:center">margin width \(=2/\lVert\mathbf{w}\rVert\) · same as hinge loss \(\sum_i\max\big(0,1-y_if(\mathbf{x}_i)\big)+\lambda\lVert\mathbf{w}\rVert^2\)</div>
+        $$f(\mathbf{x})=\sum_{i\in\text{SV}}\alpha_i\,y_i\,K(\mathbf{x}_i,\mathbf{x})+b,\qquad K(\mathbf{x},\mathbf{x}')=e^{-\gamma\lVert\mathbf{x}-\mathbf{x}'\rVert^2}$$
+      </div>
+      <div class="card"><h4>Kernel trick &amp; sparsity</h4><p class="small">Only the <b>support vectors</b> (gold rings) define the boundary. A kernel computes dot products in a high-dimensional feature space without building it. Small \(C\): wide, tolerant margin; large \(C\) and \(\gamma\): tight, wiggly fit.</p></div>
+      <div class="callout green"><div>SVMs ruled <b>hyperspectral</b> classification in the 2000s: hundreds of bands, few labelled pixels — where the margin principle shines. Scale features first.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Demo: linear kernel on water vs vegetation — solid line f = 0, dashed lines f = ±1, the light band between them is the margin; only the ringed points matter (delete any other point and nothing changes). Lower C: the margin widens and more points become support vectors. Switch to Seasons (XOR) — no line works; RBF kernel solves it. Push γ to the maximum and C high: islands around single pixels = over-fitting. Click to add vegetation pixels, shift-click (or right-click) for the other class. The optimiser running in the browser is Platt's simplified SMO.</aside>
+</section>
+
+<section data-title="Classical learners compared" data-module="I · Classical ML" data-kind="practice" data-require="classical_ml" data-src="Hastie, Tibshirani &amp; Friedman (2009) · Maxwell, Warner &amp; Fang (2018) Implementation of machine-learning classification in remote sensing: an applied review, <i>Int. J. Remote Sens.</i> 39:2784 · Belgiu &amp; Drăguţ (2016) · Mountrakis et al. (2011)">
+<h2>Five classical learners <em>at a glance</em></h2>
+<div class="s-body">
+  <table class="tbl small">
+    <tr><th style="width:190px">Model</th><th>Learns…</th><th>Strengths</th><th>Watch out</th><th>Typical EO use</th></tr>
+    <tr><td>Naive Bayes / MLC</td><td>class densities \(p(\mathbf{x}\mid k)\)</td><td>instant training, probabilities, few samples</td><td>Gaussian &amp; independence assumptions</td><td>quick baselines, classic land-cover maps</td></tr>
+    <tr><td>Decision tree</td><td>axis-aligned IF–THEN splits</td><td>readable rules, no scaling, mixed feature types</td><td>unstable, over-fits when deep</td><td>rule-based products, capturing expert knowledge</td></tr>
+    <tr><td>Random forest</td><td>vote of decorrelated bootstrap trees</td><td>robust defaults, OOB error, importances</td><td>large models, no extrapolation, biased importance</td><td>land cover &amp; crop types (Earth Engine)</td></tr>
+    <tr><td>Gradient boosting</td><td>additive trees fitted to gradients</td><td>top accuracy on tabular features</td><td>tuning, early stopping, noisy labels</td><td>yield, ET, biomass, soil-moisture regression</td></tr>
+    <tr><td>SVM</td><td>max-margin boundary in kernel space</td><td>high-d, small-n; few hyper-parameters</td><td>\(O(n^2)\) kernel matrix; scale features; tune \(C,\gamma\)</td><td>hyperspectral, few-label problems</td></tr>
+  </table>
+  <div class="cols c2 mt" style="height:auto">
+    <div class="callout"><div>All five consume <b>features you engineered</b> — bands, indices, textures, statistics. That ceiling is what deep learning lifted.</div></div>
+    <div class="callout clay"><div>Whatever the model: <b>spatial cross-validation</b> and a simple baseline before anything deep.</div></div>
+  </div>
+</div>
+<aside class="notes">A decision slide. In practice: start with a random forest (few knobs, OOB error), try gradient boosting if accuracy matters and you can tune, keep naive Bayes / MLC as the sanity baseline, use an SVM when labels are scarce and features many. The next slide shows the standard random-forest pipeline in code.</aside>
+</section>
+
+<section data-title="Classical machine learning in EO" data-module="I · Classical ML" data-kind="practice" data-src="Breiman (2001) Random Forests · Cortes &amp; Vapnik (1995) Support-Vector Networks · Belgiu &amp; Drăguţ (2016) <i>ISPRS J.</i> 114:24–31 (RF in remote sensing) · De Marchi &amp; Mitchell (2019), Ch. 1">
 <h2>The classical-ML era: <em>you design the features</em></h2>
 <div class="s-body">
   <div class="cols c46">
@@ -133,7 +350,7 @@ print(f"macro-F1 = {scores.mean():.3f} ± {scores.std():.3f}")
 <aside class="notes">Show the code briefly. Two lessons carry through the whole course: (1) engineered indices are a form of prior knowledge; (2) evaluate with spatially grouped folds, otherwise neighbouring pixels leak between train and test and accuracy is inflated.</aside>
 </section>
 
-<section data-title="Hand-crafted vs learned features" data-module="I · History of AI" data-kind="theory" data-src="LeCun, Bengio &amp; Hinton (2015) Deep learning. <i>Nature</i> 521:436–444 · Zhu et al. (2017) Deep learning in remote sensing. <i>IEEE GRSM</i> 5(4):8–36">
+<section data-title="Hand-crafted vs learned features" data-module="I · Rise of deep learning" data-kind="theory" data-src="LeCun, Bengio &amp; Hinton (2015) Deep learning. <i>Nature</i> 521:436–444 · Zhu et al. (2017) Deep learning in remote sensing. <i>IEEE GRSM</i> 5(4):8–36">
 <h2>The shift: from <em>feature engineering</em> to representation learning</h2>
 <div class="s-body">
   <div class="cols c2" style="height:auto">
@@ -157,7 +374,7 @@ print(f"macro-F1 = {scores.mean():.3f} ± {scores.std():.3f}")
 <aside class="notes">The point: the deep pipeline is uniform (one loss, one optimiser) and its learned features transfer, which leads directly to foundation models later.</aside>
 </section>
 
-<section data-title="Three ingredients of the deep-learning revolution" data-module="I · History of AI" data-kind="theory" data-src="Deng et al. (2009) ImageNet · USGS opened the Landsat archive in 2008 · Copernicus free &amp; open data policy (Sentinel-1A launched 2014) · Glorot et al. (2011) ReLU · Srivastava et al. (2014) Dropout · Ioffe &amp; Szegedy (2015) BatchNorm · He et al. (2016) ResNet">
+<section data-title="Three ingredients of the deep-learning revolution" data-module="I · Rise of deep learning" data-kind="theory" data-src="Deng et al. (2009) ImageNet · USGS opened the Landsat archive in 2008 · Copernicus free &amp; open data policy (Sentinel-1A launched 2014) · Glorot et al. (2011) ReLU · Srivastava et al. (2014) Dropout · Ioffe &amp; Szegedy (2015) BatchNorm · He et al. (2016) ResNet">
 <h2>Why now? <em>Data × algorithms × compute</em></h2>
 <div class="s-body">
   <div class="cols c3">
@@ -187,7 +404,7 @@ print(f"macro-F1 = {scores.mean():.3f} ± {scores.std():.3f}")
 <aside class="notes">All three were necessary. The 1986 back-prop algorithm already existed; what was missing was data at scale and hardware to multiply matrices quickly. Earth observation followed the same path a few years later once open archives and cloud computing met.</aside>
 </section>
 
-<section data-title="Chips: CPU, GPU, TPU" data-module="I · History of AI" data-kind="theory" data-src="Raina, Madhavan &amp; Ng (2009) Large-scale deep unsupervised learning using graphics processors, ICML · Krizhevsky, Sutskever &amp; Hinton (2012) NeurIPS (2× GTX 580) · Jouppi et al. (2017) TPU, ISCA · NVIDIA datasheets (peak dense throughput; precisions differ)">
+<section data-title="Chips: CPU, GPU, TPU" data-module="I · Rise of deep learning" data-kind="theory" data-src="Raina, Madhavan &amp; Ng (2009) Large-scale deep unsupervised learning using graphics processors, ICML · Krizhevsky, Sutskever &amp; Hinton (2012) NeurIPS (2× GTX 580) · Jouppi et al. (2017) TPU, ISCA · NVIDIA datasheets (peak dense throughput; precisions differ)">
 <h2>Deep learning is <em>matrix multiplication</em> — chips made it cheap</h2>
 <div class="s-body">
   <div class="cols c46">
@@ -208,7 +425,7 @@ print(f"macro-F1 = {scores.mean():.3f} ± {scores.std():.3f}")
 <aside class="notes">The ResNet-50 number: about 4 G multiply–adds (≈ 8 GFLOP) per 224×224 image, so a batch of 256 is on the order of 1–2 TFLOP. Emphasise orders of magnitude, not exact marketing numbers.</aside>
 </section>
 
-<section data-title="Compute growth" data-module="I · History of AI" data-kind="theory" data-src="Training-compute estimates from Epoch AI's “Notable AI Models” database and original papers; GPT-4 value is an external estimate · Sevilla et al. (2022) Compute trends across three eras of ML, IJCNN · Kaplan et al. (2020) Scaling laws">
+<section data-title="Compute growth" data-module="I · Rise of deep learning" data-kind="theory" data-src="Training-compute estimates from Epoch AI's “Notable AI Models” database and original papers; GPT-4 value is an external estimate · Sevilla et al. (2022) Compute trends across three eras of ML, IJCNN · Kaplan et al. (2020) Scaling laws">
 <h2>Training compute grew <em>~10 orders of magnitude</em></h2>
 <div class="s-body">
   <div class="cols c64">

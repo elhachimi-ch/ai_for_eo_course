@@ -1,11 +1,12 @@
-<section class="dark" data-title="Part IV — Convolutional networks" data-module="IV · CNNs">
+<section class="dark" data-title="Part IV — Computer vision and CNNs" data-module="IV · CNNs" data-part="IV" data-extra="cv_fundamentals">
 <div class="sec-wrap">
   <div class="sec-arch" style="--sec-c:#2E4BC6"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>IV</div></div>
   <div class="sec-text">
-    <div class="time">0:55 – 1:20 · 25 min</div>
-    <h2>Seeing space: CNNs</h2>
-    <div class="ar">الشبكات الالتفافية</div>
+    <div class="time">{{slot:IV}}</div>
+    <h2>Seeing space: <span data-require="cv_fundamentals">from pixels to </span>CNNs</h2>
+    <div class="ar" data-lang="ar">الشبكات الالتفافية</div>
     <ul>
+      <li data-require="cv_fundamentals">Vision fundamentals, live: RGB, multispectral &amp; hyperspectral pixels; grayscale, thresholding, filtering; SAR speckle</li>
       <li>Convolution: locality, weight sharing, equivariance (live demo)</li>
       <li>From LeNet to ResNet and U-Net</li>
       <li>EO tasks: scenes, segmentation, detection, change</li>
@@ -13,6 +14,215 @@
     </ul>
   </div>
 </div>
+</section>
+
+<section data-title="What is a digital image? (interactive)" data-module="IV · Vision fundamentals" data-kind="theory" data-require="cv_fundamentals" data-src="Gonzalez &amp; Woods (2018) <i>Digital Image Processing</i>, 4th ed., Ch. 2 · ESA Sentinel-2 User Handbook (2015) · Synthetic Sentinel-2-like scene (fields, river, reservoir, town, road) generated in the browser">
+<h2>A digital image is a <em>grid of numbers</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="pixels">
+      <div style="display:flex;gap:18px;align-items:flex-start">
+        <div><div class="xs">scene · move the mouse over it</div><canvas class="scene" width="160" height="160" style="width:420px;height:420px;image-rendering:pixelated;cursor:crosshair"></canvas></div>
+        <div><div class="xs">zoom · 5 × 5 pixels, 8-bit values</div><div class="pxgrid"></div></div>
+      </div>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-ch="rgb">RGB</button><button class="btn sm ghost" data-ch="0">R channel</button><button class="btn sm ghost" data-ch="1">G channel</button><button class="btn sm ghost" data-ch="2">B channel</button>
+        <span class="xs">a single channel is just a grayscale image</span>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">$$\mathbf{I}\in\{0,1,\dots,2^{b}-1\}^{H\times W\times C}$$<div class="xs" style="text-align:center">8-bit RGB: \(b=8\Rightarrow256\) levels per channel, \(256^3\approx16.7\) M colours</div></div>
+      <table class="tbl small">
+        <tr><th>Resolution</th><th>Question</th><th>Sentinel-2</th></tr>
+        <tr><td>Spatial</td><td>How big is a pixel?</td><td>10 / 20 / 60 m</td></tr>
+        <tr><td>Spectral</td><td>Which wavelengths?</td><td>13 bands, 443–2190 nm</td></tr>
+        <tr><td>Radiometric</td><td>How many levels?</td><td>12-bit; L2A stored as uint16</td></tr>
+        <tr><td>Temporal</td><td>How often?</td><td>≈ 5 days (two satellites)</td></tr>
+      </table>
+      <div class="callout blue"><div>A colour photo has <b>3 channels</b> because our eyes have 3 cone types. Satellite sensors are not limited to what we see.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Computer vision starts here: an image is an array of numbers, H × W × C. Move the mouse over the scene — the zoom shows the 25 pixels around the cursor with their red, green and blue values. Switch to one channel: each channel alone is a grayscale image. The four “resolutions” of remote sensing are the vocabulary for comparing any two sensors.</aside>
+</section>
+
+<section data-title="RGB, multispectral and hyperspectral (interactive)" data-module="IV · Vision fundamentals" data-kind="theory" data-require="cv_fundamentals" data-src="ESA Sentinel-2 MSI band specification · Guanter et al. (2015) The EnMAP spaceborne imaging spectroscopy mission, <i>Remote Sens.</i> 7:8830 · Green et al. (1998) AVIRIS, <i>Remote Sens. Environ.</i> 65:227 · Spectra are smoothed illustrative curves for water, vegetation, soil, roofs and asphalt">
+<h2>Beyond RGB: <em>multispectral &amp; hyperspectral</em></h2>
+<div class="s-body">
+  <div class="cols c46" data-demo="spectra">
+    <div class="demo">
+      <canvas class="scene" width="160" height="160" style="width:470px;height:470px;image-rendering:pixelated;cursor:crosshair"></canvas>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-comp="true">True colour 4·3·2</button><button class="btn sm ghost" data-comp="nir">False colour 8·4·3</button>
+        <button class="btn sm ghost" data-comp="swir">SWIR 12·8A·4</button><button class="btn sm ghost" data-comp="ndvi">NDVI</button>
+      </div>
+    </div>
+    <div class="rows">
+      <div class="demo">
+        <canvas class="spec" width="800" height="290" style="width:800px;height:290px"></canvas>
+        <div class="ctrl">
+          <button class="btn sm ghost" data-sensor="rgb">RGB camera · 3 bands</button><button class="btn sm ghost" data-sensor="s2">Sentinel-2 MSI · 13</button><button class="btn sm ghost" data-sensor="hs">Hyperspectral · 200+</button>
+          <span class="xs">hover a pixel on the left</span>
+        </div>
+        <div class="readout"></div>
+      </div>
+      <table class="tbl small">
+        <tr><th>Sensor</th><th>Bands</th><th>Band width</th><th>Examples</th></tr>
+        <tr><td>RGB</td><td>3</td><td>~100 nm, visible only</td><td>phones, drones, very-high-res imagery</td></tr>
+        <tr><td>Multispectral</td><td>4–15</td><td>15–180 nm, with gaps</td><td>Sentinel-2 (13), Landsat 8/9 (11)</td></tr>
+        <tr><td>Hyperspectral</td><td>200+</td><td>5–10 nm, contiguous</td><td>EnMAP, PRISMA, AVIRIS</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+<aside class="notes">Hover a field: vegetation is dark in red (chlorophyll absorbs) and very bright in the near infrared — the red edge. An RGB camera never sees the NIR plateau; Sentinel-2 samples it with B5–B8A and the SWIR with B11–B12; a hyperspectral sensor records the whole curve, including mineral and water absorption features (grey bands = atmospheric water vapour). Switch the composite: false colour (NIR as red) makes vegetation red; SWIR separates bare soil and roofs; NDVI is a two-band formula. Every extra band is another channel of the tensor a model will read.</aside>
+</section>
+
+<section data-title="From colour to grayscale (interactive)" data-module="IV · Vision fundamentals" data-kind="theory" data-require="cv_fundamentals" data-src="ITU-R Recommendation BT.601 (luma coefficients) · Gonzalez &amp; Woods (2018), Ch. 6 · USGS Landsat 8/9 OLI band 8 (panchromatic, 0.50–0.68 µm, 15 m)">
+<h2>From colour to <em>grayscale</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="gray">
+      <div style="display:flex;gap:16px">
+        <div><div class="xs">RGB input</div><canvas class="src" width="160" height="160" style="width:370px;height:370px;image-rendering:pixelated"></canvas></div>
+        <div><div class="xs">grayscale output Y</div><canvas class="dst" width="160" height="160" style="width:370px;height:370px;image-rendering:pixelated"></canvas></div>
+      </div>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-preset="mean">mean</button><button class="btn sm ghost" data-preset="luma">luma (BT.601)</button><button class="btn sm ghost" data-preset="r">red only</button><button class="btn sm ghost" data-preset="b">blue only</button>
+        <span class="sep"></span>
+        <label>w<sub>R</sub> <input type="range" name="wr" min="0" max="1" step="0.01" style="width:105px"></label>
+        <label>w<sub>G</sub> <input type="range" name="wg" min="0" max="1" step="0.01" style="width:105px"></label>
+        <label>w<sub>B</sub> <input type="range" name="wb" min="0" max="1" step="0.01" style="width:105px"></label>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">$$Y=w_R\,R+w_G\,G+w_B\,B,\qquad w_R+w_G+w_B=1$$$$Y_{601}=0.299\,R+0.587\,G+0.114\,B$$<div class="xs" style="text-align:center">BT.601 weights follow the eye: most sensitive to green, least to blue.</div></div>
+      <div class="card green"><h4>Same operation, many names</h4><p class="small">A weighted sum of the channels at every pixel is a <b>1 × 1 convolution</b>. Spectral indices, PCA and the first layer of a CNN do the same thing — with physics-based or learned weights.</p></div>
+      <div class="callout"><div><b>Panchromatic</b> bands are physical grayscale: one broad band (Landsat 8/9 B8, 0.50–0.68 µm) at 15 m instead of 30 m.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Try “red only” vs “blue only”: the reservoir and river are dark in red and brighter in blue, fields swap contrast. The point to carry to CNNs: converting C channels into one number per pixel with fixed weights is a 1 × 1 convolution; a CNN simply learns those weights, and many sets of them at once.</aside>
+</section>
+
+<section data-title="Thresholding to a binary image (interactive)" data-module="IV · Vision fundamentals" data-kind="theory" data-require="cv_fundamentals" data-src="Otsu (1979) A threshold selection method from gray-level histograms, <i>IEEE Trans. SMC</i> 9:62 · McFeeters (1996) NDWI, <i>Int. J. Remote Sens.</i> 17:1425 · Gonzalez &amp; Woods (2018), Ch. 10">
+<h2>Thresholding: <em>grayscale → binary</em></h2>
+<div class="s-body">
+  <div class="demo" data-demo="threshold">
+    <div style="display:flex;gap:22px;align-items:flex-start">
+      <div><div class="xs">input band / index</div><canvas class="src" width="160" height="160" style="width:320px;height:320px;image-rendering:pixelated"></canvas></div>
+      <div style="flex:1"><div class="xs">histogram · click or drag to set the threshold t</div>
+        <canvas class="hist" width="660" height="220" style="width:660px;height:220px;cursor:col-resize"></canvas>
+        <div class="ctrl" style="margin-top:10px">
+          <button class="btn sm ghost" data-in="gray">grayscale</button><button class="btn sm ghost" data-in="ndwi">NDWI (water)</button><button class="btn sm ghost" data-in="ndvi">NDVI (vegetation)</button>
+          <button class="btn sm gold" data-act="otsu">Otsu</button>
+          <label>t <input type="range" name="t" min="0" max="1" step="0.005" style="width:170px"></label>
+        </div>
+      </div>
+      <div><div class="xs">binary output B</div><canvas class="dst" width="160" height="160" style="width:320px;height:320px;image-rendering:pixelated"></canvas></div>
+    </div>
+    <div class="readout"></div>
+  </div>
+  <div class="cols c3 mt" style="height:auto">
+    <div class="eqbox small">$$B(i,j)=\begin{cases}1 & \text{if } I(i,j)>t\\ 0 & \text{otherwise}\end{cases}$$</div>
+    <div class="eqbox small"><b>Otsu:</b> pick the \(t\) that best separates the two histogram classes $$t^\star=\arg\max_t\ \omega_0(t)\,\omega_1(t)\,\big[\mu_0(t)-\mu_1(t)\big]^2$$</div>
+    <div class="card green"><h4>EO</h4><p class="small">Water: \(\text{NDWI}=\frac{G-\text{NIR}}{G+\text{NIR}}>0\). A global threshold struggles with turbid water, shadows and mixed pixels — and it is a one-feature <b>decision stump</b>.</p></div>
+  </div>
+</div>
+<aside class="notes">Start with NDWI: the histogram is clearly bimodal (land on the left, water on the right) and Otsu lands near 0, matching McFeeters' rule; the IoU against the true water mask is printed. Switch to grayscale and press Otsu: the histogram is not bimodal in a useful way, so the “optimal” threshold separates bright from dark, not one class from another. Thresholding is the simplest classifier — Part I called it a decision stump.</aside>
+</section>
+
+<section data-title="Convolution step by step (interactive)" data-module="IV · Vision fundamentals" data-kind="theory" data-require="cv_fundamentals" data-src="Dumoulin &amp; Visin (2016) A guide to convolution arithmetic for deep learning, arXiv:1603.07285 · Gonzalez &amp; Woods (2018), Ch. 3 · Goodfellow, Bengio &amp; Courville (2016), Ch. 9">
+<h2>Convolution, <em>one window at a time</em></h2>
+<div class="s-body">
+  <div class="cols c73">
+    <div class="demo" data-demo="convstep">
+      <div class="cv-row">
+        <div><div class="xs">input I (8 × 8)</div><div class="cgrid in"></div></div>
+        <div class="op">∗</div>
+        <div><div class="xs">kernel K</div><div class="cgrid k"></div><div class="xs klab" style="text-align:center;margin-top:6px"></div></div>
+        <div class="op">=</div>
+        <div><div class="xs out-l">output</div><div class="cgrid out"></div></div>
+      </div>
+      <div class="ctrl">
+        <button class="btn sm" data-act="step">Step</button><button class="btn sm gold" data-act="play">Play</button><button class="btn sm ghost" data-act="all">All</button><button class="btn sm ghost" data-act="reset">Reset</button>
+        <span class="sep"></span>
+        <button class="btn sm ghost" data-k="sobelX">edge (Sobel x)</button><button class="btn sm ghost" data-k="blur">blur</button><button class="btn sm ghost" data-k="sharpen">sharpen</button><button class="btn sm ghost" data-k="laplace">Laplacian</button>
+        <span class="sep"></span>
+        <button class="btn sm ghost" data-p="0">no padding</button><button class="btn sm ghost" data-p="1">zero padding</button>
+        <button class="btn sm ghost" data-s="1">stride 1</button><button class="btn sm ghost" data-s="2">stride 2</button>
+      </div>
+      <div class="readout calc"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">$$(\mathbf{I}\ast\mathbf{K})[i,j]=\sum_{m=0}^{2}\sum_{n=0}^{2}\mathbf{I}[iS{+}m{-}P,\ jS{+}n{-}P]\,\mathbf{K}[m,n]$$<div class="xs" style="text-align:center">Deep learning computes this cross-correlation (no kernel flip) — identical to convolution for symmetric kernels.</div></div>
+      <div class="eqbox small">Output size: $$W_{out}=\Big\lfloor\frac{W-K+2P}{S}\Big\rfloor+1$$<div class="xs osz" style="text-align:center"></div></div>
+      <div class="card"><h4>Multiply, add, slide</h4><p class="small">Each output is a dot product of the kernel with one window: large where the window looks like the kernel. Sobel fires on the field edge and the small bright building.</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Press Step a few times and read the arithmetic under the grids: nine products, one sum, one output cell. Play animates the slide. Zero padding keeps the 8 × 8 size; stride 2 halves it — check the formula on the right. Positive responses are terracotta, negative blue. This is the operation a CNN layer repeats with dozens of learned kernels over all channels.</aside>
+</section>
+
+<section data-title="Filtering (interactive)" data-module="IV · Vision fundamentals" data-kind="theory" data-src="Interactive demo on a synthetic scene (fields, river, road, buildings) · Dumoulin &amp; Visin (2016) A guide to convolution arithmetic, arXiv:1603.07285">
+<h2>Filtering — <em>kernels are feature detectors</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="conv">
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div><div class="xs">input scene</div><canvas class="src" width="300" height="300" style="width:390px;height:390px;image-rendering:pixelated"></canvas></div>
+        <div><div class="xs">feature map</div><canvas class="dst" width="300" height="300" style="width:390px;height:390px;image-rendering:pixelated"></canvas></div>
+      </div>
+      <div class="ctrl">
+        <button class="btn ghost" data-k="identity">identity</button><button class="btn ghost" data-k="blur">blur</button><button class="btn ghost" data-k="gauss">Gaussian</button><button class="btn ghost" data-k="sharpen">sharpen</button>
+        <button class="btn ghost" data-k="sobelX">Sobel x</button><button class="btn ghost" data-k="sobelY">Sobel y</button><button class="btn ghost" data-k="laplace">Laplacian</button><button class="btn ghost" data-k="median">median</button>
+      </div>
+    </div>
+    <div class="rows">
+      <div class="eqbox">$$(\mathbf{I}\ast\mathbf{K})_{i,j}=\sum_{c}\sum_{m,n}\mathbf{I}_{c,\,i+m,\,j+n}\,\mathbf{K}_{c,m,n}+b$$</div>
+      <div class="card"><h4>Kernel</h4><div class="kernel readout" style="font-size:22px;line-height:1.6;text-align:center"></div></div>
+      <div class="eqbox small" data-require="cv_fundamentals"><b>Median</b> (non-linear): \(\hat I_{i,j}=\operatorname{median}\{I_{i+m,\,j+n}\}_{m,n\in\{-1,0,1\}}\) — removes salt-and-pepper noise and keeps edges, but is <i>not</i> a convolution.</div>
+      <div class="eqbox small" data-require="!cv_fundamentals">Output size: \(\;W_{out}=\left\lfloor\frac{W-K+2P}{S}\right\rfloor+1\)<br>e.g. 64-px tile, K = 3, P = 1, S = 2 ⇒ 32 px.</div>
+      <div class="callout"><div>In a CNN the kernel values are <b>not</b> hand-picked: they are weights learned by back-prop.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Click Sobel x / y: the road and field boundaries light up — the same edge features that classical remote sensing computed by hand. In a trained CNN the first layer learns filters very much like these, deeper layers combine them into textures and objects. Blur and Gaussian are low-pass filters (noise down, detail down); median is the non-linear cousin that kills salt-and-pepper noise — the input switches to a noisy copy to show it.</aside>
+</section>
+
+<section data-title="SAR speckle filtering (interactive)" data-module="IV · Vision fundamentals" data-kind="practice" data-require="cv_fundamentals" data-src="Goodman (1976) <i>J. Opt. Soc. Am.</i> 66:1145 · Lee (1980) <i>IEEE TPAMI</i> 2:165 · Frost et al. (1982) <i>IEEE TPAMI</i> 4:157 · Argenti et al. (2013) A tutorial on speckle reduction in SAR images, <i>IEEE GRSM</i> 1(3):6 · Chierchia et al. (2017) SAR-CNN, IGARSS · Simulated Sentinel-1-like σ⁰ of the same scene with Gamma-distributed speckle">
+<h2>Application: <em>filtering SAR speckle</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="sar">
+      <div style="display:flex;gap:16px">
+        <div><div class="xs lin">speckled σ⁰ (dB)</div><canvas class="src" width="160" height="160" style="width:365px;height:365px;image-rendering:pixelated"></canvas></div>
+        <div><div class="xs lout">filtered</div><canvas class="dst" width="160" height="160" style="width:365px;height:365px;image-rendering:pixelated"></canvas></div>
+      </div>
+      <div class="ctrl">
+        <span class="xs">looks L</span><button class="btn sm ghost" data-looks="1">1</button><button class="btn sm ghost" data-looks="4">4</button><button class="btn sm ghost" data-looks="16">16</button>
+        <span class="sep"></span>
+        <button class="btn sm ghost" data-f="none">none</button><button class="btn sm ghost" data-f="mean">mean</button><button class="btn sm ghost" data-f="median">median</button><button class="btn sm ghost" data-f="lee">Lee</button>
+        <label>window <input type="range" name="win" min="3" max="11" step="2" value="7" style="width:110px"> <b class="wv"></b></label>
+      </div>
+      <div class="ctrl">
+        <label><input type="checkbox" name="mask"> water mask: σ⁰ &lt; −18 dB</label>
+        <button class="btn sm ghost" data-act="truth">show noise-free σ⁰</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">$$I=R\cdot n,\qquad \mathbb{E}[n]=1,\ \ \operatorname{Var}[n]=\tfrac1L,\qquad \text{ENL}=\frac{\mu_I^2}{\sigma_I^2}$$</div>
+      <div class="eqbox small"><b>Lee filter</b> — local statistics in the window:
+        $$\hat R=\bar I+k\,(I-\bar I),\qquad k=\frac{1-C_u^2/C_I^2}{1+C_u^2},\quad C_u=\tfrac{1}{\sqrt L},\ \ C_I=\tfrac{\sigma_I}{\bar I}$$
+        <div class="xs">flat field: \(C_I\approx C_u\Rightarrow k\to0\) (average) · edge or bright target: \(C_I\gg C_u\Rightarrow k\to1\) (keep)</div></div>
+      <div class="card"><h4>Speckle is multiplicative</h4><p class="small">Echoes of many scatterers in one cell interfere. The mean blurs edges and bright targets; median and Lee adapt to local contrast. Sentinel-1 GRD ≈ 4–5 looks: filter, then threshold for flood maps — or let a CNN learn the despeckler.</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Same scene, now as radar backscatter: water is dark (specular reflection away from the sensor), the town is bright (double bounce), fields are in between. With L = 1 the image is extremely grainy and the ENL of the dashed homogeneous field is ≈ 1. Tick the water mask: the raw image gives a salt-and-pepper mask (low IoU). Try mean 7×7 — ENL jumps, the mask cleans up, but the river edges and the bright town points blur. Lee keeps edges and point targets while still smoothing the fields. Larger L (multilooking) reduces speckle at the cost of resolution. Mean is a convolution; median and Lee are non-linear and adaptive — CNN despecklers (SAR-CNN) learn such behaviour from data.</aside>
 </section>
 
 <section data-title="Why convolution" data-module="IV · CNNs" data-kind="theory" data-src="LeCun et al. (1998) Gradient-based learning applied to document recognition, <i>Proc. IEEE</i> 86:2278 · De Marchi &amp; Mitchell (2019), Ch. 3 · Goodfellow et al. (2016), Ch. 9">
@@ -29,31 +239,6 @@
   </div>
 </div>
 <aside class="notes">The numbers make the point: convolution is a massive reduction in parameters by building in the right assumptions about images. 13·64·64 = 53 248 inputs × 256 = 13.6 M.</aside>
-</section>
-
-<section data-title="Convolution (interactive)" data-module="IV · CNNs" data-kind="theory" data-src="Interactive demo on a synthetic scene (fields, river, road, buildings) · Dumoulin &amp; Visin (2016) A guide to convolution arithmetic, arXiv:1603.07285">
-<h2>Convolution in action — <em>filters are feature detectors</em></h2>
-<div class="s-body">
-  <div class="cols c64">
-    <div class="demo" data-demo="conv">
-      <div style="display:flex;gap:16px;align-items:flex-start">
-        <div><div class="xs">input scene</div><canvas class="src" width="300" height="300" style="width:390px;height:390px;image-rendering:pixelated"></canvas></div>
-        <div><div class="xs">feature map</div><canvas class="dst" width="300" height="300" style="width:390px;height:390px;image-rendering:pixelated"></canvas></div>
-      </div>
-      <div class="ctrl">
-        <button class="btn ghost" data-k="identity">identity</button><button class="btn ghost" data-k="blur">blur</button><button class="btn ghost" data-k="sharpen">sharpen</button>
-        <button class="btn ghost" data-k="sobelX">Sobel x</button><button class="btn ghost" data-k="sobelY">Sobel y</button><button class="btn ghost" data-k="laplace">Laplacian</button>
-      </div>
-    </div>
-    <div class="rows">
-      <div class="eqbox">$$(\mathbf{I}\ast\mathbf{K})_{i,j}=\sum_{c}\sum_{m,n}\mathbf{I}_{c,\,i+m,\,j+n}\,\mathbf{K}_{c,m,n}+b$$</div>
-      <div class="card"><h4>Kernel</h4><div class="kernel readout" style="font-size:22px;line-height:1.6;text-align:center"></div></div>
-      <div class="eqbox small">Output size: \(\;W_{out}=\left\lfloor\frac{W-K+2P}{S}\right\rfloor+1\)<br>e.g. 64-px tile, K = 3, P = 1, S = 2 ⇒ 32 px.</div>
-      <div class="callout"><div>In a CNN the kernel values are <b>not</b> hand-picked: they are weights learned by back-prop.</div></div>
-    </div>
-  </div>
-</div>
-<aside class="notes">Click Sobel x / y: the road and field boundaries light up — the same edge features that classical remote sensing computed by hand. In a trained CNN the first layer learns filters very much like these, deeper layers combine them into textures and objects.</aside>
 </section>
 
 <section data-title="CNN building blocks" data-module="IV · CNNs" data-kind="theory" data-src="Zeiler &amp; Fergus (2014) Visualizing and understanding convolutional networks, ECCV · De Marchi &amp; Mitchell (2019), Ch. 3 (pooling, padding, stride)">
@@ -216,13 +401,13 @@ print("mIoU", smp.metrics.iou_score(tp, fp, fn, tn, reduction="macro"))
 <aside class="notes">U-Net is the default architecture for EO segmentation and the decoder pattern reappears on top of foundation models (UPerNet / U-Net decoders in TerraTorch). LandCover.ai has 25–50 cm aerial orthophotos of Poland; buildings and roads are the hard, small classes.</aside>
 </section>
 
-<section class="dark" data-title="Break" data-module="Break">
+<section class="dark" data-title="Break" data-module="Break" data-part="break">
 <div class="sec-wrap">
   <div class="sec-arch" style="--sec-c:#C99A2E"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num" style="font-size:96px;top:360px"><small>Pause</small>☕</div></div>
   <div class="sec-text">
-    <div class="time">1:20 – 1:30 · 10 min</div>
+    <div class="time">{{slot:break}}</div>
     <h2>Break · mint tea</h2>
-    <div class="ar">استراحة — أتاي بالنعناع</div>
+    <div class="ar" data-lang="ar">استراحة — أتاي بالنعناع</div>
     <ul>
       <li>Open <b>notebooks/</b> and launch Lab 2 in Colab (GPU runtime)</li>
       <li>Question to ponder: which axis of the data cube have we <i>not</i> used yet?</li>
