@@ -5,6 +5,7 @@
     <tr><th>Your data / question</th><th>Start with</th><th>Upgrade to</th><th>Lab</th></tr>
     <tr data-require="unsupervised"><td>No labels at all</td><td>k-means / GMM clustering, PCA</td><td>Self-supervised FM embeddings + clustering</td><td>8</td></tr>
     <tr><td>Pixel spectra, tabular features</td><td>Random forest · MLP</td><td>FM embeddings + MLP</td><td>1, 8</td></tr>
+    <tr data-require="tabular_fm"><td>Plots or labelled points, ≤ 10⁵ rows</td><td>Tuned LightGBM / CatBoost, spatial CV</td><td>Tabular FM (TabPFN, TabICL) on embeddings</td><td>8</td></tr>
     <tr data-require="detection"><td>Count / locate objects (ships, buildings)</td><td>YOLO / Faster R-CNN, sliced inference</td><td>Oriented detectors; SAM masks from boxes</td><td>—</td></tr>
     <tr><td>Image patches → one label</td><td>Pre-trained ResNet</td><td>ViT / GeoFM, linear probe or LoRA</td><td>2, 6</td></tr>
     <tr><td>Pixel-wise maps</td><td>U-Net (ResNet encoder)</td><td>Prithvi / Clay + UNet/UPerNet decoder; SAM refinement</td><td>3, 7, 9</td></tr>

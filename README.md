@@ -17,11 +17,11 @@ Slides are a static website (classic-modern Moroccan design: zellige stars, hors
 | V · RNN & LSTM | 3:25 | BPTT, vanishing gradients, LSTM gates | **Lab 4** ETo forecasting (Marrakech) |
 | VI · Generative models | 3:40 | GANs, pix2pix, CycleGAN, diffusion | **Lab 5** Sentinel-1 → Sentinel-2 |
 | VII · Transformers | 3:50 | Attention (live demo), ViT, SAM, CLIP, EO transformers | **Lab 6** ViT + temporal Transformer |
-| VIII · Geo foundation models | 4:05 | SSL, GeoFM generations, MAE vs JEPA, Zhu et al. (2026) 11 features, limitations, AtlasGeoFM; physics + ML (emulators, hybrid retrieval, physics-informed losses); trustworthy EO AI: calibration, ensemble uncertainty, explanations, domain shift | LAI-retrieval demo · 4 trust demos · **Labs 7–8** Prithvi-EO-2.0, AlphaEarth |
-| IX · Case study | 4:55 | Informal-settlement mapping with FMs (SDG 11.1.1, Morocco's *Villes sans bidonvilles*); responsible EO AI: geographic bias, carbon cost, privacy, dual use, documentation | **Lab 9** three-tier FM pipeline · bias & carbon demos |
-| X · LLMs & agents | 5:15 | Pre-training, alignment, prompting, RAG, ReAct agents, MCP, LangGraph | **Labs 10–11** EO RAG, Sentinel-2 agent |
+| VIII · Geo foundation models | 4:05 | SSL, GeoFM generations, MAE vs JEPA, Zhu et al. (2026) 11 features, limitations, AtlasGeoFM; physics + ML (emulators, hybrid retrieval, physics-informed losses); tabular foundation models (prior-fitted in-context learning, synthetic vs real priors, TabArena / BeyondArena, proper scoring rules); trustworthy EO AI: calibration, ensemble uncertainty, explanations, domain shift | LAI-retrieval demo · 3 tabular-FM demos · 4 trust demos · **Labs 7–8** Prithvi-EO-2.0, AlphaEarth |
+| IX · Case study | 5:15 | Informal-settlement mapping with FMs (SDG 11.1.1, Morocco's *Villes sans bidonvilles*); responsible EO AI: geographic bias, carbon cost, privacy, dual use, documentation | **Lab 9** three-tier FM pipeline · bias & carbon demos |
+| X · LLMs & agents | 5:35 | Pre-training, alignment, prompting, RAG, ReAct agents, MCP, LangGraph | **Labs 10–11** EO RAG, Sentinel-2 agent |
 
-131 slides · 210 equations · 38 interactive demos · 11 Colab-ready notebooks · speaker notes on every slide. Times are for the default settings (all blocks on, ≈ 5½ hours); see [Settings](#settings) to switch blocks off or hide single slides for a given audience (the 3-hour deep-learning original is every `[modules]` flag = false).
+138 slides · 234 equations · 41 interactive demos · 11 Colab-ready notebooks · speaker notes on every slide. Times are for the default settings (all blocks on, ≈ 6 hours); see [Settings](#settings) to switch blocks off or hide single slides for a given audience (the 3-hour deep-learning original is every `[modules]` flag = false).
 
 ## Publish on GitHub Pages
 
@@ -31,7 +31,7 @@ Slides are a static website (classic-modern Moroccan design: zellige stars, hors
 
 The `.nojekyll` file tells GitHub Pages to serve every file as-is. The **Open in Colab** buttons on `notebooks/` detect your user and repository name automatically from the Pages URL (branch `main`).
 
-> Large files: the pre-built `downloads/DL4EO_course.pdf` and `.pptx` are ~27 MB and ~34 MB — below GitHub's 100 MB file limit, so no Git LFS is needed.
+> Large files: the pre-built `downloads/DL4EO_course.pdf` and `.pptx` are ~28 MB and ~37 MB — below GitHub's 100 MB file limit, so no Git LFS is needed.
 
 ## Using the deck
 
@@ -75,9 +75,10 @@ python -m http.server 8000      # then open http://localhost:8000
 | `[modules] fusion` | `true` | Part IV block: why fuse SAR and optical (early / mid / late), mapping under clouds (2 slides, 1 demo) |
 | `[modules] evaluation` | `true` | Part IV block: spatial autocorrelation & cross-validation, metrics under class imbalance, stratified area estimation, evaluation protocol (4 slides, 3 demos) |
 | `[modules] physics_ml` | `true` | Part VIII block: four ways to put physics into ML, emulators and hybrid LAI retrieval (2 slides, 1 demo) |
+| `[modules] tabular_fm` | `true` | Part VIII block, after Lab 8: tabular foundation models — in-context learning as Bayesian averaging, priors and architectures, the 2023–2026 model landscape, a TabArena / BeyondArena leaderboard explorer (snapshot 17 Nov 2026), proper scoring rules, EO practice with spatial CV (7 slides, 3 demos) |
 | `[modules] trustworthy` | `true` | Part VIII block: calibration & temperature scaling, ensemble uncertainty, explanations, domain shift (4 slides, 4 demos) |
 | `[modules] responsible_ai` | `true` | Part IX block: geographic bias, carbon footprint, privacy / dual use / documentation (3 slides, 2 demos) |
-| `[schedule]` | minutes per part | section-slide times, the course map and the total duration (“5.6-hour course”) are computed from these; `[schedule.modules]` adds minutes when a block is on |
+| `[schedule]` | minutes per part | section-slide times, the course map and the total duration (“5.9-hour course”) are computed from these; `[schedule.modules]` adds minutes when a block is on |
 
 In slide sources, `data-lang="ar"` marks Arabic-only elements and `data-require="flag"` (or `"!flag"`) marks elements shown only when a module is on (or off); `{{slot:IV}}`, `{{start:IV}}`, `{{total_min}}`, `{{hours}}`, `{{duration}}`, `{{instructor}}` and `{{title}}` are filled in at build time.
 
@@ -99,6 +100,8 @@ assets/js/demos_rl.js             RL demos (value iteration, Q-learning, bandits
 assets/js/demos_eo.js             EO-practice demos (compositing, tiling, NMS/AP, fusion, spatial CV, metrics, area)
 assets/js/demos_trust.js          trust & responsibility demos (calibration, ensembles, attributions, domain shift,
                                   LAI retrieval, geographic bias, carbon)
+assets/js/demos_tfm.js            tabular-FM demos (in-context learning under a prior, TabArena explorer with an
+                                  embedded leaderboard snapshot, scoring rules)
 _build/charts.py, motifs.py       SVG charts and zellige motifs in assets/img/
 _build/export.py, make_pptx.js    regenerate downloads/ (PDF + PPTX)
 ```

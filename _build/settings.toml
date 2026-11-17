@@ -32,6 +32,7 @@ detection = true         # Part IV  · object detection: anchors, IoU, NMS, aver
 fusion = true            # Part IV  · SAR + optical fusion, mapping under clouds (1 demo)
 evaluation = true        # Part IV  · spatial cross-validation, rare-class metrics, area estimation, protocol (3 demos)
 physics_ml = true        # Part VIII · physics + ML, emulators and hybrid LAI retrieval (1 demo)
+tabular_fm = true        # Part VIII · tabular foundation models: in-context learning, TabArena, scoring rules (3 demos)
 trustworthy = true       # Part VIII · calibration, ensemble uncertainty, explanations, domain shift (4 demos)
 responsible_ai = true    # Part IX  · geographic bias, carbon footprint, privacy & documentation (2 demos)
 
@@ -63,5 +64,6 @@ detection = 10           # added to Part IV
 fusion = 10              # added to Part IV
 evaluation = 20          # added to Part IV
 physics_ml = 10          # added to Part VIII
+tabular_fm = 20          # added to Part VIII
 trustworthy = 20         # added to Part VIII
 responsible_ai = 10      # added to Part IX
