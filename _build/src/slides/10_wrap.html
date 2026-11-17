@@ -3,6 +3,7 @@
 <div class="s-body">
   <table class="tbl small">
     <tr><th>Your data / question</th><th>Start with</th><th>Upgrade to</th><th>Lab</th></tr>
+    <tr data-require="unsupervised"><td>No labels at all</td><td>k-means / GMM clustering, PCA</td><td>Self-supervised FM embeddings + clustering</td><td>8</td></tr>
     <tr><td>Pixel spectra, tabular features</td><td>Random forest · MLP</td><td>FM embeddings + MLP</td><td>1, 8</td></tr>
     <tr><td>Image patches → one label</td><td>Pre-trained ResNet</td><td>ViT / GeoFM, linear probe or LoRA</td><td>2, 6</td></tr>
     <tr><td>Pixel-wise maps</td><td>U-Net (ResNet encoder)</td><td>Prithvi / Clay + UNet/UPerNet decoder; SAM refinement</td><td>3, 7, 9</td></tr>
@@ -11,6 +12,7 @@
     <tr><td>Few labels, many places</td><td>AlphaEarth embeddings + RF</td><td>Few-shot FM, semi-supervised, test-time adaptation</td><td>8, 9</td></tr>
     <tr><td>Documents, reports, specs</td><td>RAG</td><td>Multimodal RAG (text + image embeddings)</td><td>10</td></tr>
     <tr><td>Multi-step workflows</td><td>Tool-calling agent</td><td>LangGraph multi-agent + human-in-the-loop</td><td>11</td></tr>
+    <tr data-require="reinforcement"><td>Sequential decisions (tasking, paths, control)</td><td>Bandits, tabular Q-learning in a simulator</td><td>Deep RL (PPO, DQN); RL-tuned LLM agents</td><td>—</td></tr>
   </table>
   <div class="callout mt"><div>Always: a <b>simple baseline</b>, <b>spatial/temporal splits</b>, a <b>map</b> of the errors, and a statement of <b>uncertainty</b>.</div></div>
 </div>

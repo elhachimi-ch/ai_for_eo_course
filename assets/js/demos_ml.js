@@ -75,6 +75,7 @@
     };
   }
   const SPEC_TICKS = [(v) => (v * RED_MAX).toFixed(2), (v) => (v * NIR_MAX).toFixed(2)];
+  Kit.Plot = Plot; Kit.SPEC_TICKS = SPEC_TICKS;
 
   /* ================================================================ datasets */
   /* three land-cover classes in (Red, NIR): compact water, vegetation along the vigour gradient,
@@ -92,6 +93,7 @@
     });
     return pts;
   }
+  Kit.spectral3 = spectral3;
   /* binary problems: c = 1 (positive) / 0 (negative) */
   const BIN = {
     linear: { axes: ["Red (B4) →", "NIR (B8) →"], ticks: SPEC_TICKS, neg: 0, names: ["water", "vegetation"] },

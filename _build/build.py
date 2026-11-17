@@ -39,6 +39,7 @@ def load_settings():
     s.setdefault("instructor", "")
     s.setdefault("modules", {})
     s.setdefault("schedule", {})
+    s.setdefault("hide_pages", [])
     for k, v in s["modules"].items():
         if not isinstance(v, bool):
             sys.exit(f"settings: [modules].{k} must be true or false, got {v!r}")
@@ -93,6 +94,46 @@ def make_keep(settings):
         req = re.search(r'data-require="([^"]+)"', attrs)
         return not req or all(flag_on(settings, f.strip()) for f in req.group(1).split(","))
     return keep
+
+
+# ---------------------------------------------------------------- hide_pages
+def hidden_slides(secs, spec):
+    """1-based indices of the slides to hide. spec: list of ints / "3-7" ranges / exact slide titles,
+    or one string such as "1,2,14"."""
+    if isinstance(spec, (int, str)):
+        spec = [spec]
+    items = []
+    for it in spec:
+        if isinstance(it, int):
+            items.append(it)
+        elif re.fullmatch(r"[\d\s,\-–]+", str(it)):
+            for part in str(it).split(","):
+                part = part.strip()
+                m = re.fullmatch(r"(\d+)\s*[-–]\s*(\d+)", part)
+                if m:
+                    items += range(int(m.group(1)), int(m.group(2)) + 1)
+                elif part:
+                    items.append(int(part))
+        else:
+            items.append(str(it).strip())
+    titles = []
+    for attrs, body in secs:
+        t = re.search(r'data-title="([^"]*)"', attrs)
+        h2 = re.search(r"<h2>(.*?)</h2>", body, flags=re.S)
+        titles.append(html.unescape(t.group(1) if t else re.sub("<.*?>", "", h2.group(1)) if h2 else ""))
+    hide = set()
+    for it in items:
+        if isinstance(it, int):
+            if 1 <= it <= len(secs):
+                hide.add(it)
+            else:
+                print(f"settings: hide_pages: there is no slide {it} (the deck has {len(secs)})", file=sys.stderr)
+        else:
+            hits = [i for i, t in enumerate(titles, 1) if t == it]
+            if not hits:
+                print(f"settings: hide_pages: no slide titled {it!r}", file=sys.stderr)
+            hide.update(hits)
+    return hide
 
 
 # ------------------------------------------------------------------ schedule
@@ -194,6 +235,8 @@ def build():
 
     # 3) slides: header / footer / numbering
     secs = re.findall(r"<section((?:\"[^\"]*\"|[^>\"])*)>(.*?)</section>", raw, flags=re.S)
+    hide = hidden_slides(secs, settings["hide_pages"])
+    secs = [x for i, x in enumerate(secs, 1) if i not in hide]
     out, demos = [], 0
     for i, (attrs, body) in enumerate(secs, 1):
         a = dict(re.findall(r'(data-[\w-]+|class)="([^"]*)"', attrs))
@@ -226,7 +269,7 @@ def build():
     on = [k for k, v in settings["modules"].items() if v]
     print(f"built {len(out)} slides, {len(maths)} equations, {len(codes)} code blocks, {demos} interactive demos · "
           f"{vals['hours']} ({vals['total_min']} min) · arabic={'on' if settings['arabic'] else 'off'} · "
-          f"modules on: {', '.join(on) or 'none'}")
+          f"modules on: {', '.join(on) or 'none'}" + (f" · hidden: {', '.join(map(str, sorted(hide)))}" if hide else ""))
 
 
 if __name__ == "__main__":

@@ -107,9 +107,12 @@
     const describe = (i) => comp[i].slice().sort((a, b) => b[1] - a[1]).filter(([, f]) => f >= 0.05)
       .map(([m, f]) => `${LIB[m].name} ${Math.round(f * 100)} %`).join(" + ");
     const spectrum = (i, l) => { let s = 0; for (const [m, f] of comp[i]) s += f * refl(m, l); return s * tex[i]; };
-    SC = { N, n, comp, B, rgb8, sar0, water, homog, vegPx, describe, spectrum };
+    const dom = new Uint8Array(n);   // dominant cover class per pixel
+    for (let i = 0; i < n; i++) { let b = comp[i][0]; for (const c of comp[i]) if (c[1] > b[1]) b = c; dom[i] = b[0]; }
+    SC = { N, n, comp, B, rgb8, sar0, water, homog, vegPx, describe, spectrum, dom, names: LIB.map((l) => l.name) };
     return SC;
   }
+  if (window.DemoKit) window.DemoKit.scene = scene;
   const cssPx = (cv, e, N) => { const b = cv.getBoundingClientRect(); return [clamp(Math.floor(((e.clientX - b.left) / b.width) * N), 0, N - 1), clamp(Math.floor(((e.clientY - b.top) / b.height) * N), 0, N - 1)]; };
   function frameAt(ctx, x, y, h, col) {
     ctx.fillStyle = col; const s = 2 * h + 3;

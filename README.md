@@ -1,6 +1,6 @@
-# Deep Learning for Earth Observation — a 3½-hour course
+# Deep Learning for Earth Observation — a 4-hour course
 
-**From Turing's learning machine, classical machine learning and the first perceptron to computer-vision fundamentals, CNNs, LSTMs, GANs, Transformers, geospatial foundation models, LLMs, RAG and LangGraph agents — with an Earth-observation application and code for every model family.**
+**From Turing's learning machine, classical, unsupervised and reinforcement learning and the first perceptron to computer-vision fundamentals, CNNs, LSTMs, GANs, Transformers, geospatial foundation models, LLMs, RAG and LangGraph agents — with an Earth-observation application and code for every model family.**
 
 Slides are a static website (classic-modern Moroccan design: zellige stars, horseshoe arches, Majorelle blue, saffron and terracotta) that runs on GitHub Pages with no build step and no external dependencies.
 
@@ -9,19 +9,19 @@ Slides are a static website (classic-modern Moroccan design: zellige stars, hors
 | Part | Time | Theory | Practice / lab |
 |---|---|---|---|
 | Opening | 0:00 | Roadmap, AI ⊃ ML ⊃ DL ⊃ GenAI | — |
-| I · History of AI & classical ML | 0:05 | Turing's learning machine (1950), symbolic AI and the winters, the classical-ML era: naive Bayes / maximum likelihood, decision trees, bagging & random forests, AdaBoost, gradient boosting, SVM (with the maths); data × algorithms × chips | 6 live ML playgrounds · random forest on Sentinel-2 |
-| II · Learning maths | 0:40 | Tensors/data cubes, loss & ERM, gradient descent (live demo), backprop, likelihood | — |
-| III · Perceptron & MLP | 0:50 | McCulloch–Pitts, Rosenblatt, convergence theorem, XOR, universal approximation | Perceptron playground · **Lab 1** |
-| IV · Vision & CNNs | 1:10 | Vision fundamentals: pixels & RGB, multispectral vs hyperspectral, grayscale, thresholding (Otsu), convolution step by step, filtering, SAR speckle filtering (Lee); then convolution priors, ResNet, U-Net | 7 live vision demos · **Labs 2–3** EuroSAT, LandCover.ai |
-| Break | 1:50 | | |
-| V · RNN & LSTM | 2:00 | BPTT, vanishing gradients, LSTM gates | **Lab 4** ETo forecasting (Marrakech) |
-| VI · Generative models | 2:15 | GANs, pix2pix, CycleGAN, diffusion | **Lab 5** Sentinel-1 → Sentinel-2 |
-| VII · Transformers | 2:25 | Attention (live demo), ViT, SAM, CLIP, EO transformers | **Lab 6** ViT + temporal Transformer |
-| VIII · Geo foundation models | 2:40 | SSL, GeoFM generations, MAE vs JEPA, Zhu et al. (2026) 11 features, limitations, AtlasGeoFM | **Labs 7–8** Prithvi-EO-2.0, AlphaEarth |
-| IX · Case study | 3:00 | Informal-settlement mapping with FMs (SDG 11.1.1, Morocco's *Villes sans bidonvilles*) | **Lab 9** three-tier FM pipeline |
-| X · LLMs & agents | 3:10 | Pre-training, alignment, prompting, RAG, ReAct agents, MCP, LangGraph | **Labs 10–11** EO RAG, Sentinel-2 agent |
+| I · History of AI, classical ML, unsupervised & RL | 0:05 | Turing's learning machine (1950), symbolic AI and the winters, the classical-ML era: naive Bayes / maximum likelihood, decision trees, bagging & random forests, AdaBoost, gradient boosting, SVM; unsupervised learning: k-means, unsupervised classification, GMM & EM, DBSCAN, PCA; reinforcement learning: MDPs & value iteration, Q-learning, bandits, deep RL & RLHF (all with the maths); data × algorithms × chips | 6 ML + 5 unsupervised + 3 RL live demos · random forest on Sentinel-2 |
+| II · Learning maths | 1:10 | Tensors/data cubes, loss & ERM, gradient descent (live demo), backprop, likelihood | — |
+| III · Perceptron & MLP | 1:20 | McCulloch–Pitts, Rosenblatt, convergence theorem, XOR, universal approximation | Perceptron playground · **Lab 1** |
+| IV · Vision & CNNs | 1:40 | Vision fundamentals: pixels & RGB, multispectral vs hyperspectral, grayscale, thresholding (Otsu), convolution step by step, filtering, SAR speckle filtering (Lee); then convolution priors, ResNet, U-Net | 7 live vision demos · **Labs 2–3** EuroSAT, LandCover.ai |
+| Break | 2:20 | | |
+| V · RNN & LSTM | 2:30 | BPTT, vanishing gradients, LSTM gates | **Lab 4** ETo forecasting (Marrakech) |
+| VI · Generative models | 2:45 | GANs, pix2pix, CycleGAN, diffusion | **Lab 5** Sentinel-1 → Sentinel-2 |
+| VII · Transformers | 2:55 | Attention (live demo), ViT, SAM, CLIP, EO transformers | **Lab 6** ViT + temporal Transformer |
+| VIII · Geo foundation models | 3:10 | SSL, GeoFM generations, MAE vs JEPA, Zhu et al. (2026) 11 features, limitations, AtlasGeoFM | **Labs 7–8** Prithvi-EO-2.0, AlphaEarth |
+| IX · Case study | 3:30 | Informal-settlement mapping with FMs (SDG 11.1.1, Morocco's *Villes sans bidonvilles*) | **Lab 9** three-tier FM pipeline |
+| X · LLMs & agents | 3:40 | Pre-training, alignment, prompting, RAG, ReAct agents, MCP, LangGraph | **Labs 10–11** EO RAG, Sentinel-2 agent |
 
-98 slides · 118 equations · 16 interactive demos · 11 Colab-ready notebooks · speaker notes on every slide. Times are for the default settings; see [Settings](#settings) to switch blocks off (the 3-hour original is classical_ml = false, cv_fundamentals = false).
+109 slides · 156 equations · 24 interactive demos · 11 Colab-ready notebooks · speaker notes on every slide. Times are for the default settings; see [Settings](#settings) to switch blocks off (the 3-hour original is all four `[modules]` = false).
 
 ## Publish on GitHub Pages
 
@@ -64,9 +64,12 @@ python -m http.server 8000      # then open http://localhost:8000
 |---|---|---|
 | `arabic` | `false` | `true` adds the Arabic subtitles (title, section and closing slides, break row) and loads the Arabic web font; `false` leaves all Arabic out |
 | `instructor` | `"Chouaib El Hachimi"` | name on the title slide and PPTX author |
+| `hide_pages` | `[]` | slides to leave out of the site, PDF and PPTX, e.g. `[1, 2, 14]`, `"1,2,14"` or `["20-25", "Break"]` (numbers as shown with `hide_pages = []`; ranges and exact slide titles allowed; the rest is renumbered) |
 | `[modules] classical_ml` | `true` | Part I block: era timeline, naive Bayes / MLC, decision trees, bagging & RF, AdaBoost, gradient boosting, SVM, comparison (8 slides, 6 demos) |
+| `[modules] unsupervised` | `true` | Part I block: era timeline, k-means, unsupervised classification of an image, GMM & EM, DBSCAN, PCA (6 slides, 5 demos) |
+| `[modules] reinforcement` | `true` | Part I block: era timeline, MDPs & value iteration, Q-learning, bandits (ε-greedy / UCB1 / Thompson), deep RL & RLHF (5 slides, 3 demos) |
 | `[modules] cv_fundamentals` | `true` | Part IV block: pixels & RGB, multi/hyperspectral, grayscale, thresholding, convolution step by step, SAR speckle filtering (6 slides, 6 demos) |
-| `[schedule]` | minutes per part | section-slide times, the course map and the total duration (“3½-hour course”) are computed from these; `[schedule.modules]` adds minutes when a block is on |
+| `[schedule]` | minutes per part | section-slide times, the course map and the total duration (“4-hour course”) are computed from these; `[schedule.modules]` adds minutes when a block is on |
 
 In slide sources, `data-lang="ar"` marks Arabic-only elements and `data-require="flag"` (or `"!flag"`) marks elements shown only when a module is on (or off); `{{slot:IV}}`, `{{start:IV}}`, `{{total_min}}`, `{{hours}}`, `{{duration}}` and `{{instructor}}` are filled in at build time.
 
@@ -83,6 +86,8 @@ _build/build.py                   assembles index.html (KaTeX maths + Pygments c
 assets/js/deck.js                 slide engine + original demos
 assets/js/demos_ml.js             classical-ML demos (naive Bayes, tree, forest, AdaBoost, boosting, SVM)
 assets/js/demos_vision.js         vision demos (pixels, spectra, grayscale, threshold, convolution, SAR)
+assets/js/demos_unsup.js          unsupervised demos (k-means, scene clustering, GMM/EM, DBSCAN, PCA)
+assets/js/demos_rl.js             RL demos (value iteration, Q-learning, bandits)
 _build/charts.py, motifs.py       SVG charts and zellige motifs in assets/img/
 _build/export.py, make_pptx.js    regenerate downloads/ (PDF + PPTX)
 ```
