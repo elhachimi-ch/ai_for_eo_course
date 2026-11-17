@@ -11,8 +11,8 @@ Settings (settings.toml, or the file named by $COURSE_SETTINGS):
  - any element with data-require="flag" is dropped when [modules].flag is false
    ("!flag" keeps the element only when the flag is false)
  - sections with data-part="I" (optionally data-extra="flag") drive the schedule; the
-   placeholders {{slot:I}}, {{start:I}}, {{total_min}}, {{hours}}, {{duration}} and
-   {{instructor}} are filled in from it.
+   placeholders {{slot:I}}, {{start:I}}, {{total_min}}, {{hours}}, {{duration}},
+   {{instructor}}, {{title}} and {{title_html}} are filled in from it.
 """
 import re, json, subprocess, html, glob, os, sys
 from pygments import highlight
@@ -37,6 +37,7 @@ def load_settings():
         s = tomllib.load(f)
     s.setdefault("arabic", True)
     s.setdefault("instructor", "")
+    s.setdefault("title", "AI for Earth Observation")
     s.setdefault("modules", {})
     s.setdefault("schedule", {})
     s.setdefault("hide_pages", [])
@@ -168,8 +169,11 @@ def schedule(raw, settings):
         vals[f"slot:{p}"] = f"{hm(t)} – {hm(t + mins)} · {mins} min"
         t += mins
     h = hours_label(t)
+    title = settings["title"]
+    a, sep, b = title.partition(" for ")
+    title_html = f"{html.escape(a)} for<br><em>{html.escape(b)}</em>" if sep else html.escape(title)
     vals.update({"total_min": str(t), "hours": f"{h} hours", "duration": f"{h}-hour",
-                 "instructor": html.escape(settings["instructor"])})
+                 "instructor": html.escape(settings["instructor"]), "title": html.escape(title), "title_html": title_html})
     return vals
 
 

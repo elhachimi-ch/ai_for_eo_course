@@ -1,6 +1,6 @@
-# Deep Learning for Earth Observation — a 4-hour course
+# AI for Earth Observation
 
-**From Turing's learning machine, classical, unsupervised and reinforcement learning and the first perceptron to computer-vision fundamentals, CNNs, LSTMs, GANs, Transformers, geospatial foundation models, LLMs, RAG and LangGraph agents — with an Earth-observation application and code for every model family.**
+**From Turing's learning machine, classical, unsupervised and reinforcement learning and the first perceptron to computer-vision fundamentals, CNNs, LSTMs, GANs, Transformers, geospatial foundation models, LLMs, RAG and LangGraph agents — with an Earth-observation application and code for every model family, and the EO practice around them: data preparation, object detection, SAR–optical fusion, honest evaluation, physics-aware ML, uncertainty, explainability and responsible use.**
 
 Slides are a static website (classic-modern Moroccan design: zellige stars, horseshoe arches, Majorelle blue, saffron and terracotta) that runs on GitHub Pages with no build step and no external dependencies.
 
@@ -12,16 +12,16 @@ Slides are a static website (classic-modern Moroccan design: zellige stars, hors
 | I · History of AI, classical ML, unsupervised & RL | 0:05 | Turing's learning machine (1950), symbolic AI and the winters, the classical-ML era: naive Bayes / maximum likelihood, decision trees, bagging & random forests, AdaBoost, gradient boosting, SVM; unsupervised learning: k-means, unsupervised classification, GMM & EM, DBSCAN, PCA; reinforcement learning: MDPs & value iteration, Q-learning, bandits, deep RL & RLHF (all with the maths); data × algorithms × chips | 6 ML + 5 unsupervised + 3 RL live demos · random forest on Sentinel-2 |
 | II · Learning maths | 1:10 | Tensors/data cubes, loss & ERM, gradient descent (live demo), backprop, likelihood | — |
 | III · Perceptron & MLP | 1:20 | McCulloch–Pitts, Rosenblatt, convergence theorem, XOR, universal approximation | Perceptron playground · **Lab 1** |
-| IV · Vision & CNNs | 1:40 | Vision fundamentals: pixels & RGB, multispectral vs hyperspectral, grayscale, thresholding (Otsu), convolution step by step, filtering, SAR speckle filtering (Lee); then convolution priors, ResNet, U-Net | 7 live vision demos · **Labs 2–3** EuroSAT, LandCover.ai |
-| Break | 2:20 | | |
-| V · RNN & LSTM | 2:30 | BPTT, vanishing gradients, LSTM gates | **Lab 4** ETo forecasting (Marrakech) |
-| VI · Generative models | 2:45 | GANs, pix2pix, CycleGAN, diffusion | **Lab 5** Sentinel-1 → Sentinel-2 |
-| VII · Transformers | 2:55 | Attention (live demo), ViT, SAM, CLIP, EO transformers | **Lab 6** ViT + temporal Transformer |
-| VIII · Geo foundation models | 3:10 | SSL, GeoFM generations, MAE vs JEPA, Zhu et al. (2026) 11 features, limitations, AtlasGeoFM | **Labs 7–8** Prithvi-EO-2.0, AlphaEarth |
-| IX · Case study | 3:30 | Informal-settlement mapping with FMs (SDG 11.1.1, Morocco's *Villes sans bidonvilles*) | **Lab 9** three-tier FM pipeline |
-| X · LLMs & agents | 3:40 | Pre-training, alignment, prompting, RAG, ReAct agents, MCP, LangGraph | **Labs 10–11** EO RAG, Sentinel-2 agent |
+| IV · Vision & CNNs | 1:40 | Vision fundamentals: pixels & RGB, multispectral vs hyperspectral, grayscale, thresholding (Otsu), convolution step by step, filtering, SAR speckle filtering (Lee); EO data preparation: analysis-ready data, clouds & compositing, tiles & normalisation, labels; convolution priors, ResNet, U-Net; object detection (anchors, IoU, NMS, AP, sliced inference); SAR–optical fusion; evaluating maps: spatial cross-validation, metrics for rare classes, stratified area estimation, an evaluation protocol | 7 vision + 2 data + 1 detection + 1 fusion + 3 evaluation demos · **Labs 2–3** EuroSAT, LandCover.ai |
+| Break | 3:15 | | |
+| V · RNN & LSTM | 3:25 | BPTT, vanishing gradients, LSTM gates | **Lab 4** ETo forecasting (Marrakech) |
+| VI · Generative models | 3:40 | GANs, pix2pix, CycleGAN, diffusion | **Lab 5** Sentinel-1 → Sentinel-2 |
+| VII · Transformers | 3:50 | Attention (live demo), ViT, SAM, CLIP, EO transformers | **Lab 6** ViT + temporal Transformer |
+| VIII · Geo foundation models | 4:05 | SSL, GeoFM generations, MAE vs JEPA, Zhu et al. (2026) 11 features, limitations, AtlasGeoFM; physics + ML (emulators, hybrid retrieval, physics-informed losses); trustworthy EO AI: calibration, ensemble uncertainty, explanations, domain shift | LAI-retrieval demo · 4 trust demos · **Labs 7–8** Prithvi-EO-2.0, AlphaEarth |
+| IX · Case study | 4:55 | Informal-settlement mapping with FMs (SDG 11.1.1, Morocco's *Villes sans bidonvilles*); responsible EO AI: geographic bias, carbon cost, privacy, dual use, documentation | **Lab 9** three-tier FM pipeline · bias & carbon demos |
+| X · LLMs & agents | 5:15 | Pre-training, alignment, prompting, RAG, ReAct agents, MCP, LangGraph | **Labs 10–11** EO RAG, Sentinel-2 agent |
 
-109 slides · 156 equations · 24 interactive demos · 11 Colab-ready notebooks · speaker notes on every slide. Times are for the default settings; see [Settings](#settings) to switch blocks off (the 3-hour original is all four `[modules]` = false).
+131 slides · 210 equations · 38 interactive demos · 11 Colab-ready notebooks · speaker notes on every slide. Times are for the default settings (all blocks on, ≈ 5½ hours); see [Settings](#settings) to switch blocks off or hide single slides for a given audience (the 3-hour deep-learning original is every `[modules]` flag = false).
 
 ## Publish on GitHub Pages
 
@@ -31,7 +31,7 @@ Slides are a static website (classic-modern Moroccan design: zellige stars, hors
 
 The `.nojekyll` file tells GitHub Pages to serve every file as-is. The **Open in Colab** buttons on `notebooks/` detect your user and repository name automatically from the Pages URL (branch `main`).
 
-> Large files: the pre-built `downloads/DL4EO_course.pdf` and `.pptx` are ~23–26 MB each — below GitHub's 100 MB file limit, so no Git LFS is needed.
+> Large files: the pre-built `downloads/DL4EO_course.pdf` and `.pptx` are ~27 MB and ~34 MB — below GitHub's 100 MB file limit, so no Git LFS is needed.
 
 ## Using the deck
 
@@ -63,22 +63,30 @@ python -m http.server 8000      # then open http://localhost:8000
 | Setting | Default | Effect |
 |---|---|---|
 | `arabic` | `false` | `true` adds the Arabic subtitles (title, section and closing slides, break row) and loads the Arabic web font; `false` leaves all Arabic out |
+| `title` | `"AI for Earth Observation"` | course title on the title slide, browser tab, contents panel and PPTX (split over two lines at the first “ for ”) |
 | `instructor` | `"Chouaib El Hachimi"` | name on the title slide and PPTX author |
 | `hide_pages` | `[]` | slides to leave out of the site, PDF and PPTX, e.g. `[1, 2, 14]`, `"1,2,14"` or `["20-25", "Break"]` (numbers as shown with `hide_pages = []`; ranges and exact slide titles allowed; the rest is renumbered) |
 | `[modules] classical_ml` | `true` | Part I block: era timeline, naive Bayes / MLC, decision trees, bagging & RF, AdaBoost, gradient boosting, SVM, comparison (8 slides, 6 demos) |
 | `[modules] unsupervised` | `true` | Part I block: era timeline, k-means, unsupervised classification of an image, GMM & EM, DBSCAN, PCA (6 slides, 5 demos) |
 | `[modules] reinforcement` | `true` | Part I block: era timeline, MDPs & value iteration, Q-learning, bandits (ε-greedy / UCB1 / Thompson), deep RL & RLHF (5 slides, 3 demos) |
 | `[modules] cv_fundamentals` | `true` | Part IV block: pixels & RGB, multi/hyperspectral, grayscale, thresholding, convolution step by step, SAR speckle filtering (6 slides, 6 demos) |
-| `[schedule]` | minutes per part | section-slide times, the course map and the total duration (“4-hour course”) are computed from these; `[schedule.modules]` adds minutes when a block is on |
+| `[modules] eo_data` | `true` | Part IV block: analysis-ready data and STAC code, clouds & compositing, tiles / padding / normalisation, where labels come from (4 slides, 2 demos) |
+| `[modules] detection` | `true` | Part IV block: detector families and losses, IoU / NMS / precision–recall / AP, oriented boxes and sliced inference (3 slides, 1 demo) |
+| `[modules] fusion` | `true` | Part IV block: why fuse SAR and optical (early / mid / late), mapping under clouds (2 slides, 1 demo) |
+| `[modules] evaluation` | `true` | Part IV block: spatial autocorrelation & cross-validation, metrics under class imbalance, stratified area estimation, evaluation protocol (4 slides, 3 demos) |
+| `[modules] physics_ml` | `true` | Part VIII block: four ways to put physics into ML, emulators and hybrid LAI retrieval (2 slides, 1 demo) |
+| `[modules] trustworthy` | `true` | Part VIII block: calibration & temperature scaling, ensemble uncertainty, explanations, domain shift (4 slides, 4 demos) |
+| `[modules] responsible_ai` | `true` | Part IX block: geographic bias, carbon footprint, privacy / dual use / documentation (3 slides, 2 demos) |
+| `[schedule]` | minutes per part | section-slide times, the course map and the total duration (“5.6-hour course”) are computed from these; `[schedule.modules]` adds minutes when a block is on |
 
-In slide sources, `data-lang="ar"` marks Arabic-only elements and `data-require="flag"` (or `"!flag"`) marks elements shown only when a module is on (or off); `{{slot:IV}}`, `{{start:IV}}`, `{{total_min}}`, `{{hours}}`, `{{duration}}` and `{{instructor}}` are filled in at build time.
+In slide sources, `data-lang="ar"` marks Arabic-only elements and `data-require="flag"` (or `"!flag"`) marks elements shown only when a module is on (or off); `{{slot:IV}}`, `{{start:IV}}`, `{{total_min}}`, `{{hours}}`, `{{duration}}`, `{{instructor}}` and `{{title}}` are filled in at build time.
 
 ## Editing the slides
 
 Sources live in `_build/`:
 
 ```
-_build/settings.toml              course settings (Arabic, instructor, optional blocks, schedule)
+_build/settings.toml              course settings (title, Arabic, instructor, hidden slides, optional blocks, schedule)
 _build/src/template.html          page shell (toolbar, contents, notes panel)
 _build/src/slides/*.html          one file per part — edit content here
 _build/nb/*.py                    notebook sources ("# %%" cells)
@@ -88,6 +96,9 @@ assets/js/demos_ml.js             classical-ML demos (naive Bayes, tree, forest,
 assets/js/demos_vision.js         vision demos (pixels, spectra, grayscale, threshold, convolution, SAR)
 assets/js/demos_unsup.js          unsupervised demos (k-means, scene clustering, GMM/EM, DBSCAN, PCA)
 assets/js/demos_rl.js             RL demos (value iteration, Q-learning, bandits)
+assets/js/demos_eo.js             EO-practice demos (compositing, tiling, NMS/AP, fusion, spatial CV, metrics, area)
+assets/js/demos_trust.js          trust & responsibility demos (calibration, ensembles, attributions, domain shift,
+                                  LAI retrieval, geographic bias, carbon)
 _build/charts.py, motifs.py       SVG charts and zellige motifs in assets/img/
 _build/export.py, make_pptx.js    regenerate downloads/ (PDF + PPTX)
 ```

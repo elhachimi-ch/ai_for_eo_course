@@ -1,4 +1,4 @@
-<section class="dark" data-title="Part VIII — Geospatial foundation models" data-module="VIII · Geo foundation models" data-part="VIII">
+<section class="dark" data-title="Part VIII — Geospatial foundation models" data-module="VIII · Geo foundation models" data-part="VIII" data-extra="physics_ml,trustworthy">
 <div class="sec-wrap">
   <div class="sec-arch" style="--sec-c:#0F6B5C"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>VIII</div></div>
   <div class="sec-text">
@@ -9,7 +9,9 @@
       <li>Self-supervised learning → foundation models → GeoFMs</li>
       <li>Three generations: RGB → multispectral → multimodal</li>
       <li>MAE, contrastive, DINO, JEPA — and the 11 features of an ideal Earth FM</li>
+      <li data-require="physics_ml">Physics + ML: emulators and hybrid retrieval (live demo)</li>
       <li>Labs 7–8 — Prithvi-EO-2.0 with TerraTorch, AlphaEarth embeddings</li>
+      <li data-require="trustworthy">Trustworthy EO AI: calibration, uncertainty, explanations, domain shift</li>
     </ul>
   </div>
 </div>
@@ -195,6 +197,54 @@
 <aside class="notes">This is the instructor's own research direction (from the seminar deck) and links back to Lab 4: the LSTM ETo forecaster is the small, supervised version; AtlasGeoFM is the self-supervised, physics-aware, multi-task version.</aside>
 </section>
 
+<section data-title="Four ways to put physics into ML" data-module="VIII · Physics + ML" data-kind="theory" data-require="physics_ml" data-src="Reichstein et al. (2019) <i>Nature</i> 566:195 · Raissi et al. (2019) PINNs, <i>J. Comput. Phys.</i> 378:686 · Karniadakis et al. (2021) <i>Nat. Rev. Phys.</i> 3:422 · Jacquemoud et al. (2009) PROSAIL, <i>RSE</i> 113:S56 · Weiss &amp; Baret (2016) S2ToolBox Level-2 ATBD · Kochkov et al. (2024) NeuralGCM, <i>Nature</i> 632:1060">
+<h2>Four ways to put <em>physics</em> into machine learning</h2>
+<div class="s-body">
+  <div class="cols c4" style="height:auto">
+    <div class="card arch blue"><div class="icon">①</div><h3>Physics as input</h3><p class="small">Indices, reference ET (FAO-56), terrain, solar geometry as features or priors. Cheap and robust.</p></div>
+    <div class="card arch green"><div class="icon">②</div><h3>Emulate &amp; invert</h3><p class="small">Simulate a radiative-transfer model (PROSAIL), train ML on the simulations, apply to real pixels: <b>hybrid retrieval</b>. The SNAP biophysical processor is such a network.</p></div>
+    <div class="card arch sand"><div class="icon">③</div><h3>Physics in the loss</h3><p class="small">Penalise violations of conservation laws, monotonicity or a PDE residual — physics-informed neural networks.</p></div>
+    <div class="card arch clay"><div class="icon">④</div><h3>Hybrid models</h3><p class="small">Keep the physical model, learn only the unknown part (a parameterisation) end-to-end: NeuralGCM.</p></div>
+  </div>
+  <div class="cols c2 mt2" style="height:auto">
+    <div class="eqbox small">Physics-constrained training: $$\mathcal{L}=\underbrace{\tfrac1n\textstyle\sum_i\big(y_i-f_\theta(\mathbf{x}_i)\big)^2}_{\text{fit the data}}+\lambda\,\underbrace{\big\lVert\mathcal{N}[f_\theta]\big\rVert^2}_{\text{obey the physics}}$$</div>
+    <div class="callout"><div class="small">The aim (Reichstein et al. 2019): models that fit the data, stay physically consistent, extrapolate better to new conditions, and can be <b>interpreted</b> in terms of processes.</div></div>
+  </div>
+</div>
+<aside class="notes">This picks up the first limitation of current GeoFMs: physics ignorance. The four options go from the least to the most invasive. Option ② is the workhorse of operational biophysical products: Copernicus LAI, fAPAR and fCover from Sentinel-2 come from neural networks trained on PROSAIL simulations. Option ③ needs a differentiable physical constraint, e.g. water-balance closure or energy-balance closure in ET models. Option ④ is where weather and climate modelling is heading.</aside>
+</section>
+
+<section data-title="Emulators and hybrid retrieval (interactive)" data-module="VIII · Physics + ML" data-kind="practice" data-require="physics_ml" data-src="Clevers (1989) <i>RSE</i> 29:25 · Baret &amp; Guyot (1991) <i>RSE</i> 35:161 · Verrelst et al. (2015) Retrieval of vegetation bio-geophysical properties, a review, <i>ISPRS J.</i> 108:273 · Weiss &amp; Baret (2016) S2ToolBox ATBD · Toy two-band canopy model (Beer–Lambert-type), not PROSAIL">
+<h2>Retrieving LAI: <em>empirical, LUT or hybrid</em></h2>
+<div class="s-body">
+  <div class="cols c73">
+    <div class="demo" data-demo="emu">
+      <div style="display:flex;gap:16px">
+        <div><div class="xs">forward model: canopy reflectance vs LAI</div><canvas class="fwd" width="440" height="300" style="width:440px;height:300px"></canvas></div>
+        <div><div class="xs">retrieval on 260 test pixels</div><canvas class="sct" width="440" height="300" style="width:440px;height:300px"></canvas></div>
+      </div>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-m="ndvi">empirical NDVI fit (25 plots)</button><button class="btn sm ghost" data-m="lut">LUT inversion</button><button class="btn sm ghost" data-m="ml">hybrid ML on simulations</button>
+        <button class="btn sm ghost" data-act="new">New test set</button>
+      </div>
+      <div class="ctrl">
+        <label>soil brightness range <input type="range" name="soil" min="0" max="0.6" step="0.05" value="0.4" style="width:140px"> <b class="vv"></b></label>
+        <label>noise σ <input type="range" name="noise" min="0" max="0.03" step="0.002" value="0.01" style="width:140px"> <b class="nv"></b></label>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">Toy canopy model, band \(b\), soil brightness \(s\):
+        $$\rho_b=\rho_{\infty,b}+\big(s\,\rho_{s,b}-\rho_{\infty,b}\big)\,e^{-k_b\,\mathrm{LAI}}$$</div>
+      <div class="eqbox small">LUT inversion: average the LAI of the \(k\) simulations closest to the observation
+        $$\widehat{\mathrm{LAI}}=\tfrac1k\textstyle\sum_{j\in\mathcal{N}_k(\boldsymbol\rho)}\mathrm{LAI}_j$$</div>
+      <div class="card green"><h4>Hybrid = physics + ML</h4><p class="small">Train a regressor on (simulated reflectance + noise → LAI). Physics supplies unlimited labels; ML supplies speed.</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">The empirical model is a cubic NDVI → LAI fit on 25 field plots collected on one soil type: fine on that soil, biased on brighter or darker soils, and it saturates at high LAI. The look-up table (3 000 simulations over all soils) handles soil variation because the physics knows about soil; the hybrid model learns the same inverse mapping from 1 500 simulations and runs in microseconds per pixel — this is how the Sentinel-2 biophysical processor works with PROSAIL. Set the soil range to 0 and the empirical fit becomes competitive; raise the noise and all methods degrade, LUT/hybrid most gracefully. The canopy model here is a deliberately simple two-band Beer–Lambert form, not PROSAIL.</aside>
+</section>
+
 <section data-title="Adapting foundation models" data-module="VIII · Geo foundation models" data-kind="theory" data-src="Hu et al. (2022) LoRA, ICLR · Rodriguez (2024) <i>Generative AI Foundations in Python</i>, Ch. 5 (PEFT, LoRA, AdaLoRA) · Rothman (2024), Ch. 11 (embeddings as an alternative to fine-tuning) · Google Earth Engine catalog: GOOGLE/SATELLITE_EMBEDDING/V1/ANNUAL">
 <h2>Four ways to <em>use</em> a foundation model</h2>
 <div class="s-body">
@@ -295,4 +345,114 @@ landcover = emb.classify(clf)
   </div>
 </div>
 <aside class="notes">The example reference points are placeholders: replace them with locations you have checked on VHR imagery. All 64 bands must be used together — individual axes have no physical meaning.</aside>
+</section>
+
+<section data-title="Calibration: can you trust the probability? (interactive)" data-module="VIII · Trustworthy EO AI" data-kind="theory" data-require="trustworthy" data-src="Guo et al. (2017) On calibration of modern neural networks, ICML · Naeini et al. (2015) Expected calibration error, AAAI · Niculescu-Mizil &amp; Caruana (2005) ICML · Minderer et al. (2021) Revisiting the calibration of modern neural networks, NeurIPS · Simulated 5-class classifier, 4 000 validation pixels">
+<h2>Calibration: <em>does 90 % mean 90 %?</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="calib">
+      <canvas class="rel" width="800" height="330" style="width:800px;height:330px"></canvas>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-model="over">over-confident network</button><button class="btn sm ghost" data-model="under">under-confident model</button>
+        <span class="sep"></span>
+        <label>temperature T <input type="range" name="T" min="0.2" max="5" step="0.05" value="1" style="width:200px"> <b class="tv"></b></label>
+        <button class="btn sm gold" data-act="fit">fit T on validation</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">Temperature scaling of the logits \(\mathbf{z}\):
+        $$\hat{\mathbf{p}}=\operatorname{softmax}(\mathbf{z}/T)$$
+        Expected calibration error over confidence bins \(B_m\):
+        $$\mathrm{ECE}=\sum_m\frac{|B_m|}{n}\,\big|\operatorname{acc}(B_m)-\operatorname{conf}(B_m)\big|$$</div>
+      <div class="card"><h4>Why EO needs it</h4><p class="small">Probabilities feed thresholds, area estimates, alerts and decisions. Deep networks trained with cross-entropy are usually <b>over-confident</b>; one scalar \(T\), fitted on held-out data, fixes much of it.</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Left: reliability diagram. Blue bars are the accuracy in each confidence bin; the shaded part is the gap to the confidence the model claimed; the diagonal is perfect calibration. Right: how often each confidence occurs. The over-confident network puts most pixels near 100 % confidence but is right less often. Drag T above 1 (softer probabilities) or press “fit T”: ECE and NLL drop, accuracy does not change because the arg-max is the same. Calibration holds only for data like the validation set — after a domain shift it degrades again (two slides on).</aside>
+</section>
+
+<section data-title="Uncertainty from ensembles (interactive)" data-module="VIII · Trustworthy EO AI" data-kind="theory" data-require="trustworthy" data-src="Lakshminarayanan et al. (2017) Deep ensembles, NeurIPS · Gal &amp; Ghahramani (2016) MC dropout, ICML · Kendall &amp; Gal (2017) NeurIPS · Angelopoulos &amp; Bates (2023) Conformal prediction, <i>Found. Trends ML</i> 16:494 · Lang et al. (2023) Global canopy height, <i>Nat. Ecol. Evol.</i> 7:1778 · Synthetic biomass data">
+<h2>Ensembles: <em>aleatoric vs epistemic</em> uncertainty</h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="ens">
+      <canvas width="800" height="360" style="width:800px;height:360px"></canvas>
+      <div class="ctrl">
+        <label>members M <input type="range" name="m" min="1" max="20" step="1" value="8" style="width:150px"> <b class="mv"></b></label>
+        <label><input type="checkbox" name="gap" checked> gap in the field data</label>
+        <label>noise <input type="range" name="noise" min="0.2" max="2" step="0.1" value="1" style="width:120px"> <b class="nv"></b></label>
+        <button class="btn sm ghost" data-act="new">New data</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">Each member \(m\) predicts a mean \(\mu_m\) and a noise variance \(\sigma_m^2\):
+        $$\sigma^2(\mathbf{x})=\underbrace{\tfrac1M\textstyle\sum_m\sigma_m^2}_{\text{aleatoric}}+\underbrace{\tfrac1M\textstyle\sum_m(\mu_m-\bar\mu)^2}_{\text{epistemic}}$$</div>
+      <div class="card"><h4>Two kinds of “don't know”</h4><p class="small"><b>Aleatoric</b>: noise in the data (saturation, speckle) — more data won't remove it. <b>Epistemic</b>: the model has not seen such inputs — it grows in gaps and outside the training range.</p></div>
+      <div class="callout green"><div class="small"><b>Conformal prediction</b> wraps any model: widen intervals by the \((1-\alpha)\) quantile of held-out residuals to guarantee coverage.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Biomass from L-band backscatter saturates and gets noisier at high biomass (heteroscedastic, aleatoric noise). Each ensemble member is trained on a bootstrap sample with different random features; where they agree the dark (epistemic) band is thin. Inside the gap and beyond the data (gold zone) they disagree — that disagreement is the warning. With M = 1 there is no epistemic estimate at all. MC dropout approximates the same idea with one network. Global canopy-height and biomass maps (e.g. Lang et al. 2023) now ship a per-pixel uncertainty layer built this way.</aside>
+</section>
+
+<section data-title="Explaining a classifier (interactive)" data-module="VIII · Trustworthy EO AI" data-kind="theory" data-require="trustworthy" data-src="Selvaraju et al. (2017) Grad-CAM, ICCV · Sundararajan et al. (2017) Integrated gradients, ICML · Lundberg &amp; Lee (2017) SHAP, NeurIPS · Breiman (2001) <i>Mach. Learn.</i> 45:5 · Adebayo et al. (2018) Sanity checks for saliency maps, NeurIPS · Tuia et al. (2021) AI for Earth science, <i>IEEE GRSM</i> 9(2):88">
+<h2>Explaining a classifier: <em>which bands, which pixels?</em></h2>
+<div class="s-body">
+  <div class="cols c73">
+    <div class="demo" data-demo="xai">
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div><div class="xs">click a pixel</div><canvas class="img" width="320" height="320" style="width:250px;height:250px;cursor:crosshair"></canvas></div>
+        <div><div class="xs">attribution map of one band (<span style="color:#B5502E">for</span> / <span style="color:#2E4BC6">against</span> the predicted class)</div><canvas class="att" width="320" height="320" style="width:250px;height:250px;cursor:crosshair"></canvas></div>
+        <div><div class="xs">per-band evidence</div><canvas class="bars" width="420" height="250" style="width:420px;height:250px"></canvas></div>
+      </div>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-view="rgb">true colour</button><button class="btn sm ghost" data-view="pred">prediction</button>
+        <span class="sep"></span>
+        <span class="xs">map band</span><button class="btn sm ghost" data-band="2">B4 red</button><button class="btn sm ghost" data-band="6">B8 NIR</button><button class="btn sm ghost" data-band="8">B11 SWIR</button><button class="btn sm ghost" data-band="0">B2 blue</button>
+        <span class="sep"></span>
+        <button class="btn sm ghost" data-mode="local">this pixel</button><button class="btn sm gold" data-mode="global">permutation importance</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">Linear model, baseline = mean pixel: attribution of band \(j\) is exact
+        $$a_j=w_{k,j}\,(x_j-\bar x_j),\quad \textstyle\sum_j a_j=z_k(\mathbf{x})-z_k(\bar{\mathbf{x}})$$</div>
+      <div class="eqbox small">CNNs — Grad-CAM for class \(c\):
+        $$L^c=\mathrm{ReLU}\Big(\textstyle\sum_k\alpha_k^c A^k\Big),\quad \alpha_k^c=\frac1Z\sum_{i,j}\frac{\partial y^c}{\partial A^k_{ij}}$$</div>
+      <div class="callout clay"><div class="small">Explanations show what the <b>model</b> uses, not what causes the land cover. Correlated bands share credit; check saliency maps with sanity tests.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">A softmax regression on 10 Sentinel-2 bands of the synthetic scene. For a linear model, gradient × (input − baseline) is the exact decomposition of the logit (it equals integrated gradients and, with independent features, SHAP). Click a field: NIR (B8) is strong evidence for vegetation; click the river: SWIR and NIR count against everything but water. The attribution map shows one band's contribution everywhere. Permutation importance asks a global question: how much does accuracy drop if I scramble this band? Correlated red-edge and NIR bands each look unimportant because the others carry the same information — a classic trap. For deep networks Grad-CAM gives coarse “where” maps; Adebayo et al. showed some saliency methods barely depend on the model, so test them.</aside>
+</section>
+
+<section data-title="Domain shift (interactive)" data-module="VIII · Trustworthy EO AI" data-kind="theory" data-require="trustworthy" data-src="Tuia, Persello &amp; Bruzzone (2016) Domain adaptation in remote sensing, <i>IEEE GRSM</i> 4(2):41 · Ganin et al. (2016) DANN, <i>JMLR</i> 17:59 · Wang et al. (2021) Tent, ICLR · Koh et al. (2021) WILDS (incl. FMoW, PovertyMap), ICML · Lee et al. (2018) Mahalanobis OOD detection, NeurIPS">
+<h2>Domain shift: <em>new region, new season, new sensor</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="shift">
+      <canvas width="660" height="400" style="width:660px;height:400px"></canvas>
+      <div class="ctrl">
+        <label>shift <input type="range" name="s" min="0" max="1" step="0.05" value="0.8" style="width:150px"> <b class="sv"></b></label>
+        <button class="btn sm ghost" data-a="none">no adaptation</button><button class="btn sm ghost" data-a="std">per-domain standardisation</button><button class="btn sm ghost" data-a="ft">fine-tune, 11 labels</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">Trained on source \(p_S(\mathbf{x},y)\), used on target \(p_T(\mathbf{x},y)\):
+        $$p_T(\mathbf{x})\neq p_S(\mathbf{x})\ \ \text{(covariate shift)},\qquad p_T(y\mid\mathbf{x})\neq p_S(y\mid\mathbf{x})\ \ \text{(concept shift)}$$</div>
+      <table class="tbl small">
+        <tr><th>Remedy</th><th>Needs</th></tr>
+        <tr><td>Normalise per scene / augment</td><td>nothing</td></tr>
+        <tr><td>Domain-adversarial, test-time adaptation</td><td>unlabelled target data</td></tr>
+        <tr><td>Fine-tune / few-shot</td><td>a few target labels</td></tr>
+        <tr><td>Detect out-of-distribution, abstain</td><td>a confidence score</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+<aside class="notes">Hollow points: the source region used for training. Filled points: the target region, after a shift that brightens red (haze, drier soils) and darkens the NIR of vegetation (dry season). Black rings mark target errors. With no adaptation, vegetation is mistaken for soil. Per-domain standardisation removes most of the global gain/offset without any target labels; 11 labelled target points (gold rings) fix the rest. The readout also counts how many target points a Mahalanobis test flags as out-of-distribution — a model that knows when it is outside its training data can abstain instead of being confidently wrong.</aside>
 </section>

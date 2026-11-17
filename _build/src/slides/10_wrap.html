@@ -1,12 +1,15 @@
 <section data-title="Which model for which EO problem" data-module="Wrap-up" data-part="wrap" data-kind="theory" data-src="Synthesis of the course">
 <h2>Cheat-sheet: <em>which model for which EO problem?</em></h2>
 <div class="s-body">
-  <table class="tbl small">
+  <table class="tbl small dense">
     <tr><th>Your data / question</th><th>Start with</th><th>Upgrade to</th><th>Lab</th></tr>
     <tr data-require="unsupervised"><td>No labels at all</td><td>k-means / GMM clustering, PCA</td><td>Self-supervised FM embeddings + clustering</td><td>8</td></tr>
     <tr><td>Pixel spectra, tabular features</td><td>Random forest · MLP</td><td>FM embeddings + MLP</td><td>1, 8</td></tr>
+    <tr data-require="detection"><td>Count / locate objects (ships, buildings)</td><td>YOLO / Faster R-CNN, sliced inference</td><td>Oriented detectors; SAM masks from boxes</td><td>—</td></tr>
     <tr><td>Image patches → one label</td><td>Pre-trained ResNet</td><td>ViT / GeoFM, linear probe or LoRA</td><td>2, 6</td></tr>
     <tr><td>Pixel-wise maps</td><td>U-Net (ResNet encoder)</td><td>Prithvi / Clay + UNet/UPerNet decoder; SAM refinement</td><td>3, 7, 9</td></tr>
+    <tr data-require="fusion"><td>Cloudy optical, need regular maps</td><td>SAR + optical fusion with a cloud mask</td><td>Multimodal GeoFM (CROMA, TerraMind)</td><td>5</td></tr>
+    <tr data-require="physics_ml"><td>Biophysical variables (LAI, biomass)</td><td>Hybrid retrieval on RTM simulations</td><td>Physics-constrained or differentiable hybrid models</td><td>—</td></tr>
     <tr><td>Time series (weather, NDVI)</td><td>LSTM / GRU</td><td>Temporal Transformer; physics-aware FM</td><td>4, 6</td></tr>
     <tr><td>Translate / fill images</td><td>pix2pix (cGAN)</td><td>Diffusion models</td><td>5</td></tr>
     <tr><td>Few labels, many places</td><td>AlphaEarth embeddings + RF</td><td>Few-shot FM, semi-supervised, test-time adaptation</td><td>8, 9</td></tr>

@@ -2,9 +2,9 @@
 <div class="title-wrap">
   <div>
     <div class="t-kicker">{{duration}} course · theory &amp; practice</div>
-    <h1>Deep Learning for<br><em>Earth Observation</em></h1>
+    <h1>{{title_html}}</h1>
     <div class="t-ar" data-lang="ar">التعلّم العميق لرصد الأرض</div>
-    <div class="t-sub">From Turing's learning machine and the first perceptron to CNNs, LSTMs, GANs, Transformers, geospatial foundation models, LLMs and agentic AI — with code for every model family.</div>
+    <div class="t-sub">From Turing's learning machine, classical machine learning and the first perceptron to CNNs, LSTMs, GANs, Transformers, geospatial foundation models, LLMs and agentic AI — and the EO practice around them: data, evaluation, uncertainty and responsible use.</div>
     <div class="t-meta">
       <span><b>Instructor</b>{{instructor}}</span>
       <span><b>Format</b>Slides · demos · 11 notebooks</span>
@@ -19,17 +19,17 @@
 <section data-title="Course map" data-module="Opening" data-kind="theory" data-src="Timing is a guide for a {{total_min}}-minute session; labs are live walk-throughs, full notebooks are for after class.">
 <h2>Course map — <em>{{total_min}} minutes</em></h2>
 <div class="s-body">
-  <table class="tbl small">
+  <table class="tbl small dense">
     <tr><th style="width:120px">Time</th><th>Part</th><th>Theory</th><th>Practice (EO)</th></tr>
     <tr><td>{{start:opening}}</td><td>Opening</td><td>Goals, roadmap</td><td>—</td></tr>
     <tr><td>{{start:I}}</td><td>I · History of AI<span data-require="classical_ml"> &amp; classical ML</span><span data-require="unsupervised">, unsupervised</span><span data-require="reinforcement"> &amp; RL</span></td><td>Turing's learning machine, AI winters, classical ML<span data-require="classical_ml"> (naive Bayes, trees, random forests, boosting, SVM)</span><span data-require="unsupervised">, clustering &amp; PCA</span><span data-require="reinforcement">, MDPs, Q-learning, bandits, RLHF</span>, chips</td><td>Random forest on Sentinel-2<span data-require="classical_ml"> · 6 ML playgrounds</span><span data-require="unsupervised"> · 5 clustering/PCA demos</span><span data-require="reinforcement"> · 3 RL demos</span></td></tr>
     <tr><td>{{start:II}}</td><td>II · Learning maths</td><td>Loss, gradient descent, backprop, likelihood</td><td>Gradient-descent demo</td></tr>
     <tr><td>{{start:III}}</td><td>III · Perceptron &amp; MLP</td><td>McCulloch–Pitts, Rosenblatt, XOR, universal approximation</td><td>Lab 1 · pixel classification</td></tr>
-    <tr><td>{{start:IV}}</td><td>IV · <span data-require="cv_fundamentals">Vision &amp; </span>CNNs</td><td><span data-require="cv_fundamentals">RGB / multi- / hyperspectral images, thresholding, filtering, SAR speckle · </span>Convolution, ResNet, U-Net</td><td><span data-require="cv_fundamentals">Vision demos · </span>Labs 2–3 · EuroSAT, LandCover.ai</td></tr>
+    <tr><td>{{start:IV}}</td><td>IV · <span data-require="cv_fundamentals">Vision &amp; </span>CNNs</td><td><span data-require="cv_fundamentals">RGB / multi- / hyperspectral images, thresholding, filtering, SAR speckle · </span>Convolution, ResNet, U-Net<span data-require="eo_data"> · ARD, clouds, tiles, labels</span><span data-require="detection"> · object detection</span><span data-require="fusion"> · SAR–optical fusion</span><span data-require="evaluation"> · spatial CV, metrics, area estimation</span></td><td><span data-require="cv_fundamentals">Vision demos · </span>Labs 2–3 · EuroSAT, LandCover.ai<span data-require="eo_data"> · compositing &amp; tiling demos</span><span data-require="detection"> · ship detection</span><span data-require="fusion"> · mapping under clouds</span><span data-require="evaluation"> · 3 evaluation demos</span></td></tr>
     <tr><td>{{start:break}}</td><td colspan="3" style="text-align:center;color:#8A6512;font-weight:600">Break<span data-lang="ar"> · <bdi class="ar">استراحة</bdi></span> · {{min:break}} min</td></tr>
     <tr><td>{{start:V}}</td><td>V–VI · RNN/LSTM &amp; GANs</td><td>BPTT, gates, minimax game, pix2pix</td><td>Labs 4–5 · ETo forecast, SAR→optical</td></tr>
     <tr><td>{{start:VII}}</td><td>VII · Transformers</td><td>Attention, ViT, MAE</td><td>Lab 6 · ViT on EuroSAT</td></tr>
-    <tr><td>{{start:VIII}}</td><td>VIII–IX · Geo foundation models</td><td>SSL, GeoFM generations, Earth-FM features</td><td>Labs 7–9 · Prithvi, AlphaEarth, informal settlements</td></tr>
+    <tr><td>{{start:VIII}}</td><td>VIII–IX · Geo foundation models</td><td>SSL, GeoFM generations, Earth-FM features<span data-require="physics_ml"> · physics + ML</span><span data-require="trustworthy"> · calibration, uncertainty, explanations, domain shift</span><span data-require="responsible_ai"> · bias, carbon, privacy</span></td><td>Labs 7–9 · Prithvi, AlphaEarth, informal settlements<span data-require="physics_ml"> · LAI retrieval demo</span><span data-require="trustworthy"> · 4 trust demos</span><span data-require="responsible_ai"> · bias &amp; carbon demos</span></td></tr>
     <tr><td>{{start:X}}</td><td>X · LLMs &amp; agentic AI</td><td>Scaling, RAG, agents, LangGraph</td><td>Labs 10–11 · EO RAG &amp; agent</td></tr>
   </table>
 </div>
@@ -42,7 +42,7 @@
   <div class="cols c3" style="height:auto">
     <div class="card arch blue"><div class="icon">∑</div><h3>Explain</h3><p>how each family — classical learners (Bayes, trees, ensembles, SVM), MLP, CNN, RNN/LSTM, GAN, Transformer, foundation model, LLM agent — represents data and learns, with the key equation of each.</p></div>
     <div class="card arch green"><div class="icon">⌘</div><h3>Choose</h3><p>the right architecture for an EO problem: pixels, scenes, segmentation, time series, image translation, multimodal cubes, documents or workflows.</p></div>
-    <div class="card arch clay"><div class="icon">▶</div><h3>Build</h3><p>working PyTorch, TerraTorch, Earth Engine, LangChain and LangGraph pipelines — and map informal settlements with foundation models.</p></div>
+    <div class="card arch clay"><div class="icon">▶</div><h3>Build</h3><p>working PyTorch, TerraTorch, Earth Engine, LangChain and LangGraph pipelines — and map informal settlements with foundation models<span data-require="evaluation">, validated with spatial cross-validation and area estimates</span>.</p></div>
   </div>
   <div class="callout mt2"><div><b>How to read the slides.</b> Every slide carries a tag: <span class="tag theory">Theory</span> concepts &amp; maths, <span class="tag practice">Practice</span> EO applications, <span class="tag lab">Lab</span> code you can run (notebook link on the slide), <span class="tag case">Case study</span> informal settlements.</div></div>
 </div>

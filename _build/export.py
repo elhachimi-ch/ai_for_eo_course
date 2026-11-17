@@ -17,7 +17,7 @@ with sync_playwright() as p:
         notes: (s.querySelector('.notes')||{innerText:''}).innerText.trim(),
         src: (s.querySelector('.s-foot .src')||{innerText:''}).innerText.trim()}))""")
     deck = pg.evaluate("""() => { const m = (n) => (document.querySelector(`meta[name="${n}"]`)||{}).content || "";
-        return {author: m('author'), duration: m('course-duration')}; }""")
+        return {author: m('author'), duration: m('course-duration'), title: m('course-title')}; }""")
     for i, s in enumerate(pg.query_selector_all(".slide"), 1):
         png = f"{OUT}/img/s{i:03d}.png"
         s.screenshot(path=png)
