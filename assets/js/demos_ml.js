@@ -21,8 +21,8 @@
   const { rng, gauss, clamp, pick, argmax } = Kit;
 
   const INK = "#14213D", MUT = "#5B6478", SAF = "#C99A2E";
-  const COL = ["#2E4BC6", "#0F6B5C", "#B5502E"];
-  const RGB = [[46, 75, 198], [15, 107, 92], [181, 80, 46]];
+  const COL = ["#2E4BC6", THEME.s, THEME.p];
+  const RGB = [[46, 75, 198], THEME.sRgb, THEME.pRgb];
   const NAMES = ["water", "vegetation", "soil / built-up"];
   const RED_MAX = 0.4, NIR_MAX = 0.6;           // axis ranges of the (Red, NIR) feature space
   const IVORY = [253, 251, 247];
@@ -450,8 +450,8 @@
       for (let i = 0; i < n; i++) { const v = ys[i] - F[i], y0 = Y2(0), y1 = Y2(clamp(v, -0.45, 0.45)); ctx.fillRect(X(xs[i]) - 2, Math.min(y0, y1), 4, Math.abs(y1 - y0)); }
       if (lastH) { ctx.strokeStyle = SAF; ctx.lineWidth = 3; ctx.beginPath(); for (let d = 0; d < GRID; d++) { const y = Y2(clamp(lastH[d], -0.45, 0.45)); d ? ctx.lineTo(X(d), y) : ctx.moveTo(X(d), y); } ctx.stroke(); }
       // data + model
-      for (let i = 0; i < n; i++) { ctx.beginPath(); ctx.arc(X(xs[i]), Y1(ys[i]), 4.2, 0, 7); ctx.fillStyle = "#0F6B5C"; ctx.fill(); }
-      ctx.strokeStyle = "#B5502E"; ctx.lineWidth = 3.2; ctx.beginPath();
+      for (let i = 0; i < n; i++) { ctx.beginPath(); ctx.arc(X(xs[i]), Y1(ys[i]), 4.2, 0, 7); ctx.fillStyle = THEME.s; ctx.fill(); }
+      ctx.strokeStyle = THEME.p; ctx.lineWidth = 3.2; ctx.beginPath();
       for (let d = 0; d < GRID; d++) { const y = Y1(clamp(Fg[d], 0, 0.9)); d ? ctx.lineTo(X(d), y) : ctx.moveTo(X(d), y); }
       ctx.stroke();
       let mse = 0, mae = 0; for (let i = 0; i < n; i++) { const e = ys[i] - F[i]; mse += e * e; mae += Math.abs(e); }

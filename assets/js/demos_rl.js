@@ -44,11 +44,11 @@
     for (let s = 0; s < w.n; s++) {
       const x = (s % w.C) * cw, y = Math.floor(s / w.C) * ch, t = w.type(s);
       let bg = "#FDFBF7";
-      if (t === "#") bg = "#22325A"; else if (t === "X") bg = "#B5502E"; else if (t === "G") bg = "#0F6B5C";
+      if (t === "#") bg = "#22325A"; else if (t === "X") bg = THEME.p; else if (t === "G") bg = THEME.s;
       ctx.fillStyle = bg; ctx.fillRect(x, y, cw, ch);
       if (t === "." || t === "S") {
         const v = val ? val[s] : 0, a = Math.min(1, Math.abs(v) / 8) * 0.55;
-        if (val && o.show !== false && (o.seen ? o.seen[s] : true)) { ctx.fillStyle = v >= 0 ? `rgba(15,107,92,${a})` : `rgba(181,80,46,${a})`; ctx.fillRect(x, y, cw, ch); }
+        if (val && o.show !== false && (o.seen ? o.seen[s] : true)) { ctx.fillStyle = v >= 0 ? `rgba(${THEME.sRgb},${a})` : `rgba(${THEME.pRgb},${a})`; ctx.fillRect(x, y, cw, ch); }
       }
       ctx.strokeStyle = "rgba(20,33,61,.15)"; ctx.lineWidth = 1; ctx.strokeRect(x + 0.5, y + 0.5, cw - 1, ch - 1);
       ctx.textAlign = "center"; ctx.textBaseline = "middle";
@@ -148,7 +148,7 @@
       [-10, 0, 10].forEach((v) => { c.fillText(v, L - 4, Y(v) + 4); c.strokeStyle = "rgba(20,33,61,.1)"; c.beginPath(); c.moveTo(L, Y(v)); c.lineTo(W - 8, Y(v)); c.stroke(); });
       c.textAlign = "left"; c.fillStyle = INK; c.font = "600 12px Inter, Arial"; c.fillText("return per episode (dots) and 20-episode mean", L + 4, 12);
       c.fillStyle = "rgba(46,75,198,.35)"; rets.forEach((v, i) => c.fillRect(X(i) - 1, Y(v) - 1, 2.5, 2.5));
-      c.strokeStyle = "#B5502E"; c.lineWidth = 2.4; c.beginPath();
+      c.strokeStyle = THEME.p; c.lineWidth = 2.4; c.beginPath();
       rets.forEach((_, i) => { const a = Math.max(0, i - 19), m = rets.slice(a, i + 1).reduce((s, v) => s + v, 0) / (i + 1 - a); i ? c.lineTo(X(i), Y(m)) : c.moveTo(X(i), Y(m)); });
       c.stroke();
     }
@@ -189,7 +189,7 @@
     const eIn = root.querySelector("input[name=eps]"), cIn = root.querySelector("input[name=c]"), rev = root.querySelector("input[name=reveal]");
     const eV = root.querySelector(".ev"), cV = root.querySelector(".cv");
     const P = [0.3, 0.55, 0.42, 0.68, 0.2], NAMES = ["A", "B", "C", "D", "E"], BEST = Math.max(...P);
-    const ST = [["eg", "ε-greedy", "#2E4BC6"], ["ucb", "UCB1", "#B5502E"], ["ts", "Thompson", "#0F6B5C"]];
+    const ST = [["eg", "ε-greedy", "#2E4BC6"], ["ucb", "UCB1", THEME.p], ["ts", "Thompson", THEME.s]];
     let A, t, show = "ts", timer = null;
     function reset() {
       clearInterval(timer); t = 0;

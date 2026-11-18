@@ -1,4 +1,4 @@
-<section class="dark" data-title="Part VIII — Geospatial foundation models" data-module="VIII · Geo foundation models" data-part="VIII" data-extra="physics_ml,tabular_fm,trustworthy">
+<section class="dark" data-title="Part VIII — Geospatial foundation models" data-module="VIII · Geo foundation models" data-part="VIII" data-extra="physics_ml,tabular_fm,trustworthy,responsible_ai">
 <div class="sec-wrap">
   <div class="sec-arch" style="--sec-c:#0F6B5C"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>VIII</div></div>
   <div class="sec-text">
@@ -13,6 +13,7 @@
       <li>Labs 7–8 — Prithvi-EO-2.0 with TerraTorch, AlphaEarth embeddings</li>
       <li data-require="tabular_fm">Tabular foundation models: in-context learning, TabArena, proper scoring rules</li>
       <li data-require="trustworthy">Trustworthy EO AI: calibration, uncertainty, explanations, domain shift</li>
+      <li data-require="responsible_ai">Responsible EO AI: geographic bias, carbon cost, privacy, documentation</li>
     </ul>
   </div>
 </div>
@@ -651,4 +652,74 @@ q05, q50, q95 = reg.predict(X_te, output_type="quantiles",
   </div>
 </div>
 <aside class="notes">Hollow points: the source region used for training. Filled points: the target region, after a shift that brightens red (haze, drier soils) and darkens the NIR of vegetation (dry season). Black rings mark target errors. With no adaptation, vegetation is mistaken for soil. Per-domain standardisation removes most of the global gain/offset without any target labels; 11 labelled target points (gold rings) fix the rest. The readout also counts how many target points a Mahalanobis test flags as out-of-distribution — a model that knows when it is outside its training data can abstain instead of being confidently wrong.</aside>
+</section>
+
+<section data-title="Geographic bias (interactive)" data-module="VIII · Responsible EO AI" data-kind="practice" data-require="responsible_ai" data-src="Zhu et al. (2026) <i>Commun. Earth Environ.</i> (balanced geography) · Kerner et al. (2024) How accurate are existing land cover maps for agriculture in Sub-Saharan Africa? <i>Sci. Data</i> 11:486 · Meyer &amp; Pebesma (2022) <i>Nat. Commun.</i> 13:2208 · Sagawa et al. (2020) Distributionally robust optimisation, ICLR · Simulated regions in (Red, NIR) space">
+<h2>Geographic bias: <em>who is the model good for?</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="region">
+      <canvas class="bars" width="800" height="300" style="width:800px;height:300px"></canvas>
+      <div class="xs">where the 600 training labels come from</div>
+      <canvas class="mix" width="800" height="44" style="width:800px;height:44px"></canvas>
+      <div class="ctrl">
+        <label>labels from Africa <input type="range" name="africa" min="0" max="60" step="1" value="0" style="width:200px"> <b class="av"></b></label>
+        <button class="btn sm ghost" data-preset="0">typical benchmark</button><button class="btn sm ghost" data-preset="33">balanced by region</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="card"><h4>The pattern</h4><p class="small">Most EO benchmarks and pre-training data come from Europe, North America and China. Accuracy is then lowest where maps are needed most — smallholder farms, drylands, informal settlements.</p></div>
+      <div class="eqbox small">Report the <b>worst</b> region, not only the mean:
+        $$\text{Acc}_{\min}=\min_{g}\ \text{Acc}_g$$
+        and train for it (group re-weighting, distributionally robust optimisation).</div>
+      <div class="callout clay"><div class="small">Kerner et al. (2024) found low agreement between existing cropland maps across Sub-Saharan Africa.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Six regions share the same three land-cover classes but differ in spectra: drier vegetation and brighter soils in North and Sub-Saharan Africa, haze and different crops elsewhere. With a typical benchmark mix (no African labels) the model is excellent in Europe and poor in Africa, although the mean accuracy looks acceptable. Move the slider: a modest share of local labels closes most of the gap at almost no cost elsewhere. The general lesson for every map you publish: report accuracy per region (or per city, per agro-ecological zone) and say where the model should not be used.</aside>
+</section>
+
+<section data-title="The carbon cost of EO AI (interactive)" data-module="VIII · Responsible EO AI" data-kind="practice" data-require="responsible_ai" data-src="Lacoste et al. (2019) Quantifying the carbon emissions of ML, arXiv:1910.09700 · Strubell et al. (2019) ACL · Patterson et al. (2021) arXiv:2104.10350 · Luccioni et al. (2023) Carbon footprint of BLOOM, <i>JMLR</i> 24:253 · Grid intensities and equivalences are rounded orders of magnitude">
+<h2>The <em>carbon cost</em> of training and inference</h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="carbon">
+      <div class="ctrl">
+        <button class="btn sm ghost" data-pre="unet">fine-tune a U-Net</button><button class="btn sm ghost" data-pre="map">map a continent</button><button class="btn sm ghost" data-pre="fm">pre-train a GeoFM</button><button class="btn sm ghost" data-pre="agent">serve an LLM agent 3 months</button>
+      </div>
+      <div class="ctrl">
+        <select name="hw"><option value="rtx">RTX 4090 (0.45 kW)</option><option value="a100">A100 (0.4 kW)</option><option value="h100">H100 (0.7 kW)</option><option value="cpu">CPU server (0.25 kW)</option></select>
+        <label>devices <input type="range" name="g" min="0" max="9" step="1" value="0" style="width:120px"> <b class="gv"></b></label>
+        <label>time <input type="range" name="h" min="0" max="12" step="1" value="3" style="width:120px"> <b class="hv"></b></label>
+      </div>
+      <div class="ctrl">
+        <label>PUE <input type="range" name="pue" min="1" max="2" step="0.05" value="1.2" style="width:120px"> <b class="pv"></b></label>
+        <select name="grid"><option value="low">low-carbon grid ≈ 0.03 kg/kWh</option><option value="eu">EU average ≈ 0.25 kg/kWh</option><option value="world" selected>world average ≈ 0.47 kg/kWh</option><option value="coal">coal-heavy grid ≈ 0.8 kg/kWh</option></select>
+      </div>
+      <div class="big"></div>
+      <canvas width="800" height="190" style="width:800px;height:190px"></canvas>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">$$E=n_{\text{dev}}\cdot P\cdot t\cdot \text{PUE},\qquad \text{CO}_2\text{e}=E\cdot \text{CI}_{\text{grid}}$$<div class="xs" style="text-align:center">PUE: data-centre overhead · CI: carbon intensity of the electricity</div></div>
+      <div class="card green"><h4>Lighter options</h4><ul class="list compact small"><li>Use embeddings or a frozen FM before full fine-tuning</li><li>Smaller models, mixed precision, early stopping</li><li>Run where and when the grid is clean</li><li>Report energy and CO₂e in the paper</li></ul></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Presets: fine-tuning a U-Net is a few kWh — negligible. Pre-training a foundation model on 64 A100s for two weeks is in the tonnes of CO₂e, comparable to several long-haul flights, and strongly dependent on the grid. Serving a model for months can exceed training. Numbers are orders of magnitude: real power draw is below the rated TDP, and embodied emissions from manufacturing the hardware are not counted. Zhu et al. (2026) list “carbon-minimised” as one of the 11 features of an ideal Earth FM.</aside>
+</section>
+
+<section data-title="Privacy, dual use and documentation" data-module="VIII · Responsible EO AI" data-kind="theory" data-require="responsible_ai" data-src="Gebru et al. (2021) Datasheets for datasets, <i>CACM</i> 64(12):86 · Mitchell et al. (2019) Model cards, FAT* · Wilkinson et al. (2016) FAIR, <i>Sci. Data</i> 3:160018 · Carroll et al. (2020) CARE principles, <i>Data Sci. J.</i> 19:43 · Kochupillai et al. (2022) Ethics of EO and AI, <i>IEEE GRSM</i> 10(4):90">
+<h2>Privacy, dual use and <em>documentation</em></h2>
+<div class="s-body">
+  <div class="cols c4" style="height:auto">
+    <div class="card arch blue"><div class="icon">◉</div><h3>Privacy</h3><p class="small">At 30–50 cm, houses, cars and gatherings are visible. Combined with other data, a map can identify people. Aggregate before publishing.</p></div>
+    <div class="card arch clay"><div class="icon">⚠</div><h3>Dual use</h3><p class="small">The same detector counts ships for fisheries control or for military targeting; a settlement map guides upgrading — or evictions.</p></div>
+    <div class="card arch green"><div class="icon">⇄</div><h3>Communities</h3><p class="small">Involve the people being mapped: co-design, consent for field data, CARE principles for Indigenous data.</p></div>
+    <div class="card arch sand"><div class="icon">≡</div><h3>Document</h3><p class="small">Datasheet for the labels, model card for the model (data, regions, limits, metrics per group), licence, FAIR release.</p></div>
+  </div>
+  <div class="callout mt2"><div>Before publishing a map, ask: <b>who could be harmed by it, and who was not asked?</b> Write the answer in the model card.</div></div>
+</div>
+<aside class="notes">These four cards turn the lessons of the course into general rules. A model card is a one-page document: intended use, training data and regions, evaluation per group and region, known failure cases, ethical considerations. A datasheet does the same for a dataset: who collected the labels, when, how, with what consent and licence. Both take an afternoon and make a paper easier to review and reuse.</aside>
 </section>

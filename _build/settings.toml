@@ -13,11 +13,28 @@ title = "AI for Earth Observation"
 # Shown on the title slide; also written as the author of the PPTX.
 instructor = "Chouaib El Hachimi"
 
+# Title slide: position under the name, numbered affiliations, and the portrait shown in the
+# arch (path relative to the site root; "" shows the zellige rosette instead).
+position = "Postdoctoral Fellow"
+affiliations = [
+  "The Research Centre for Artificial Intelligence in Geomatics, The Hong Kong Polytechnic University",
+  "JC STEM Lab of Earth Observations, Department of Land Surveying and Geospatial Science, The Hong Kong Polytechnic University",
+]
+photo = "assets/img/instructor.jpg"
+
 # Slides to leave out of the deck (and of the PDF/PPTX). Numbers are the slide numbers you
 # see in the deck built with hide_pages = [] (after the [modules] below are applied); the
 # remaining slides are renumbered. Ranges and exact slide titles also work:
 #   hide_pages = [1, 2, 14]      hide_pages = "1,2,14"      hide_pages = ["20-25", "Break"]
 hide_pages = []
+
+# The two main accent colours (hex). They replace the terracotta red and the zellige green
+# everywhere: headings, tags, cards, code cards, the live demos and the SVG figures and motifs.
+# Default: the red and green of the Moroccan flag. The original palette was
+# primary = "#B5502E" (terracotta), secondary = "#0F6B5C" (zellige green).
+[theme]
+primary = "#C1272D"
+secondary = "#006233"
 
 # Optional teaching blocks. Switching one off removes its slides, its lines on the
 # course map and section slides, and its minutes from the schedule.
@@ -34,12 +51,12 @@ evaluation = true        # Part IV  · spatial cross-validation, rare-class metr
 physics_ml = true        # Part VIII · physics + ML, emulators and hybrid LAI retrieval (1 demo)
 tabular_fm = true        # Part VIII · tabular foundation models: in-context learning, TabArena, scoring rules (3 demos)
 trustworthy = true       # Part VIII · calibration, ensemble uncertainty, explanations, domain shift (4 demos)
-responsible_ai = true    # Part IX  · geographic bias, carbon footprint, privacy & documentation (2 demos)
+responsible_ai = true    # Part VIII · geographic bias, carbon footprint, privacy & documentation (2 demos)
 
 # Minutes per part, in teaching order. Section-slide times, the course map and the
 # total duration ("3½-hour course") are computed from these numbers.
 [schedule]
-opening = 5
+opening = 10
 I = 20
 II = 10
 III = 20
@@ -49,8 +66,7 @@ V = 15
 VI = 10
 VII = 15
 VIII = 20
-IX = 10
-X = 17
+IX = 17
 wrap = 3
 
 # Extra minutes added to a part when its optional block is switched on.
@@ -66,4 +82,4 @@ evaluation = 20          # added to Part IV
 physics_ml = 10          # added to Part VIII
 tabular_fm = 20          # added to Part VIII
 trustworthy = 20         # added to Part VIII
-responsible_ai = 10      # added to Part IX
+responsible_ai = 10      # added to Part VIII

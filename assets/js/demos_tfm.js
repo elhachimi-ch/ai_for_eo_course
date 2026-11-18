@@ -7,7 +7,7 @@
   const DEMOS = (window.DECK_DEMOS = window.DECK_DEMOS || {});
   const K = window.DemoKit;
   const { rng, gauss, clamp, pick, axes, label } = K;
-  const INK = "#14213D", MUT = "#5B6478", TER = "#B5502E", BLU = "#2E4BC6", GRN = "#0F6B5C";
+  const INK = "#14213D", MUT = "#5B6478", TER = THEME.p, BLU = "#2E4BC6", GRN = THEME.s;
   const FONT = "Inter, Arial, sans-serif";
   const $ = (root, s) => root.querySelector(s);
   const $$ = (root, s) => Array.from(root.querySelectorAll(s));
@@ -156,7 +156,7 @@
     grouped: { bench: "BeyondArena", n: 18, txt: "18 datasets, grouped splits (unseen groups)" },
     temporal: { bench: "BeyondArena", n: 21, txt: "21 datasets, temporal splits (predict the future)" },
   };
-  const FAMC = { F: "#2E4BC6", N: "#16876B", T: "#C99A2E", B: "#B5502E", O: "#5B6478" };
+  const FAMC = { F: "#2E4BC6", N: "#16876B", T: "#C99A2E", B: THEME.p, O: "#5B6478" };
   const FAMN = { F: "foundation model", N: "neural network", T: "tree-based", B: "baseline", O: "other" };
   DEMOS.arena = function (root) {
     const cv = $(root, "canvas"), ctx = cv.getContext("2d"), out = $(root, ".readout"), defIn = $(root, "input[name=def]");

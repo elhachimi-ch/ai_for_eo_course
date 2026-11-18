@@ -17,11 +17,10 @@ Slides are a static website (classic-modern Moroccan design: zellige stars, hors
 | V · RNN & LSTM | 3:25 | BPTT, vanishing gradients, LSTM gates | **Lab 4** ETo forecasting (Marrakech) |
 | VI · Generative models | 3:40 | GANs, pix2pix, CycleGAN, diffusion | **Lab 5** Sentinel-1 → Sentinel-2 |
 | VII · Transformers | 3:50 | Attention (live demo), ViT, SAM, CLIP, EO transformers | **Lab 6** ViT + temporal Transformer |
-| VIII · Geo foundation models | 4:05 | SSL, GeoFM generations, MAE vs JEPA, Zhu et al. (2026) 11 features, limitations, AtlasGeoFM; physics + ML (emulators, hybrid retrieval, physics-informed losses); tabular foundation models (prior-fitted in-context learning, synthetic vs real priors, TabArena / BeyondArena, proper scoring rules); trustworthy EO AI: calibration, ensemble uncertainty, explanations, domain shift | LAI-retrieval demo · 3 tabular-FM demos · 4 trust demos · **Labs 7–8** Prithvi-EO-2.0, AlphaEarth |
-| IX · Case study | 5:15 | Informal-settlement mapping with FMs (SDG 11.1.1, Morocco's *Villes sans bidonvilles*); responsible EO AI: geographic bias, carbon cost, privacy, dual use, documentation | **Lab 9** three-tier FM pipeline · bias & carbon demos |
-| X · LLMs & agents | 5:35 | Pre-training, alignment, prompting, RAG, ReAct agents, MCP, LangGraph | **Labs 10–11** EO RAG, Sentinel-2 agent |
+| VIII · Geo foundation models | 4:05 | SSL, GeoFM generations, MAE vs JEPA, Zhu et al. (2026) 11 features, limitations, AtlasGeoFM; physics + ML (emulators, hybrid retrieval, physics-informed losses); tabular foundation models (prior-fitted in-context learning, synthetic vs real priors, TabArena / BeyondArena, proper scoring rules); trustworthy EO AI: calibration, ensemble uncertainty, explanations, domain shift; responsible EO AI: geographic bias, carbon cost, privacy, dual use, documentation | LAI-retrieval demo · 3 tabular-FM demos · 4 trust demos · bias & carbon demos · **Labs 7–8** Prithvi-EO-2.0, AlphaEarth |
+| IX · LLMs & agents | 5:25 | Pre-training, alignment, prompting, RAG, ReAct agents, MCP, LangGraph | **Labs 9–10** EO RAG, Sentinel-2 agent |
 
-138 slides · 234 equations · 41 interactive demos · 11 Colab-ready notebooks · speaker notes on every slide. Times are for the default settings (all blocks on, ≈ 6 hours); see [Settings](#settings) to switch blocks off or hide single slides for a given audience (the 3-hour deep-learning original is every `[modules]` flag = false).
+130 slides · 234 equations · 41 interactive demos · 10 Colab-ready notebooks · speaker notes on every slide. Times are for the default settings (all blocks on, ≈ 5¾ hours); see [Settings](#settings) to switch blocks off or hide single slides for a given audience (the 3-hour deep-learning original is every `[modules]` flag = false).
 
 ## Publish on GitHub Pages
 
@@ -65,6 +64,10 @@ python -m http.server 8000      # then open http://localhost:8000
 | `arabic` | `false` | `true` adds the Arabic subtitles (title, section and closing slides, break row) and loads the Arabic web font; `false` leaves all Arabic out |
 | `title` | `"AI for Earth Observation"` | course title on the title slide, browser tab, contents panel and PPTX (split over two lines at the first “ for ”) |
 | `instructor` | `"Chouaib El Hachimi"` | name on the title slide and PPTX author |
+| `position` | `"Postdoctoral Fellow"` | shown under the name on the title slide (`""` = none) |
+| `affiliations` | two PolyU affiliations | numbered list under the name on the title slide; the name gets matching superscripts |
+| `photo` | `"assets/img/instructor.jpg"` | portrait shown in the title-slide arch (path from the site root; `""` = zellige rosette) |
+| `[theme] primary` / `secondary` | `"#C1272D"` / `"#006233"` (Moroccan flag red and green) | the two main accent colours; they replace the terracotta red and zellige green in the CSS, slides, live demos (`window.THEME`) and SVG figures (themed copies in `assets/img/themed/`). The original palette was `#B5502E` / `#0F6B5C` |
 | `hide_pages` | `[]` | slides to leave out of the site, PDF and PPTX, e.g. `[1, 2, 14]`, `"1,2,14"` or `["20-25", "Break"]` (numbers as shown with `hide_pages = []`; ranges and exact slide titles allowed; the rest is renumbered) |
 | `[modules] classical_ml` | `true` | Part I block: era timeline, naive Bayes / MLC, decision trees, bagging & RF, AdaBoost, gradient boosting, SVM, comparison (8 slides, 6 demos) |
 | `[modules] unsupervised` | `true` | Part I block: era timeline, k-means, unsupervised classification of an image, GMM & EM, DBSCAN, PCA (6 slides, 5 demos) |
@@ -77,7 +80,7 @@ python -m http.server 8000      # then open http://localhost:8000
 | `[modules] physics_ml` | `true` | Part VIII block: four ways to put physics into ML, emulators and hybrid LAI retrieval (2 slides, 1 demo) |
 | `[modules] tabular_fm` | `true` | Part VIII block, after Lab 8: tabular foundation models — in-context learning as Bayesian averaging, priors and architectures, the 2023–2026 model landscape, a TabArena / BeyondArena leaderboard explorer (snapshot 17 Nov 2026), proper scoring rules, EO practice with spatial CV (7 slides, 3 demos) |
 | `[modules] trustworthy` | `true` | Part VIII block: calibration & temperature scaling, ensemble uncertainty, explanations, domain shift (4 slides, 4 demos) |
-| `[modules] responsible_ai` | `true` | Part IX block: geographic bias, carbon footprint, privacy / dual use / documentation (3 slides, 2 demos) |
+| `[modules] responsible_ai` | `true` | Part VIII block: geographic bias, carbon footprint, privacy / dual use / documentation (3 slides, 2 demos) |
 | `[schedule]` | minutes per part | section-slide times, the course map and the total duration (“5.9-hour course”) are computed from these; `[schedule.modules]` adds minutes when a block is on |
 
 In slide sources, `data-lang="ar"` marks Arabic-only elements and `data-require="flag"` (or `"!flag"`) marks elements shown only when a module is on (or off); `{{slot:IV}}`, `{{start:IV}}`, `{{total_min}}`, `{{hours}}`, `{{duration}}`, `{{instructor}}` and `{{title}}` are filled in at build time.
@@ -129,4 +132,4 @@ Every content slide lists its references in its footer; key references are colle
 
 ## Notes on the notebooks
 
-The notebooks were written against current library APIs (PyTorch, TorchGeo, TerraTorch, timm, Hugging Face, Earth Engine, LangChain/LangGraph) and syntax-checked, but they download data and models, so run them in Colab or a GPU machine with internet access. Lab 8–9 need an Earth Engine Cloud project; Lab 9 needs your own labels (none are openly available for Moroccan informal settlements); Labs 10–11 need either a local Ollama model or an LLM API key.
+The notebooks were written against current library APIs (PyTorch, TorchGeo, TerraTorch, timm, Hugging Face, Earth Engine, LangChain/LangGraph) and syntax-checked, but they download data and models, so run them in Colab or a GPU machine with internet access. Lab 8 needs an Earth Engine Cloud project; Labs 9–10 need either a local Ollama model or an LLM API key.

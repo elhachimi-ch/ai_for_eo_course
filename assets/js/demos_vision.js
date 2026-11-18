@@ -157,7 +157,7 @@
     const sp = root.querySelector("canvas.spec"), sx = sp.getContext("2d"), W = sp.width, H = sp.height, out = root.querySelector(".readout");
     let comp = "true", sensor = "s2", px = S.vegPx.slice();
     const g = (v, k) => Math.round(255 * Math.pow(clamp(v * k, 0, 1), 0.8));
-    const STOPS = [[-0.7, [46, 75, 198]], [0, [232, 220, 181]], [0.35, [190, 176, 96]], [0.85, [15, 107, 92]]];
+    const STOPS = [[-0.7, [46, 75, 198]], [0, [232, 220, 181]], [0.35, [190, 176, 96]], [0.85, THEME.sRgb]];
     const ramp = (v) => { if (v <= STOPS[0][0]) return STOPS[0][1]; for (let k = 1; k < STOPS.length; k++) if (v <= STOPS[k][0]) { const [a, ca] = STOPS[k - 1], [b, cb] = STOPS[k], t = (v - a) / (b - a); return ca.map((c, j) => Math.round(c + (cb[j] - c) * t)); } return STOPS[STOPS.length - 1][1]; };
     const band = (i, b) => S.B[i * 13 + b];
     const COMP = {
@@ -189,7 +189,7 @@
       sx.stroke();
       let nb;
       if (sensor === "rgb") {
-        [[400, 500, "46,75,198"], [500, 600, "15,107,92"], [600, 700, "181,80,46"]].forEach(([a, b, c]) => {
+        [[400, 500, "46,75,198"], [500, 600, String(THEME.sRgb)], [600, 700, String(THEME.pRgb)]].forEach(([a, b, c]) => {
           let s = 0, k = 0; for (let l = a; l <= b; l += 5) { s += S.spectrum(i, l); k++; } const v = s / k;
           sx.fillStyle = `rgba(${c},.25)`; sx.fillRect(X(a), Y(v), X(b) - X(a), Y(0) - Y(v));
           sx.fillStyle = `rgb(${c})`; sx.fillRect(X(a), Y(v) - 2, X(b) - X(a), 4);
@@ -289,8 +289,8 @@
       hx.fillStyle = MUT; hx.font = "12px Inter, Arial, sans-serif"; hx.textAlign = "center";
       for (let k = 0; k <= 4; k++) { const v = o.lo + (k / 4) * (o.hi - o.lo); hx.fillText(v.toFixed(o.hi === 1 && o.lo === 0 ? 2 : 1), clamp(X(v, o), 14, W - 14), H - 6); }
       hx.textAlign = "left"; hx.fillText("pixel count (√ scale)", L, 14);
-      hx.strokeStyle = "#B5502E"; hx.lineWidth = 3; hx.beginPath(); hx.moveTo(X(t, o), T - 6); hx.lineTo(X(t, o), H - Bm); hx.stroke();
-      hx.fillStyle = "#B5502E"; hx.font = "600 13px Inter, Arial, sans-serif"; hx.textAlign = X(t, o) > W - 90 ? "right" : "left";
+      hx.strokeStyle = THEME.p; hx.lineWidth = 3; hx.beginPath(); hx.moveTo(X(t, o), T - 6); hx.lineTo(X(t, o), H - Bm); hx.stroke();
+      hx.fillStyle = THEME.p; hx.font = "600 13px Inter, Arial, sans-serif"; hx.textAlign = X(t, o) > W - 90 ? "right" : "left";
       hx.fillText(` t = ${t.toFixed(3)} `, X(t, o) + (hx.textAlign === "right" ? -4 : 4), T + 6);
       tIn.min = o.lo; tIn.max = o.hi; tIn.step = (o.hi - o.lo) / 400; tIn.value = t;
       out.textContent = `${{ gray: "grayscale", ndwi: "NDWI", ndvi: "NDVI" }[inp]} > ${t.toFixed(3)} · ${((100 * ones) / n).toFixed(1)} % of pixels = 1 · separability σ²_B/σ² = ${sep(o).toFixed(2)}`
@@ -350,7 +350,7 @@
     function show(p) {
       const i = Math.floor(p / Wo), j = p % Wo, r = conv(i, j), cell = gout.children[p], t = r.v / maxAbs;
       cell.textContent = fmt(r.v);
-      cell.style.background = t >= 0 ? `rgba(181,80,46,${(Math.abs(t) * 0.85).toFixed(3)})` : `rgba(46,75,198,${(Math.abs(t) * 0.85).toFixed(3)})`;
+      cell.style.background = t >= 0 ? `rgba(${THEME.pRgb},${(Math.abs(t) * 0.85).toFixed(3)})` : `rgba(46,75,198,${(Math.abs(t) * 0.85).toFixed(3)})`;
       cell.style.color = Math.abs(t) > 0.55 ? "#fff" : INK;
       gin.querySelectorAll(".win").forEach((e) => e.classList.remove("win"));
       for (let m = 0; m < 3; m++) for (let q = 0; q < 3; q++) gin.children[(i * St + m) * Wi + (j * St + q)].classList.add("win");

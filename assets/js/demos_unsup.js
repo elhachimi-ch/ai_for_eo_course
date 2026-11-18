@@ -7,7 +7,7 @@
   const DEMOS = (window.DECK_DEMOS = window.DECK_DEMOS || {});
   const K = window.DemoKit;
   const { rng, gauss, clamp, pick, argmax, Plot } = K;
-  const PAL = [[46, 75, 198], [15, 107, 92], [181, 80, 46], [201, 154, 46], [123, 63, 181], [27, 150, 190], [200, 80, 140], [110, 110, 110]];
+  const PAL = [[46, 75, 198], THEME.sRgb, THEME.pRgb, [201, 154, 46], [123, 63, 181], [27, 150, 190], [200, 80, 140], [110, 110, 110]];
   const col = (k, a = 1) => `rgba(${PAL[k % PAL.length].join(",")},${a})`;
   const INK = "#14213D", MUT = "#5B6478", SAF = "#C99A2E";
   const d2 = (a, b) => (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
@@ -124,7 +124,7 @@
     const kIn = root.querySelector("input[name=k]"), kv = root.querySelector(".kv");
     const FEAT = { rgb: { b: [1, 2, 3], name: "B2 B3 B4 (visible only)" }, s2: { b: [1, 2, 3, 7, 11, 12], name: "B2 B3 B4 B8 B11 B12" } };
     // colours ordered from water-like to vegetation-like (clusters are ranked by mean NDVI)
-    const SCPAL = [[46, 75, 198], [95, 100, 115], [181, 80, 46], [201, 154, 46], [150, 165, 75], [15, 107, 92], [8, 66, 52]];
+    const SCPAL = [[46, 75, 198], [95, 100, 115], THEME.pRgb, [201, 154, 46], [150, 165, 75], THEME.sRgb, [8, 66, 52]];
     let feat = "s2";
     const band = (i, b) => S.B[i * 13 + b];
     const idImg = sc.createImageData(N, N);
@@ -366,7 +366,7 @@
       });
       P2.forEach((p) => { ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]), 2.6, 0, 7); ctx.fillStyle = "rgba(20,33,61,.55)"; ctx.fill(); });
       ctx.strokeStyle = "#2E4BC6"; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(X(a[0]), Y(a[1])); ctx.lineTo(X(b[0]), Y(b[1])); ctx.stroke();
-      [[eig2[0], "#C99A2E", "PC1"], [eig2[1], "#B5502E", "PC2"]].forEach(([e, c, lb]) => {
+      [[eig2[0], "#C99A2E", "PC1"], [eig2[1], THEME.p, "PC2"]].forEach(([e, c, lb]) => {
         const s = 2 * Math.sqrt(e.val), ex = mu[0] + s * e.vec[0], ey = mu[1] + s * e.vec[1];
         ctx.strokeStyle = c; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(X(mu[0]), Y(mu[1])); ctx.lineTo(X(ex), Y(ey)); ctx.stroke();
         ctx.fillStyle = c; ctx.font = "700 14px Inter, Arial, sans-serif"; ctx.textAlign = "left"; ctx.fillText(lb, X(ex) + 6, Y(ey) - 4);
@@ -401,7 +401,7 @@
       let cum = 0; const pts = [];
       eig.forEach((e, k) => {
         const f = e.val / tot, h = f * (BH - B - 16); cum += f;
-        bx.fillStyle = k < 3 ? ["#C99A2E", "#B5502E", "#2E4BC6"][k] : "#C9D2F3";
+        bx.fillStyle = k < 3 ? ["#C99A2E", THEME.p, "#2E4BC6"][k] : "#C9D2F3";
         bx.fillRect(L + k * w + 2, BH - B - h, w - 4, h);
         bx.fillStyle = MUT; bx.textAlign = "center"; bx.fillText(k + 1, L + k * w + w / 2, BH - 10);
         pts.push([L + k * w + w / 2, BH - B - cum * (BH - B - 16)]);

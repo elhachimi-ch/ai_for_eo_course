@@ -27,6 +27,9 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE = os.environ.get("SITE_DIR", os.path.dirname(ROOT))  # the website root (parent of _build)
 LEX = {"py": PythonLexer, "js": JavascriptLexer, "bash": BashLexer, "yaml": YamlLexer, "json": JsonLexer}
 KIND_LABEL = {"theory": "Theory", "practice": "Practice", "lab": "Lab", "case": "Case study"}
+BASE_PRIMARY, BASE_SECONDARY = "#B5502E", "#0F6B5C"   # the red and green the sources are written in
+THEMED_SVG = ["rosette", "frieze", "nested_arches", "chart_chips", "chart_compute",
+              "act_sigmoid", "act_tanh", "act_relu", "act_gelu"]
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
 
 
@@ -41,6 +44,17 @@ def load_settings():
     s.setdefault("modules", {})
     s.setdefault("schedule", {})
     s.setdefault("hide_pages", [])
+    s.setdefault("position", "")
+    s.setdefault("affiliations", [])
+    s.setdefault("photo", "")
+    s.setdefault("theme", {})
+    s["theme"].setdefault("primary", BASE_PRIMARY)
+    s["theme"].setdefault("secondary", BASE_SECONDARY)
+    for k in ("primary", "secondary"):
+        if not re.fullmatch(r"#[0-9a-fA-F]{6}", str(s["theme"][k])):
+            sys.exit(f"settings: [theme].{k} must be a hex colour like \"#C1272D\", got {s['theme'][k]!r}")
+    if isinstance(s["affiliations"], str):
+        s["affiliations"] = [s["affiliations"]]
     for k, v in s["modules"].items():
         if not isinstance(v, bool):
             sys.exit(f"settings: [modules].{k} must be true or false, got {v!r}")
@@ -186,6 +200,68 @@ def fill(text, vals):
     return re.sub(r"\{\{([a-z_]+(?::[\w]+)?|N)\}\}", rep, text)
 
 
+# ------------------------------------------------------------------- theme
+def rgb(hexc):
+    return [int(hexc[i:i + 2], 16) for i in (1, 3, 5)]
+
+
+def tint(hexc, w):
+    """Mix a colour with white (w = share of white)."""
+    return "#" + "".join(f"{round(c + (255 - c) * w):02X}" for c in rgb(hexc))
+
+
+def recolor(text, theme):
+    """Swap the base red/green (hex and "r, g, b" forms) for the theme colours."""
+    for base, new in ((BASE_PRIMARY, theme["primary"]), (BASE_SECONDARY, theme["secondary"])):
+        text = re.sub(re.escape(base), new.upper(), text, flags=re.I)
+        r, g, b = rgb(base)
+        text = re.sub(rf"\b{r},\s*{g},\s*{b}\b", ",".join(map(str, rgb(new))), text)
+    return text
+
+
+def theme_assets(settings):
+    """Themed copies of the SVG figures/motifs in assets/img/themed/, plus the <head> snippet
+    that overrides the CSS colour tokens and defines window.THEME for the demos."""
+    th = settings["theme"]
+    src, dst = os.path.join(SITE, "assets/img"), os.path.join(SITE, "assets/img/themed")
+    os.makedirs(dst, exist_ok=True)
+    for name in THEMED_SVG:
+        with open(os.path.join(src, name + ".svg"), encoding="utf-8") as f:
+            svg = recolor(f.read(), th)
+        if name == "frieze":   # the belt at the foot of every slide: primary + secondary only
+            svg = re.sub("#1F3A93", th["primary"].upper(), svg, flags=re.I)
+        with open(os.path.join(dst, name + ".svg"), "w", encoding="utf-8", newline="\n") as f:
+            f.write(svg)
+    p, s = th["primary"].upper(), th["secondary"].upper()
+    css = (f":root{{--terracotta:{p};--terracotta-soft:{tint(p, .88)};--zellige:{s};--zellige-soft:{tint(s, .88)}}}"
+           f'.s-foot::before{{background-image:url("assets/img/themed/frieze.svg")}}'
+           f".card.clay{{border-color:{tint(p, .72)}}}"
+           f".code .bar .dots i{{background:{p}}}.code .bar .dots i:nth-child(2){{background:var(--saffron)}}"
+           f".code .bar .dots i:nth-child(3){{background:{s}}}"
+           f'.slide:not(.dark)::before,.arch-window .aw-rose{{background-image:url("assets/img/themed/rosette.svg")}}')
+    js = "window.THEME=" + json.dumps({"p": p, "s": s, "pRgb": rgb(p), "sRgb": rgb(s)}) + ";"
+    return f'<style id="theme">{css}</style>\n<script>{js}</script>'
+
+
+def title_block(settings):
+    """{{author_html}}, {{photo_img}} and {{photo_class}} on the title slide."""
+    affs, name = settings["affiliations"], html.escape(settings["instructor"])
+    sup = f"<sup>{','.join(str(i) for i in range(1, len(affs) + 1))}</sup>" if affs else ""
+    out = f'<div class="t-author"><div class="t-name">{name}{sup}</div>'
+    if settings["position"]:
+        out += f'<div class="t-pos">{html.escape(settings["position"])}</div>'
+    if affs:
+        out += '<div class="t-aff" role="list" aria-label="Author affiliations">' + "".join(
+            f'<div class="t-aff-item" role="listitem"><sup>{i}</sup>{html.escape(a)}</div>'
+            for i, a in enumerate(affs, 1)) + "</div>"
+    out += "</div>"
+    photo = settings["photo"]
+    if photo and not os.path.exists(os.path.join(SITE, photo)):
+        sys.exit(f"settings: photo {photo!r} not found (the path is relative to the site root)")
+    img = f'<img class="aw-photo" src="{html.escape(photo)}" alt="{name}">' if photo else ""
+    return {"author_html": out, "photo_img": img, "photo_class": " photo" if photo else ""}
+
+
 # ---------------------------------------------------------------- code cards
 def code_block(m):
     attrs, body = m.group(1), m.group(2)
@@ -214,6 +290,9 @@ def build():
     # 0) settings: optional elements, then schedule + placeholders
     raw = drop_elements(raw, keep)
     vals = schedule(raw, settings)
+    vals.update(title_block(settings))
+    raw = recolor(raw, settings["theme"])
+    raw = re.sub(r"assets/img/(%s)\.svg" % "|".join(THEMED_SVG), r"assets/img/themed/\1.svg", raw)
 
     # 1) protect code
     codes = []
@@ -266,6 +345,8 @@ def build():
 
     tpl = open(os.path.join(ROOT, "src/template.html"), encoding="utf-8").read()
     tpl = drop_elements(tpl, keep)
+    tpl = tpl.replace('<link rel="stylesheet" href="assets/css/style.css">',
+                      '<link rel="stylesheet" href="assets/css/style.css">\n' + theme_assets(settings), 1)
     vals["N"] = str(len(out))
     page = fill(tpl, vals).replace("<!--SLIDES-->", "\n".join(out))
     with open(os.path.join(SITE, "index.html"), "w", encoding="utf-8", newline="\n") as f:

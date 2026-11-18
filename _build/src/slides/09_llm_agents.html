@@ -1,21 +1,21 @@
-<section class="dark" data-title="Part X — LLMs, RAG and agentic AI" data-module="X · LLMs &amp; agents" data-part="X">
+<section class="dark" data-title="Part IX — LLMs, RAG and agentic AI" data-module="IX · LLMs &amp; agents" data-part="IX">
 <div class="sec-wrap">
-  <div class="sec-arch" style="--sec-c:#B5502E"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>X</div></div>
+  <div class="sec-arch" style="--sec-c:#B5502E"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>IX</div></div>
   <div class="sec-text">
-    <div class="time">{{slot:X}}</div>
+    <div class="time">{{slot:IX}}</div>
     <h2>From LLMs to agentic AI</h2>
     <div class="ar" data-lang="ar">من النماذج اللغوية إلى الوكلاء الأذكياء</div>
     <ul>
       <li>How LLMs are trained: next token, scale, alignment</li>
       <li>Prompting and retrieval-augmented generation (RAG)</li>
       <li>Agents: reason → act → observe; LangGraph</li>
-      <li>Labs 10–11 — EO document RAG and a Sentinel-2 agent</li>
+      <li>Labs 9–10 — EO document RAG and a Sentinel-2 agent</li>
     </ul>
   </div>
 </div>
 </section>
 
-<section data-title="How LLMs are made" data-module="X · LLMs &amp; agents" data-kind="theory" data-src="Radford et al. (2018) GPT · Brown et al. (2020) GPT-3 · Kaplan et al. (2020) &amp; Hoffmann et al. (2022, “Chinchilla”) scaling laws · Ouyang et al. (2022) InstructGPT/RLHF · Rafailov et al. (2023) DPO · DeepSeek-AI (2025) DeepSeek-R1 · Rothman (2024), Ch. 7–8 · Rodriguez (2024), Ch. 3–6">
+<section data-title="How LLMs are made" data-module="IX · LLMs &amp; agents" data-kind="theory" data-src="Radford et al. (2018) GPT · Brown et al. (2020) GPT-3 · Kaplan et al. (2020) &amp; Hoffmann et al. (2022, “Chinchilla”) scaling laws · Ouyang et al. (2022) InstructGPT/RLHF · Rafailov et al. (2023) DPO · DeepSeek-AI (2025) DeepSeek-R1 · Rothman (2024), Ch. 7–8 · Rodriguez (2024), Ch. 3–6">
 <h2>How an LLM is made — <em>three stages</em></h2>
 <div class="s-body">
   <div class="cols c3" style="height:auto">
@@ -31,7 +31,7 @@
 <aside class="notes">Close the historical loop: the RLHF stage is literally the reward/punishment education Turing proposed in 1950. Stress that an LLM alone cannot compute an NDVI over a city — it needs tools.</aside>
 </section>
 
-<section data-title="Prompting, tokens and embeddings" data-module="X · LLMs &amp; agents" data-kind="theory" data-src="Rodriguez (2024) <i>Generative AI Foundations in Python</i>, Ch. 7 Mastering the fundamentals of prompt engineering · Rothman (2024), Ch. 10 Tokenizers &amp; Ch. 11 LLM embeddings · Wei et al. (2022) Chain-of-thought prompting">
+<section data-title="Prompting, tokens and embeddings" data-module="IX · LLMs &amp; agents" data-kind="theory" data-src="Rodriguez (2024) <i>Generative AI Foundations in Python</i>, Ch. 7 Mastering the fundamentals of prompt engineering · Rothman (2024), Ch. 10 Tokenizers &amp; Ch. 11 LLM embeddings · Wei et al. (2022) Chain-of-thought prompting">
 <h2>Talking to an LLM: <em>tokens, prompts, embeddings</em></h2>
 <div class="s-body">
   <div class="cols c3" style="height:auto">
@@ -50,7 +50,7 @@ USER = "Which Sentinel-2 bands are at 10 m and which index detects built-up area
 <aside class="notes">Point out the parallel with Lab 8: AlphaEarth embeddings and text embeddings are the same mathematical object — vectors where cosine similarity means semantic similarity.</aside>
 </section>
 
-<section data-title="Retrieval-augmented generation" data-module="X · LLMs &amp; agents" data-kind="theory" data-src="Lewis et al. (2020) Retrieval-augmented generation, NeurIPS · Rodriguez (2024), Ch. 7 “Practice project: implementing RAG with LlamaIndex” · Rothman (2024), Ch. 7 “RAG with GPT-4” · Zhu et al. (2026) list RAG over geo-temporal data as an emerging direction">
+<section data-title="Retrieval-augmented generation" data-module="IX · LLMs &amp; agents" data-kind="theory" data-src="Lewis et al. (2020) Retrieval-augmented generation, NeurIPS · Rodriguez (2024), Ch. 7 “Practice project: implementing RAG with LlamaIndex” · Rothman (2024), Ch. 7 “RAG with GPT-4” · Zhu et al. (2026) list RAG over geo-temporal data as an emerging direction">
 <h2>RAG — give the model <em>a library card</em></h2>
 <div class="s-body">
   <div class="flow" style="height:150px">
@@ -68,11 +68,11 @@ USER = "Which Sentinel-2 bands are at 10 m and which index detects built-up area
 <aside class="notes">Common failure modes: bad chunking (tables split), retrieving the wrong section, and the model ignoring context. Evaluate retrieval (did the right chunk come back?) separately from generation.</aside>
 </section>
 
-<section data-title="Lab 10 — RAG over EO documents" data-module="X · LLMs &amp; agents" data-kind="lab" data-src="Notebook <b>notebooks/lab10_rag_eo_documents.ipynb</b> · LangChain, FAISS, sentence-transformers (BAAI/bge-small-en-v1.5) · any chat model via <code>init_chat_model</code> (local Ollama or a hosted API) · Book code: github.com/PacktPublishing/Generative-AI-Foundations-in-Python">
-<h2>Lab 10 · A cited <em>RAG assistant</em> for EO documents</h2>
+<section data-title="Lab 9 — RAG over EO documents" data-module="IX · LLMs &amp; agents" data-kind="lab" data-src="Notebook <b>notebooks/lab09_rag_eo_documents.ipynb</b> · LangChain, FAISS, sentence-transformers (BAAI/bge-small-en-v1.5) · any chat model via <code>init_chat_model</code> (local Ollama or a hosted API) · Book code: github.com/PacktPublishing/Generative-AI-Foundations-in-Python">
+<h2>Lab 9 · A cited <em>RAG assistant</em> for EO documents</h2>
 <div class="s-body">
   <div class="cols c64">
-    <pre class="py" data-file="lab10_rag_eo_documents.ipynb" data-size="sm">
+    <pre class="py" data-file="lab09_rag_eo_documents.ipynb" data-size="sm">
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -109,7 +109,7 @@ print(ask("What are the 11 features of an ideal Earth foundation model?"))
 <aside class="notes">The SYSTEM prompt is the one from the previous slide. The notebook also shows the same pipeline with LlamaIndex, mirroring the practice project in Rodriguez (2024), Ch. 7.</aside>
 </section>
 
-<section data-title="Agentic AI" data-module="X · LLMs &amp; agents" data-kind="theory" data-src="Yao et al. (2023) ReAct, ICLR · Schick et al. (2023) Toolformer · Shen et al. (2023) HuggingGPT; Rothman (2024), Ch. 19 · Anthropic (2024) Model Context Protocol · Singh et al. (2024) GeoLLM-Engine, CVPRW · Zhu et al. (2026) feature 11: AI assistants">
+<section data-title="Agentic AI" data-module="IX · LLMs &amp; agents" data-kind="theory" data-src="Yao et al. (2023) ReAct, ICLR · Schick et al. (2023) Toolformer · Shen et al. (2023) HuggingGPT; Rothman (2024), Ch. 19 · Anthropic (2024) Model Context Protocol · Singh et al. (2024) GeoLLM-Engine, CVPRW · Zhu et al. (2026) feature 11: AI assistants">
 <h2>Agents: LLMs that <em>reason, act and observe</em></h2>
 <div class="s-body">
   <div class="cols c46">
@@ -141,7 +141,7 @@ print(ask("What are the 11 features of an ideal Earth foundation model?"))
 <aside class="notes">An agent is a loop, not a model. The LLM decides; deterministic code acts. This separation is what makes agents auditable: every tool call and result is logged in the state.</aside>
 </section>
 
-<section data-title="LangGraph" data-module="X · LLMs &amp; agents" data-kind="theory" data-src="LangGraph documentation (LangChain, v1.x): StateGraph, nodes, edges, conditional edges, ToolNode, tools_condition, checkpointers, interrupts">
+<section data-title="LangGraph" data-module="IX · LLMs &amp; agents" data-kind="theory" data-src="LangGraph documentation (LangChain, v1.x): StateGraph, nodes, edges, conditional edges, ToolNode, tools_condition, checkpointers, interrupts">
 <h2>LangGraph: agents as <em>state machines</em></h2>
 <div class="s-body">
   <div class="cols c55">
@@ -178,11 +178,11 @@ print(ask("What are the 11 features of an ideal Earth foundation model?"))
 <aside class="notes">The minimal ReAct agent in LangGraph is exactly this graph: START → agent; agent → tools if the last message contains tool calls, otherwise END; tools → agent. The optional human-check node uses LangGraph's interrupt to pause before, e.g., launching a large download.</aside>
 </section>
 
-<section data-title="Lab 11 — LangGraph EO agent" data-module="X · LLMs &amp; agents" data-kind="lab" data-src="Notebook <b>notebooks/lab11_langgraph_eo_agent.ipynb</b> · LangGraph · Microsoft Planetary Computer STAC (<code>sentinel-2-l2a</code>) · pystac-client, odc-stac · OpenStreetMap Nominatim geocoder (respect its usage policy)">
-<h2>Lab 11 · A <em>Sentinel-2 agent</em> in LangGraph</h2>
+<section data-title="Lab 10 — LangGraph EO agent" data-module="IX · LLMs &amp; agents" data-kind="lab" data-src="Notebook <b>notebooks/lab10_langgraph_eo_agent.ipynb</b> · LangGraph · Microsoft Planetary Computer STAC (<code>sentinel-2-l2a</code>) · pystac-client, odc-stac · OpenStreetMap Nominatim geocoder (respect its usage policy)">
+<h2>Lab 10 · A <em>Sentinel-2 agent</em> in LangGraph</h2>
 <div class="s-body">
   <div class="cols c55">
-    <pre class="py" data-file="lab11 — tools" data-size="xs">
+    <pre class="py" data-file="lab10 — tools" data-size="xs">
 from langchain_core.tools import tool
 import pystac_client, planetary_computer, odc.stac, numpy as np
 
@@ -213,7 +213,7 @@ def mean_ndvi(item_id: str, bbox: list[float]) -> float:
     red, nir = ds.B04.where(ok), ds.B08.where(ok)
     return float(((nir - red) / (nir + red)).mean())
 </pre>
-    <pre class="py" data-file="lab11 — graph" data-size="sm">
+    <pre class="py" data-file="lab10 — graph" data-size="sm">
 from langgraph.graph import StateGraph, MessagesState, START
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.checkpoint.memory import InMemorySaver

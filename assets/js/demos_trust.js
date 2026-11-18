@@ -7,7 +7,7 @@
   const DEMOS = (window.DECK_DEMOS = window.DECK_DEMOS || {});
   const K = window.DemoKit;
   const { rng, gauss, clamp, pick, Plot, axes, label, blit, shuffle } = K;
-  const INK = "#14213D", MUT = "#5B6478", SAF = "#C99A2E", TER = "#B5502E", BLU = "#2E4BC6", GRN = "#0F6B5C";
+  const INK = "#14213D", MUT = "#5B6478", SAF = "#C99A2E", TER = THEME.p, BLU = "#2E4BC6", GRN = THEME.s;
   const FONT = "Inter, Arial, sans-serif";
   const pct = (v, d = 1) => (100 * v).toFixed(d) + " %";
   const $ = (root, s) => root.querySelector(s);
@@ -44,7 +44,7 @@
   }
   const maha = (g, x, y) => { const u = x - g.mx, v = y - g.my; return g.ia * u * u + 2 * g.ib * u * v + g.id * v * v; };
   const classify = (M, x, y) => { let b = 0, bv = Infinity; M.forEach((g, c) => { const v = maha(g, x, y) + g.ld; if (v < bv) { bv = v; b = c; } }); return b; };
-  const COL3 = ["#2E4BC6", "#0F6B5C", "#B5502E"], RGB3 = [[46, 75, 198], [15, 107, 92], [181, 80, 46]];
+  const COL3 = ["#2E4BC6", THEME.s, THEME.p], RGB3 = [[46, 75, 198], THEME.sRgb, THEME.pRgb];
 
   /* ======================================================= 1 · calibration and temperature scaling */
   DEMOS.calib = function (root) {
@@ -73,7 +73,7 @@
         if (!b.n) return;
         const x0 = A.X(j / 10) + 2, x1 = A.X((j + 1) / 10) - 2, acc = b.a / b.n, conf = b.c / b.n;
         rc.fillStyle = "rgba(46,75,198,.75)"; rc.fillRect(x0, A.Y(acc), x1 - x0, A.Y(0) - A.Y(acc));
-        rc.fillStyle = "rgba(181,80,46,.32)"; rc.fillRect(x0, Math.min(A.Y(acc), A.Y(conf)), x1 - x0, Math.abs(A.Y(acc) - A.Y(conf)));
+        rc.fillStyle = `rgba(${THEME.pRgb},.32)`; rc.fillRect(x0, Math.min(A.Y(acc), A.Y(conf)), x1 - x0, Math.abs(A.Y(acc) - A.Y(conf)));
       });
       rc.setLineDash([6, 4]); rc.strokeStyle = INK; rc.lineWidth = 1.5; rc.beginPath(); rc.moveTo(A.X(0), A.Y(0)); rc.lineTo(A.X(1), A.Y(1)); rc.stroke(); rc.setLineDash([]);
       label(rc, "perfect calibration", A.X(0.52), A.Y(0.6), MUT, "right", `12px ${FONT}`);
@@ -151,7 +151,7 @@
   DEMOS.xai = function (root) {
     const S = K.scene(), N = S.N, n = S.n, BI = [1, 2, 3, 4, 5, 6, 7, 8, 11, 12];
     const BN = ["B2", "B3", "B4", "B5", "B6", "B7", "B8", "B8A", "B11", "B12"], CN = ["water", "vegetation", "bare soil", "built-up"], MAT2C = [0, 1, 2, 3, 3, 3];
-    const C4 = [[46, 75, 198], [15, 107, 92], [201, 154, 46], [181, 80, 46]];
+    const C4 = [[46, 75, 198], THEME.sRgb, [201, 154, 46], THEME.pRgb];
     const ic = $(root, "canvas.img").getContext("2d"), ac = $(root, "canvas.att").getContext("2d"), bc = $(root, "canvas.bars").getContext("2d"), out = $(root, ".readout");
     const d = BI.length, Z = new Float32Array(n * d), y = new Uint8Array(n), mu = new Float64Array(d), sdv = new Float64Array(d);
     const r = rng(77);
@@ -189,7 +189,7 @@
       const att = new Float32Array(n); let mx = 1e-6;
       for (let i = 0; i < n; i++) { att[i] = Wt[pred[i]][band] * Z[i * d + band]; mx = Math.max(mx, Math.abs(att[i])); }
       blit(ac, N, (i) => {
-        const v = clamp(att[i] / (0.6 * mx), -1, 1), t = Math.abs(v), c = v > 0 ? [181, 80, 46] : [46, 75, 198];
+        const v = clamp(att[i] / (0.6 * mx), -1, 1), t = Math.abs(v), c = v > 0 ? THEME.pRgb : [46, 75, 198];
         return [253 + (c[0] - 253) * t, 251 + (c[1] - 251) * t, 247 + (c[2] - 247) * t].map(Math.round);
       });
     }
@@ -290,7 +290,7 @@
       let A = axes(fc, 58, 12, W - 74, H - 58, { x: [0, 7], y: [0, 0.6], xt: [0, 1, 2, 3, 4, 5, 6, 7], yt: [0, 0.2, 0.4, 0.6], xl: "leaf area index (m²/m²)", yl: "reflectance" });
       [[1, BLU, "NIR"], [0, TER, "red"]].forEach(([b, col, nm]) => {
         fc.beginPath(); for (let l = 0; l <= 7; l += 0.05) fc.lineTo(A.X(l), A.Y(fwd(l, 1 - sv)[b])); for (let l = 7; l >= 0; l -= 0.05) fc.lineTo(A.X(l), A.Y(fwd(l, 1 + sv)[b]));
-        fc.closePath(); fc.fillStyle = col === BLU ? "rgba(46,75,198,.15)" : "rgba(181,80,46,.18)"; fc.fill();
+        fc.closePath(); fc.fillStyle = col === BLU ? "rgba(46,75,198,.15)" : `rgba(${THEME.pRgb},.18)`; fc.fill();
         fc.beginPath(); for (let l = 0; l <= 7; l += 0.05) fc.lineTo(A.X(l), A.Y(fwd(l, 1)[b])); fc.strokeStyle = col; fc.lineWidth = 2.5; fc.stroke();
         label(fc, nm, A.X(5.6), A.Y(fwd(5.6, 1)[b]) - 8, col);
       });
@@ -318,9 +318,9 @@
       { n: "Europe", t: [1, 0, 1, 0, 0, 0], w: 0.5, col: "#2E4BC6" },
       { n: "North America", t: [1.05, 0.005, 0.97, 0, 0.02, 0], w: 0.33, col: "#5B7BD6" },
       { n: "East Asia", t: [1.12, 0.012, 0.94, 0.005, 0.05, 0.01], w: 0.12, col: "#7B3FB5" },
-      { n: "South America", t: [0.96, 0, 1.04, 0, 0, 0.01], w: 0.05, col: "#0F6B5C" },
+      { n: "South America", t: [0.96, 0, 1.04, 0, 0, 0.01], w: 0.05, col: THEME.s },
       { n: "North Africa", t: [1.4, 0.05, 0.84, 0.02, 0.2, 0.08], w: 0, col: "#C99A2E" },
-      { n: "Sub-Saharan Africa", t: [1.28, 0.04, 0.8, 0.01, 0.24, 0.05], w: 0, col: "#B5502E" },
+      { n: "Sub-Saharan Africa", t: [1.28, 0.04, 0.8, 0.01, 0.24, 0.05], w: 0, col: THEME.p },
     ];
     const tf = (p, t) => ({ x: clamp(t[0] * p.x + t[1] + (p.c === 2 ? t[5] : 0), 0.01, 0.99), y: clamp(t[2] * p.y + t[3] - (p.c === 1 ? t[4] * p.y : 0), 0.01, 0.99), c: p.c });
     const pool = RG.map((g, k) => K.spectral3(300 + k, 120).map((p) => tf(p, g.t)));

@@ -39,7 +39,7 @@ code{background:#F2EADB;padding:1px 6px;border-radius:4px}
 <header>
   <div class="k">Deep Learning for Earth Observation · practical part</div>
   <h1>Colab-ready notebooks</h1>
-  <p>Eleven labs, one per model family, from a perceptron on Sentinel-2 spectra to a LangGraph agent that queries the Planetary Computer. <a href="../">← back to the slides</a></p>
+  <p>Ten labs, one per model family, from a perceptron on Sentinel-2 spectra to a LangGraph agent that queries the Planetary Computer. <a href="../">← back to the slides</a></p>
 </header>
 <main>
   <div class="note" id="colabNote">“Open in Colab” links point to this repository on GitHub (detected from the page address). If you host the site elsewhere, download the notebook and upload it to <a href="https://colab.research.google.com">Colab</a>.</div>
@@ -55,9 +55,8 @@ const NB = [
  ["lab06_vit_eurosat","Attention, ViT and a temporal Transformer","Attention from scratch, ViT-S/16 fine-tuning with attention maps, and a date-aware Transformer for cloudy pixel time series.",["Part VII","GPU"]],
  ["lab07_prithvi_terratorch","Prithvi-EO-2.0 with TerraTorch","Fine-tune the NASA/IBM geospatial foundation model for burn-scar segmentation (HLS).",["Part VIII","GPU"]],
  ["lab08_alphaearth_embeddings","AlphaEarth embeddings in Earth Engine","Similarity search, few-label random-forest mapping and change detection with 64-D annual embeddings.",["Part VIII","Earth Engine"]],
- ["lab09_informal_settlements_fm","Informal settlements × foundation models","Three tiers: AlphaEarth + RF (leave-one-city-out), frozen DINOv2 few-shot tiles, LoRA segmentation + SAM refinement.",["Part IX","GPU","your labels"]],
- ["lab10_rag_eo_documents","RAG over EO documents","LangChain + FAISS + bge embeddings; cited answers; retrieval evaluation; local (Ollama) or hosted LLM.",["Part X","CPU ok"]],
- ["lab11_langgraph_eo_agent","A Sentinel-2 agent in LangGraph","Geocode → STAC search → cloud-masked NDVI, as a StateGraph with memory and human-in-the-loop.",["Part X","LLM API or Ollama"]],
+ ["lab09_rag_eo_documents","RAG over EO documents","LangChain + FAISS + bge embeddings; cited answers; retrieval evaluation; local (Ollama) or hosted LLM.",["Part IX","CPU ok"]],
+ ["lab10_langgraph_eo_agent","A Sentinel-2 agent in LangGraph","Geocode → STAC search → cloud-masked NDVI, as a StateGraph with memory and human-in-the-loop.",["Part IX","LLM API or Ollama"]],
 ];
 // Detect https://USER.github.io/REPO/notebooks/ → github.com/USER/REPO
 let gh = null;

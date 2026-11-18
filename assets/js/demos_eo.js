@@ -8,12 +8,12 @@
   const DEMOS = (window.DECK_DEMOS = window.DECK_DEMOS || {});
   const K = window.DemoKit;
   const { rng, gauss, clamp, pick } = K;
-  const INK = "#14213D", MUT = "#5B6478", SAF = "#C99A2E", TER = "#B5502E", BLU = "#2E4BC6", GRN = "#0F6B5C";
+  const INK = "#14213D", MUT = "#5B6478", SAF = "#C99A2E", TER = THEME.p, BLU = "#2E4BC6", GRN = THEME.s;
   const FONT = "Inter, Arial, sans-serif";
   const pct = (v, d = 1) => (100 * v).toFixed(d) + " %";
   const disp = (v) => Math.round(255 * Math.pow(clamp(v * 3.4, 0, 1), 0.8));
   const MAT2C = [0, 1, 2, 3, 3, 3];                     // water, vegetation, bare soil, roofs/asphalt → 4 classes
-  const C4 = [[46, 75, 198], [15, 107, 92], [201, 154, 46], [181, 80, 46]];
+  const C4 = [[46, 75, 198], THEME.sRgb, [201, 154, 46], THEME.pRgb];
   const $ = (root, s) => root.querySelector(s);
   const $$ = (root, s) => Array.from(root.querySelectorAll(s));
 
@@ -254,7 +254,7 @@
       g.strokeStyle = "rgba(255,255,255,.08)"; g.lineWidth = 1.3;
       for (let k = 0; k < 260; k++) { const x = r() * W, y = 70 + r() * H, l = 6 + r() * 16; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + l / 2, y - 2, x + l, y); g.stroke(); }
       g.fillStyle = "#BFB6A1"; g.fillRect(0, 0, W, 64); g.fillStyle = "#AAA18B"; g.fillRect(392, 64, 54, 150);
-      const CC = ["#B5502E", "#2E4BC6", "#C99A2E", "#0F6B5C", "#8E8E8E", "#6E4B8E"];
+      const CC = [THEME.p, "#2E4BC6", "#C99A2E", THEME.s, "#8E8E8E", "#6E4B8E"];
       for (let row = 0; row < 3; row++) for (let col = 0; col < 10; col++) { g.fillStyle = CC[Math.floor(r() * CC.length)]; g.fillRect(16 + col * 34, 7 + row * 17, 30, 13); }
       g.fillStyle = "#8C846F"; for (let k = 0; k < 6; k++) g.fillRect(470 + k * 26, 14, 18, 36);
       // ships
@@ -433,7 +433,7 @@
     const bIn = $(root, "input[name=block]"), bv = $(root, ".bv"), pIn = $(root, "input[name=pe]"), pv = $(root, ".pv");
     const MU = [[0, 0, 0], [1.1, 0.35, 0.2], [0.25, 1.2, -0.5], [-0.7, 0.45, 1.1]];
     const CC = [[218, 186, 98], [160, 172, 92], [30, 120, 96], [122, 104, 72]];
-    const FOLD = ["#2E4BC6", "#B5502E", "#C99A2E", "#0F6B5C", "#7B3FB5"];
+    const FOLD = ["#2E4BC6", THEME.p, "#C99A2E", THEME.s, "#7B3FB5"];
     let seed = 1, view = "random", samp = "survey";
     let parcel, pcls, poff, eps, surveyed, lab, testMap;
     const X = new Float32Array(n * 3);
@@ -566,7 +566,7 @@
       for (let b = 0; b < B; b++) {
         const x0 = A.X(b / B) + 1, w = A.X(1 / B) - A.X(0) - 2;
         hx.fillStyle = "rgba(46,75,198,.55)"; hx.fillRect(x0, A.Y(f(hn[b])), w, A.Y(0) - A.Y(f(hn[b])));
-        hx.fillStyle = "rgba(181,80,46,.8)"; hx.fillRect(x0 + w * 0.25, A.Y(f(hp[b])), w * 0.5, A.Y(0) - A.Y(f(hp[b])));
+        hx.fillStyle = `rgba(${THEME.pRgb},.8)`; hx.fillRect(x0 + w * 0.25, A.Y(f(hp[b])), w * 0.5, A.Y(0) - A.Y(f(hp[b])));
       }
       hx.strokeStyle = INK; hx.lineWidth = 2.5; hx.setLineDash([6, 4]); hx.beginPath(); hx.moveTo(A.X(t), 8); hx.lineTo(A.X(t), A.Y(0)); hx.stroke(); hx.setLineDash([]);
       label(hx, "■ background", A.X(0.62), 28, "rgba(46,75,198,.9)"); label(hx, "■ informal settlement", A.X(0.62), 46, TER);
@@ -657,7 +657,7 @@
       let cover = 0;
       hist.forEach((h, j) => {
         const yy = A.Y(0.5) - 12 + (24 * j) / Math.max(hist.length, 1), ok = Math.abs(h.est - tTrue) <= 1.96 * h.se; cover += ok;
-        ec.strokeStyle = ok ? "rgba(46,75,198,.45)" : "rgba(181,80,46,.9)"; ec.beginPath(); ec.moveTo(A.X(h.est - 1.96 * h.se), yy); ec.lineTo(A.X(h.est + 1.96 * h.se), yy); ec.stroke();
+        ec.strokeStyle = ok ? "rgba(46,75,198,.45)" : `rgba(${THEME.pRgb},.9)`; ec.beginPath(); ec.moveTo(A.X(h.est - 1.96 * h.se), yy); ec.lineTo(A.X(h.est + 1.96 * h.se), yy); ec.stroke();
       });
       const [n0, n1] = alloc();
       out.textContent = `mapped change ${Math.round(pix)} ha vs true ${Math.round(tTrue)} ha · sample n = ${n0 + n1} (${n1} in mapped change, ${n0} in no change)`

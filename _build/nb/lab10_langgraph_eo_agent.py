@@ -1,6 +1,6 @@
 # %% [markdown]
-# # Lab 11 — A Sentinel-2 agent with LangGraph
-# **Deep Learning for Earth Observation** · Part X
+# # Lab 10 — A Sentinel-2 agent with LangGraph
+# **Deep Learning for Earth Observation** · Part IX
 #
 # An **agent** is a loop: the LLM *reasons* and decides to call a tool, *your code acts*, the result is *observed*, and the loop repeats until the model answers.
 # LangGraph makes this loop an explicit **state graph**: `START → agent ⇄ tools → END`, with memory (checkpointer) and optional human approval (interrupt).
@@ -26,7 +26,7 @@ from geopy.geocoders import Nominatim
 MODEL = "openai:gpt-4o-mini"            # or "ollama:qwen2.5:7b", "anthropic:<model-name>", ...
 STAC = "https://planetarycomputer.microsoft.com/api/stac/v1"
 cat = pystac_client.Client.open(STAC, modifier=planetary_computer.sign_inplace)
-geolocator = Nominatim(user_agent="dl4eo-course-lab11")
+geolocator = Nominatim(user_agent="dl4eo-course-lab10")
 
 # %% [markdown]
 # ## 1 · Tools — the docstring and type hints ARE the API the model sees

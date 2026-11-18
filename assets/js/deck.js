@@ -56,14 +56,14 @@
       ctx.save(); ctx.translate(14, 130); ctx.rotate(-Math.PI / 2); ctx.fillText("NIR reflectance →", 0, 0); ctx.restore();
       // boundary
       if (Math.abs(w[1]) > 1e-6) {
-        ctx.strokeStyle = "#B5502E"; ctx.lineWidth = 3; ctx.beginPath();
+        ctx.strokeStyle = THEME.p; ctx.lineWidth = 3; ctx.beginPath();
         const y0 = -(w[0] * 0 + w[2]) / w[1], y1 = -(w[0] * 1 + w[2]) / w[1];
         ctx.moveTo(0, H - y0 * H); ctx.lineTo(W, H - y1 * H); ctx.stroke();
       }
       pts.forEach((p) => {
         ctx.beginPath(); ctx.arc(p.x * W, H - p.y * H, 7, 0, 7);
-        ctx.fillStyle = p.c > 0 ? "#0F6B5C" : "#2E4BC6"; ctx.fill();
-        ctx.lineWidth = 2; ctx.strokeStyle = predict(p) === p.c ? "#fff" : "#B5502E"; ctx.stroke();
+        ctx.fillStyle = p.c > 0 ? THEME.s : "#2E4BC6"; ctx.fill();
+        ctx.lineWidth = 2; ctx.strokeStyle = predict(p) === p.c ? "#fff" : THEME.p; ctx.stroke();
       });
       const err = pts.filter((p) => predict(p) !== p.c).length;
       out.innerHTML = `epoch ${epoch} · w = [${w.map((v) => v.toFixed(2)).join(", ")}] · errors ${err}/${pts.length}`;
@@ -115,7 +115,7 @@
       ctx.strokeStyle = "#C99A2E"; ctx.lineWidth = 2; ctx.beginPath();
       path.forEach((v, i) => (i ? ctx.lineTo(X(v), Y(L(v))) : ctx.moveTo(X(v), Y(L(v)))));
       ctx.stroke();
-      path.forEach((v, i) => { ctx.beginPath(); ctx.arc(X(v), Y(L(v)), i === path.length - 1 ? 9 : 4, 0, 7); ctx.fillStyle = i === path.length - 1 ? "#B5502E" : "#C99A2E"; ctx.fill(); });
+      path.forEach((v, i) => { ctx.beginPath(); ctx.arc(X(v), Y(L(v)), i === path.length - 1 ? 9 : 4, 0, 7); ctx.fillStyle = i === path.length - 1 ? THEME.p : "#C99A2E"; ctx.fill(); });
       out.textContent = `step ${path.length - 1} · θ = ${x.toFixed(3)} · L(θ) = ${L(x).toFixed(3)} · ∂L/∂θ = ${dL(x).toFixed(3)}`;
     }
     function step() { const lr = parseFloat(lrIn.value); x = x - lr * dL(x); x = Math.max(-3.2, Math.min(3.2, x)); path.push(x); draw(); }
@@ -217,7 +217,7 @@
       const m = Math.max(...sc), ex = sc.map((s) => Math.exp(s - m)), Z = ex.reduce((a, b) => a + b, 0), p = ex.map((e) => e / Z);
       els.forEach((el, i) => {
         el.classList.toggle("q", i === qi);
-        el.style.background = `rgba(181,80,46,${Math.min(1, p[i] * 1.6).toFixed(3)})`;
+        el.style.background = `rgba(${THEME.pRgb},${Math.min(1, p[i] * 1.6).toFixed(3)})`;
         el.querySelector("small").textContent = p[i].toFixed(2);
       });
       out.textContent = `query = "${toks[qi]}" · softmax(q·kᵀ/√d) shown under each token`;
