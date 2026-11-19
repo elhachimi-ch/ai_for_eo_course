@@ -1,21 +1,21 @@
-<section class="dark" data-title="Part VII — Transformers" data-module="VII · Transformers" data-part="VII">
+<section class="dark" data-title="Chapter V.5 — Transformers" data-module="V.5 · Transformers" data-part="V5">
 <div class="sec-wrap">
-  <div class="sec-arch" style="--sec-c:#2E4BC6"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>VII</div></div>
+  <div class="sec-arch" style="--sec-c:#2E4BC6"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num ch"><small>Chapter</small>V.5</div></div>
   <div class="sec-text">
-    <div class="time">{{slot:VII}}</div>
+    <div class="time">{{slot:V5}} · 2017 → 2023</div>
     <h2>Attention is all you need</h2>
     <div class="ar" data-lang="ar">الانتباه هو كل ما تحتاجه</div>
     <ul>
       <li>Self-attention, multi-head attention, positional encoding</li>
       <li>Encoder, decoder, encoder–decoder — BERT, GPT, T5</li>
       <li>Vision Transformers, SAM, CLIP — and EO transformers</li>
-      <li>Lab 6 — ViT on EuroSAT and a temporal transformer</li>
+      <li>Lab 9 — ViT on EuroSAT and a temporal transformer</li>
     </ul>
   </div>
 </div>
 </section>
 
-<section data-title="The Transformer" data-module="VII · Transformers" data-kind="theory" data-src="Vaswani et al. (2017) Attention is all you need, NeurIPS (figure) · Rothman (2024) <i>Transformers for NLP and Computer Vision</i>, 3rd ed., Ch. 2 “Getting started with the architecture of the transformer model”">
+<section data-title="The Transformer" data-module="V.5 · Transformers" data-kind="theory" data-src="Vaswani et al. (2017) Attention is all you need, NeurIPS (figure) · Rothman (2024) <i>Transformers for NLP and Computer Vision</i>, 3rd ed., Ch. 2 “Getting started with the architecture of the transformer model”">
 <h2>The Transformer <em>(Vaswani et al., 2017)</em></h2>
 <div class="s-body">
   <div class="cols c37">
@@ -35,7 +35,7 @@
 <aside class="notes">No recurrence, no convolution: every token looks at every other token in one step, so long-range dependencies are one hop away and training parallelises perfectly on GPUs — that is why it scaled. The figure is from the original paper (as used in Chouaib's GeoFM deck).</aside>
 </section>
 
-<section data-title="Attention explorer" data-module="VII · Transformers" data-kind="practice" data-src="Interactive demo with hand-made 4-D embeddings (illustrative, not a trained model) · Rothman (2024), Ch. 2 &amp; Ch. 9 (interpretability of attention)">
+<section data-title="Attention explorer" data-module="V.5 · Transformers" data-kind="practice" data-src="Interactive demo with hand-made 4-D embeddings (illustrative, not a trained model) · Rothman (2024), Ch. 2 &amp; Ch. 9 (interpretability of attention)">
 <h2>Attention explorer — <em>who looks at whom?</em></h2>
 <div class="s-body">
   <div class="cols c64">
@@ -55,7 +55,7 @@
 <aside class="notes">Click “flooded”: it attends to “river” and “storm”. The embeddings here are hand-made for illustration; in a real model they are learned. The same mechanism lets a pixel at a given date attend to the most informative other dates (e.g., peak of season).</aside>
 </section>
 
-<section data-title="Transformer families and ViT" data-module="VII · Transformers" data-kind="theory" data-src="Devlin et al. (2019) BERT · Radford et al. (2018, 2019) GPT · Raffel et al. (2020) T5 · Dosovitskiy et al. (2021) ViT, ICLR · Liu et al. (2021) Swin · Radford et al. (2021) CLIP · Kirillov et al. (2023) SAM · Rothman (2024), Ch. 5–7 &amp; 16">
+<section data-title="Transformer families and ViT" data-module="V.5 · Transformers" data-kind="theory" data-src="Devlin et al. (2019) BERT · Radford et al. (2018, 2019) GPT · Raffel et al. (2020) T5 · Dosovitskiy et al. (2021) ViT, ICLR · Liu et al. (2021) Swin · Radford et al. (2021) CLIP · Kirillov et al. (2023) SAM · Rothman (2024), Ch. 5–7 &amp; 16">
 <h2>Three families and the <em>Vision Transformer</em></h2>
 <div class="s-body">
   <div class="cols c55">
@@ -86,7 +86,7 @@
 <aside class="notes">For multispectral data, patch embedding simply sees C = 6, 10 or 13 channels per patch — that is how Prithvi and SatMAE ingest Sentinel/HLS bands.</aside>
 </section>
 
-<section data-title="Transformers for EO" data-module="VII · Transformers" data-kind="practice" data-src="Cong et al. (2022) SatMAE, NeurIPS · Reed et al. (2023) Scale-MAE, ICCV · Tseng et al. (2023) Presto · Tarasiou et al. (2023) TSViT, CVPR · Liu et al. (2024) RemoteCLIP, <i>IEEE TGRS</i> · Hong et al. (2024) SpectralGPT, <i>IEEE TPAMI</i>">
+<section data-title="Transformers for EO" data-module="V.5 · Transformers" data-kind="practice" data-src="Cong et al. (2022) SatMAE, NeurIPS · Reed et al. (2023) Scale-MAE, ICCV · Tseng et al. (2023) Presto · Tarasiou et al. (2023) TSViT, CVPR · Liu et al. (2024) RemoteCLIP, <i>IEEE TGRS</i> · Hong et al. (2024) SpectralGPT, <i>IEEE TPAMI</i>">
 <h2>Transformers meet <em>Earth observation</em></h2>
 <div class="s-body">
   <div class="cols c4" style="height:auto">
@@ -95,17 +95,17 @@
     <div class="card arch clay"><div class="icon">≋</div><h3>Spectral</h3><p class="small">Tokens per band group (SpectralGPT); wavelength-aware patch embeddings (DOFA) accept any sensor.</p></div>
     <div class="card arch sand"><div class="icon">✎</div><h3>Vision–language</h3><p class="small">RemoteCLIP, GeoChat-style assistants: search imagery with text, caption scenes, answer questions.</p></div>
   </div>
-  <div class="callout mt2"><div><b>Rule of thumb.</b> Little labelled data and one sensor → a pre-trained CNN is hard to beat. Many sensors, long time series, or many tasks → Transformer-based <b>foundation models</b> pay off (Part VIII).</div></div>
+  <div class="callout mt2"><div><b>Rule of thumb.</b> Little labelled data and one sensor → a pre-trained CNN is hard to beat. Many sensors, long time series, or many tasks → Transformer-based <b>foundation models</b> pay off (Chapters V.6–V.7).</div></div>
 </div>
 <aside class="notes">This slide bridges into foundation models: all four directions are combined in the current generation of GeoFMs.</aside>
 </section>
 
-<section data-title="Lab 6 — ViT and temporal transformer" data-module="VII · Transformers" data-kind="lab" data-src="Notebook <b>notebooks/lab06_vit_eurosat.ipynb</b> · timm (Wightman) · PyTorch <code>nn.TransformerEncoder</code> · Book code: github.com/Denis2054/Transformers-for-NLP-and-Computer-Vision-3rd-Edition (Ch. 2, 16)">
-<h2>Lab 6 · Attention from scratch, <em>ViT</em> and a temporal encoder</h2>
+<section data-title="Lab 9 — ViT and temporal transformer" data-module="V.5 · Transformers" data-kind="lab" data-src="Notebook <b>notebooks/lab09_vit_eurosat.ipynb</b> · timm (Wightman) · PyTorch <code>nn.TransformerEncoder</code> · Book code: github.com/Denis2054/Transformers-for-NLP-and-Computer-Vision-3rd-Edition (Ch. 2, 16)">
+<h2>Lab 9 · Attention from scratch, <em>ViT</em> and a temporal encoder</h2>
 <div class="s-body">
   <div class="cols c55">
     <div class="rows">
-      <pre class="py" data-file="lab06 — scaled dot-product attention" data-size="sm">
+      <pre class="py" data-file="lab09 — scaled dot-product attention" data-size="sm">
 def attention(Q, K, V, mask=None):
     d = Q.size(-1)
     scores = Q @ K.transpose(-2, -1) / d ** 0.5
@@ -114,7 +114,7 @@ def attention(Q, K, V, mask=None):
     w = scores.softmax(dim=-1)          # (B, n, n)
     return w @ V, w
 </pre>
-      <pre class="py" data-file="lab06 — fine-tune a pre-trained ViT on EuroSAT" data-size="sm">
+      <pre class="py" data-file="lab09 — fine-tune a pre-trained ViT on EuroSAT" data-size="sm">
 import timm
 model = timm.create_model("vit_small_patch16_224.augreg_in21k",
                           pretrained=True, num_classes=10)
@@ -122,10 +122,10 @@ cfg = timm.data.resolve_data_config({}, model=model)
 train_tf = timm.data.create_transform(**cfg, is_training=True)
 opt = torch.optim.AdamW(model.parameters(), lr=5e-5,
                         weight_decay=0.05)
-# same loop as Lab 2; warm-up + cosine schedule recommended
+# same loop as Lab 5; warm-up + cosine schedule recommended
 </pre>
     </div>
-    <pre class="py" data-file="lab06 — transformer for pixel time series (crop type)" data-size="sm">
+    <pre class="py" data-file="lab09 — transformer for pixel time series (crop type)" data-size="sm">
 class PixelTSFormer(nn.Module):
     """Sentinel-2 pixel time series (T dates x C bands) -> class."""
     def __init__(self, n_bands=10, d=64, n_cls=9, max_doy=366):
@@ -149,4 +149,20 @@ class PixelTSFormer(nn.Module):
   </div>
 </div>
 <aside class="notes">The day-of-year embedding is how temporal transformers deal with irregular acquisitions: positions are real dates, not indices. Cloudy dates are dropped with the padding mask instead of being interpolated — one reason attention works well for optical time series.</aside>
+</section>
+
+<section class="dark" data-title="Break 2" data-module="Break" data-part="break2">
+<div class="sec-wrap">
+  <div class="sec-arch" style="--sec-c:#C99A2E"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num" style="font-size:96px;top:360px"><small>Pause</small>☕</div></div>
+  <div class="sec-text">
+    <div class="time">{{slot:break2}}</div>
+    <h2>Break · second round</h2>
+    <div class="ar" data-lang="ar">استراحة ثانية</div>
+    <ul>
+      <li>Start Lab 11 (Prithvi) on a GPU runtime now — the model download takes a few minutes</li>
+      <li>Every network so far learned from labels. What could it learn from the unlabelled archive alone?</li>
+      <li>Next: self-supervised learning, foundation models and LLMs</li>
+    </ul>
+  </div>
+</div>
 </section>

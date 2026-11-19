@@ -1,0 +1,647 @@
+<section class="dark" data-title="Part II — Statistical machine learning" data-module="II · Statistical learning" data-part="II" data-extra="classical_ml,eo_data,evaluation">
+<div class="sec-wrap">
+  <div class="sec-arch" style="--sec-c:#0F6B5C"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>II</div></div>
+  <div class="sec-text">
+    <div class="time">{{slot:II}} · 1961 → 2018</div>
+    <h2>Learning from examples</h2>
+    <div class="ar" data-lang="ar">التعلّم الآلي الإحصائي</div>
+    <ul>
+      <li data-require="classical_ml">The classical-ML era: from naive Bayes and the first SVM to random forests and XGBoost</li>
+      <li>Theory: the EO data cube, loss and empirical risk, likelihood, bias and variance (live demo)</li>
+      <li data-require="classical_ml">Naive Bayes, decision trees, random forests, boosting, SVM — each with its maths, live</li>
+      <li data-require="eo_data">EO data for ML: analysis-ready data, clouds &amp; compositing, where labels come from</li>
+      <li data-require="evaluation">An honest score: spatial cross-validation, rare-class metrics, area estimation</li>
+      <li>Lab 1 — land cover from Sentinel-2 with classical learners, scored with spatial CV</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<section data-title="The classical-ML era" data-module="II · History" data-kind="theory" data-require="classical_ml" data-src="Maron (1961) · Vapnik &amp; Lerner (1963) · Breiman et al. (1984) CART · Quinlan (1986; 1993) · Boser, Guyon &amp; Vapnik (1992) · Cortes &amp; Vapnik (1995) · Ho (1995) · Breiman (1996; 2001) · Freund &amp; Schapire (1997) · Friedman (2001) · Chen &amp; Guestrin (2016) · Grinsztajn et al. (2022) NeurIPS — full references on the following slides">
+<h2>The classical-ML era: <em>statistics meets computing</em></h2>
+<div class="s-body">
+  <div style="height:300px">
+    <div class="timeline compact">
+      <div class="axis"></div>
+      <div class="tl-era" style="left:24%;width:70%;background:#C99A2E"></div>
+      <div class="tl-item up" style="left:5%"><div class="yr">1961</div><div class="ev">Maron: naive Bayes sorts documents</div></div>
+      <div class="tl-item down" style="left:16%"><div class="yr">1963</div><div class="ev">Vapnik &amp; Lerner: optimal separating hyperplane</div></div>
+      <div class="tl-item up" style="left:27%"><div class="yr">1984</div><div class="ev">CART: classification &amp; regression trees</div></div>
+      <div class="tl-item down" style="left:38%"><div class="yr">1986–93</div><div class="ev">Quinlan: ID3 → C4.5, entropy-based trees</div></div>
+      <div class="tl-item up" style="left:49%"><div class="yr">1992–95</div><div class="ev">Kernel trick; soft-margin SVM</div></div>
+      <div class="tl-item down" style="left:60%"><div class="yr">1995–97</div><div class="ev">AdaBoost; Ho's random decision forests</div></div>
+      <div class="tl-item up" style="left:71%"><div class="yr">1996–2001</div><div class="ev">Breiman: bagging → random forests</div></div>
+      <div class="tl-item down" style="left:82%"><div class="yr">2001</div><div class="ev">Friedman: gradient boosting machine</div></div>
+      <div class="tl-item up" style="left:93%"><div class="yr">2016–18</div><div class="ev">XGBoost · LightGBM · CatBoost</div></div>
+      <div class="tl-dot" style="left:5%"></div><div class="tl-dot" style="left:16%"></div><div class="tl-dot" style="left:27%"></div><div class="tl-dot" style="left:38%"></div><div class="tl-dot" style="left:49%"></div><div class="tl-dot" style="left:60%"></div><div class="tl-dot" style="left:71%"></div><div class="tl-dot" style="left:82%"></div><div class="tl-dot" style="left:93%"></div>
+    </div>
+  </div>
+  <div class="cols c3 mt" style="height:auto">
+    <div class="card blue"><h4>The paradigm</h4><p class="small">Hand-designed features → a <b>shallow</b> model with a clean objective (often convex) and guarantees from <b>statistical learning theory</b>: control the capacity, not just the training error.</p></div>
+    <div class="card green"><h4>In remote sensing</h4><p class="small">Gaussian <b>maximum-likelihood</b> classifier (1970s–90s) → <b>SVM</b> for hyperspectral data (2000s) → <b>random forest</b> as the default in Earth Engine (2010s).</p></div>
+    <div class="card sand"><h4>Still alive</h4><p class="small">On tabular features, tuned tree ensembles still match or beat deep nets (Grinsztajn et al., 2022). Cheap, strong baselines for every EO project.</p></div>
+  </div>
+</div>
+<aside class="notes">The shaded band marks the classical era (mid-1980s to the deep-learning switch around 2012). The five families on the next slides are the ones you will meet in every EO paper and in Earth Engine: naive Bayes / maximum likelihood, decision trees, bagging and random forests, boosting, SVM. Each slide has a live demo and the one or two equations that matter.</aside>
+</section>
+
+<section data-title="EO data as tensors" data-module="II · Statistical learning" data-kind="theory" data-src="Danka (2025) <i>Mathematics of Machine Learning</i>, Part I (vectors, matrices) · ESA Sentinel-2 User Handbook · Mahecha et al. (2020) Earth system data cubes, <i>Earth Syst. Dyn.</i> 11:201–234">
+<h2>Everything is a <em>tensor</em>: the EO data cube</h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="center">
+      <svg viewBox="0 0 560 470" class="diagram" style="max-height:560px">
+        <defs><pattern id="px" width="22" height="22" patternUnits="userSpaceOnUse"><rect width="22" height="22" fill="none" stroke="#C9D2F3" stroke-width="1"/></pattern></defs>
+        <g transform="translate(70,40)">
+          <g opacity=".35"><polygon points="90,0 390,0 330,60 30,60" fill="#2E4BC6"/><polygon points="330,60 390,0 390,280 330,340" fill="#14213D"/><rect x="30" y="60" width="300" height="280" fill="#2E4BC6"/></g>
+          <g transform="translate(-30,30)" opacity=".6"><polygon points="90,0 390,0 330,60 30,60" fill="#0F6B5C"/><polygon points="330,60 390,0 390,280 330,340" fill="#0A4E43"/><rect x="30" y="60" width="300" height="280" fill="#0F6B5C"/></g>
+          <g transform="translate(-60,60)"><polygon points="90,0 390,0 330,60 30,60" fill="#C99A2E"/><polygon points="330,60 390,0 390,280 330,340" fill="#8A6512"/><rect x="30" y="60" width="300" height="280" fill="#B5502E"/><rect x="30" y="60" width="300" height="280" fill="url(#px)"/></g>
+        </g>
+        <text x="130" y="455" font-family="Inter" font-size="18" fill="#14213D" font-weight="600">W (x)</text>
+        <text x="20" y="260" font-family="Inter" font-size="18" fill="#14213D" font-weight="600" transform="rotate(-90 20 260)">H (y)</text>
+        <text x="420" y="430" font-family="Inter" font-size="18" fill="#14213D" font-weight="600">C bands →</text>
+        <text x="430" y="60" font-family="Inter" font-size="18" fill="#B5502E" font-weight="700">T dates ↗</text>
+      </svg>
+    </div>
+    <div class="rows">
+      <div class="eqbox">$$\mathcal{X}\in\mathbb{R}^{B\times T\times C\times H\times W}$$<div class="xs" style="text-align:center">batch × time × channels (bands) × height × width</div></div>
+      <table class="tbl small">
+        <tr><th>Model input</th><th>Shape</th><th>Example</th></tr>
+        <tr><td>Pixel spectrum</td><td>\(C\)</td><td>13 Sentinel-2 bands</td></tr>
+        <tr><td>Image patch</td><td>\(C\times H\times W\)</td><td>EuroSAT 13×64×64</td></tr>
+        <tr><td>Pixel time series</td><td>\(T\times C\)</td><td>daily ERA5 weather, 365×6</td></tr>
+        <tr><td>Image time series</td><td>\(T\times C\times H\times W\)</td><td>Prithvi: 4×6×224×224</td></tr>
+      </table>
+      <div class="callout blue"><div>Each architecture in this course is a different <b>inductive bias</b> about which axes matter: MLP (C), CNN (H, W), RNN (T), Transformer (any set of tokens).</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">This slide is the key that unlocks the rest of the course: we will meet each family through which axes of this cube it is designed to exploit.</aside>
+</section>
+
+<section data-title="Loss and empirical risk" data-module="II · Statistical learning" data-kind="theory" data-src="Danka (2025), Ch. 13 Optimization &amp; Ch. 17 Optimization in multiple variables · Goodfellow, Bengio &amp; Courville (2016) <i>Deep Learning</i>, Ch. 5 &amp; 8">
+<h2>Training = minimising a <em>loss</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="rows">
+      <div class="eqbox">
+        <div class="xs">Empirical risk minimisation (with regularisation):</div>
+        $$\hat{\theta} \;=\; \arg\min_{\theta}\; \frac{1}{N}\sum_{i=1}^{N} \ell\big(f_\theta(\mathbf{x}_i),\,y_i\big) \;+\; \lambda\,\Omega(\theta)$$
+      </div>
+      <table class="tbl small">
+        <tr><th>Task</th><th>Loss \(\ell\)</th><th>EO example</th></tr>
+        <tr><td>Regression</td><td>MSE \((\hat y-y)^2\), MAE</td><td>ETo, biomass, soil moisture</td></tr>
+        <tr><td>Classification</td><td>Cross-entropy \(-\log p_{y}\)</td><td>Land cover, crop type</td></tr>
+        <tr><td>Segmentation</td><td>CE + Dice / focal</td><td>Buildings, floods, slums</td></tr>
+        <tr><td>Generation</td><td>Adversarial, L1, diffusion</td><td>SAR→optical, cloud removal</td></tr>
+      </table>
+    </div>
+    <div class="rows">
+      <div class="card"><h4>Generalisation, not memorisation</h4><p>We minimise the loss on training data but care about <b>unseen places and dates</b>. Regularisers \(\Omega\) (weight decay), dropout, augmentation and early stopping fight over-fitting.</p></div>
+      <div class="card clay"><h4>EO trap · spatial autocorrelation</h4><p>Neighbouring pixels are near-duplicates. Random train/test splits leak information and inflate accuracy. Split by <b>blocks, polygons, tiles or cities</b> (spatial cross-validation).</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">The class imbalance in EO (e.g., 2% slum pixels) motivates Dice/focal losses in segmentation. Spatial cross-validation gets its own slides, with a live demo, at the end of this part.</aside>
+</section>
+
+<section data-title="Likelihood, softmax and cross-entropy" data-module="II · Statistical learning" data-kind="theory" data-src="Danka (2025), Part IV Probability theory — Ch. 19 Random variables and distributions, Ch. 20 The expected value; maximum likelihood estimation">
+<h2>Why cross-entropy? <em>Maximum likelihood</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="rows">
+      <div class="eqbox">
+        <div class="xs">Softmax turns scores (logits) into class probabilities:</div>
+        $$p_k(\mathbf{x}) = \frac{e^{z_k}}{\sum_{j=1}^{K} e^{z_j}}$$
+      </div>
+      <div class="eqbox">
+        <div class="xs">Maximising the likelihood of the labels = minimising cross-entropy:</div>
+        $$\arg\max_\theta \prod_i p_\theta(y_i\mid\mathbf{x}_i) \;=\; \arg\min_\theta \; -\sum_i \log p_\theta(y_i\mid\mathbf{x}_i)$$
+      </div>
+    </div>
+    <div class="rows">
+      <div class="card"><h4>Worked example · one EuroSAT patch</h4>
+        <table class="tbl small" style="margin-top:6px">
+          <tr><th>Class</th><th>Logit z</th><th>p</th></tr>
+          <tr><td>Residential</td><td>2.1</td><td>0.71</td></tr>
+          <tr><td>Industrial</td><td>1.0</td><td>0.24</td></tr>
+          <tr><td>Pasture</td><td>−1.0</td><td>0.03</td></tr>
+          <tr><td>River</td><td>−1.5</td><td>0.02</td></tr>
+        </table>
+        <p class="small mt">True label Residential ⇒ loss = −log 0.71 = <b>0.34</b>. Had it been River ⇒ −log 0.02 = <b>3.9</b>: confident mistakes are punished hard.</p>
+      </div>
+      <div class="callout green"><div>MSE ⇔ Gaussian noise likelihood; cross-entropy ⇔ categorical likelihood. Choosing a loss is choosing a <b>noise model</b>.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Check the arithmetic live if you like: exp(2.1)=8.17, exp(1)=2.72, exp(−1)=0.37, exp(−1.5)=0.22; sum 11.48; probabilities 0.71, 0.24, 0.03, 0.02.</aside>
+</section>
+
+<section data-title="Generalisation: bias and variance (interactive)" data-module="II · Statistical learning" data-kind="theory" data-src="Geman, Bienenstock &amp; Doursat (1992) <i>Neural Comput.</i> 4:1 · Hoerl &amp; Kennard (1970) <i>Technometrics</i> 12:55 · Hastie, Tibshirani &amp; Friedman (2009) <i>Elements of Statistical Learning</i>, Ch. 2, 3, 7 · Belkin et al. (2019) <i>PNAS</i> 116:15849 · Synthetic NDVI season, computed in the browser">
+<h2>Fitting is not learning: <em>bias, variance and regularisation</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="biasvar">
+      <div style="display:flex;gap:12px">
+        <canvas class="fit" width="500" height="290" style="width:500px;height:290px"></canvas>
+        <canvas class="err" width="288" height="290" style="width:288px;height:290px"></canvas>
+      </div>
+      <div class="ctrl">
+        <label>polynomial degree <input type="range" name="d" min="0" max="12" step="1" value="3" style="width:150px"> <b class="dv"></b></label>
+        <label>ridge log₁₀λ <input type="range" name="lam" min="-8" max="1" step="0.25" value="-8" style="width:130px"> <b class="lv"></b></label>
+      </div>
+      <div class="ctrl">
+        <label>cloud-free dates n <input type="range" name="n" min="8" max="60" step="1" value="14" style="width:130px"> <b class="nv"></b></label>
+        <label><input type="checkbox" name="refits" checked> 20 refits on new data</label>
+        <button class="btn sm ghost" data-act="new">New data</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">A linear model in basis functions, fitted by ridge regression:
+        $$\hat y(t)=\sum_{k=0}^{d}w_k\,\phi_k(t),\qquad \hat{\mathbf{w}}=(\Phi^\top\Phi+\lambda I)^{-1}\Phi^\top\mathbf{y}$$
+        Expected error on a new date splits into three parts:
+        $$\mathbb{E}\big[(y-\hat y)^2\big]=\underbrace{\mathrm{Bias}^2}_{\text{too simple}}+\underbrace{\mathrm{Var}}_{\text{too flexible}}+\underbrace{\sigma^2}_{\text{noise}}$$</div>
+      <div class="card"><h4>Complexity is chosen on held-out data</h4><p class="small">Training error always falls as the model grows; held-out error falls, then rises. Pick the degree, tree depth or λ where <b>held-out</b> error is lowest — in EO, held out <b>in space</b>. Forests attack variance; boosting attacks bias.</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">An NDVI season sampled on a few cloud-free dates — the classic phenology-fitting problem. Degree 0–1 under-fits (high bias: the curve cannot follow green-up and senescence); degree 10–12 with few dates over-fits (high variance: the grey refits on new data disagree wildly between dates). Right panel: training error keeps falling with degree, test error is U-shaped; the dotted line is the noise floor σ that no model can beat. Raise λ at degree 12: ridge shrinks the weights and the test error comes back down — regularisation trades a little bias for a lot less variance. Add more dates and the U flattens: more data lets you afford a more flexible model. With only 8 dates, push the degree past 8: test error falls again, because once there are more coefficients than dates the (almost un-regularised) solver picks the smoothest interpolating curve — a small-scale double descent (Belkin et al. 2019), the regime deep networks live in (Part V). Dates are drawn one per slice of the season, so there are no long cloudy gaps; with real gaps, high degrees extrapolate even more wildly. This decomposition explains the classical learners that follow: bagging and random forests attack variance, boosting attacks bias.</aside>
+</section>
+
+<section data-title="Naive Bayes and the maximum-likelihood classifier (interactive)" data-module="II · Classical learners" data-kind="theory" data-require="classical_ml" data-src="Bayes (1763) · Maron (1961) · Duda, Hart &amp; Stork (2001) <i>Pattern Classification</i>, Ch. 2–3 · Domingos &amp; Pazzani (1997) <i>Mach. Learn.</i> 29:103 · Richards (2013) <i>Remote Sensing Digital Image Analysis</i>, 5th ed., Ch. 8 · Toy (Red, NIR) samples generated in the browser">
+<h2>Naive Bayes — <em>classify by probability</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="nb">
+      <canvas width="660" height="420" style="width:660px;height:420px;cursor:crosshair"></canvas>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-mode="naive">Naive Bayes · diagonal Σ</button><button class="btn sm ghost" data-mode="full">Max. likelihood · full Σ</button>
+        <span class="sep"></span><span class="xs">click adds:</span>
+        <button class="btn sm ghost" data-c="0">water</button><button class="btn sm ghost" data-c="1">vegetation</button><button class="btn sm ghost" data-c="2">soil</button>
+        <button class="btn sm ghost" data-act="reset">Reset</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">
+        $$P(k\mid\mathbf{x})=\frac{P(k)\,p(\mathbf{x}\mid k)}{\sum_{k'}P(k')\,p(\mathbf{x}\mid k')}\;\overset{\text{naive}}{\propto}\;P(k)\prod_{j=1}^{d}p(x_j\mid k)$$
+        $$p(x_j\mid k)=\mathcal{N}\big(x_j;\,\mu_{kj},\sigma^2_{kj}\big),\qquad \hat y=\arg\max_k\Big[\log P(k)+\sum_j\log p(x_j\mid k)\Big]$$
+      </div>
+      <div class="card"><h4>“Naive” = bands independent given the class</h4><p class="small">Each class is a product of 1-D Gaussians, so its ellipses stay <b>aligned with the axes</b>. Training = means and variances per class: one pass, works with a handful of pixels.</p></div>
+      <div class="card green"><h4>EO classic · maximum-likelihood classifier</h4><p class="small">Keep the full covariance: \(p(\mathbf{x}\mid k)\propto|\Sigma_k|^{-1/2}e^{-\frac12(\mathbf{x}-\boldsymbol\mu_k)^\top\Sigma_k^{-1}(\mathbf{x}-\boldsymbol\mu_k)}\). Ellipses tilt along the <b>soil line</b>; boundaries become quadratic. The standard supervised classifier of remote sensing for decades.</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Demo: start in naive mode — the soil / built-up cloud is elongated along the soil line, but the naive ellipses cannot tilt, so they spread probability over empty space and bulge towards the vegetation cloud. Switch to full Σ: the ellipses rotate onto the soil line and the boundary bends (dark rings mark misclassified pixels). Add a few soil pixels near the vegetation tip to see the two models disagree. Hover anywhere to read the three posteriors; click to add training pixels of the selected class and watch the class prior and the boundary move. Note that correlated bands violate the naive assumption, which makes the probabilities over-confident even when the argmax is right (Domingos &amp; Pazzani 1997).</aside>
+</section>
+
+<section data-title="Decision trees (interactive)" data-module="II · Classical learners" data-kind="theory" data-require="classical_ml" data-src="Breiman, Friedman, Olshen &amp; Stone (1984) <i>CART</i> · Quinlan (1986) ID3; (1993) C4.5 · Hastie, Tibshirani &amp; Friedman (2009) <i>Elements of Statistical Learning</i>, §9.2 · Friedl &amp; Brodley (1997) <i>Remote Sens. Environ.</i> 61:399">
+<h2>Decision trees — <em>learned IF–THEN rules</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="tree">
+      <canvas width="660" height="440" style="width:660px;height:440px"></canvas>
+      <div class="ctrl">
+        <label>max depth <input type="range" name="depth" min="1" max="12" step="1" value="2"> <b class="dv"></b></label>
+        <select name="crit"><option value="gini">Gini</option><option value="entropy">Entropy</option></select>
+        <label><input type="checkbox" name="test"> show test pixels</label>
+        <button class="btn sm ghost" data-act="new">New sample</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">
+        $$\text{Gini}(S)=1-\sum_k p_k^2\qquad H(S)=-\sum_k p_k\log_2 p_k$$
+        $$\Delta I(j,t)=I(S)-\tfrac{|S_L|}{|S|}\,I(S_L)-\tfrac{|S_R|}{|S|}\,I(S_R)$$
+        <div class="xs">Greedy: at every node try each band \(j\) and threshold \(t\) (split \(x_j\le t\)); keep the largest impurity drop \(\Delta I\); recurse.</div>
+      </div>
+      <div class="card"><h4>The learned rules (top two levels)</h4><pre class="rules"></pre></div>
+      <div class="callout clay"><div>Deeper ⇒ training accuracy → 100 %, test accuracy falls: <b>high variance</b>. A new sample gives a different tree — the problem ensembles solve.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">The tree is the learned version of the expert's threshold rules from the previous slide (NDVI &gt; 0.3 …). Demo: depth 1–3 gives readable rules and a sensible map. Push depth to 10+: every noisy label gets its own little box (7 % of the labels are deliberately flipped), training accuracy hits 100 % and the test accuracy (tick “show test pixels”) drops. Click “New sample” at depth 10 to show how unstable the tree is.</aside>
+</section>
+
+<section data-title="Bagging and random forests (interactive)" data-module="II · Classical learners" data-kind="theory" data-require="classical_ml" data-src="Breiman (1996) Bagging predictors, <i>Mach. Learn.</i> 24:123 · Ho (1995) ICDAR · Breiman (2001) Random forests, <i>Mach. Learn.</i> 45:5 · Hastie et al. (2009), §8.7 &amp; Ch. 15 · Belgiu &amp; Drăguţ (2016) <i>ISPRS J.</i> 114:24 · Strobl et al. (2007) <i>BMC Bioinformatics</i> 8:25">
+<h2>Bagging &amp; random forests — <em>many noisy trees, one calm vote</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="forest">
+      <canvas width="660" height="440" style="width:660px;height:440px"></canvas>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-mode="tree">1 deep tree</button><button class="btn sm ghost" data-mode="bag">Bagging</button><button class="btn sm ghost" data-mode="rf">Random forest</button>
+        <label>trees B <input type="range" name="B" min="1" max="100" step="1" value="50"> <b class="bv"></b></label>
+        <button class="btn sm ghost" data-act="new">New sample</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">
+        $$\mathbb{E}\big[(y-\hat f)^2\big]=\text{Bias}^2+\text{Variance}+\sigma^2_\varepsilon$$
+        $$\hat f_{\text{bag}}(\mathbf{x})=\operatorname{vote}\{T_b(\mathbf{x})\}_{b=1}^{B},\qquad \operatorname{Var}\big[\bar T\big]=\rho\,\sigma^2+\frac{1-\rho}{B}\,\sigma^2$$
+      </div>
+      <div class="card"><h4>Two sources of randomness</h4><ul class="list compact small">
+        <li><b>Bootstrap</b>: each tree sees \(n\) pixels drawn with replacement; averaging \(B\) trees shrinks the \(\tfrac{1-\rho}{B}\) term.</li>
+        <li><b>Random features</b>: each split tries only \(m\approx\sqrt{p}\) bands, so trees decorrelate and \(\rho\) drops.</li>
+        <li><b>Out-of-bag</b>: \((1-\tfrac1n)^n\to e^{-1}\approx\) 37 % of pixels are unused by each tree — a free validation set.</li></ul></div>
+      <div class="callout green"><div><b>EO workhorse</b> (<code>ee.Classifier.smileRandomForest</code>): robust to label noise and to 100+ stacked features. Prefer <b>permutation</b> importance — impurity importance is biased.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Demo: “1 deep tree” shows the jagged, over-fitted map from the previous slide. Switch to Bagging and slide B from 1 to 100: the islands melt away, the colour intensity (vote share) shows where the forest is unsure, and test accuracy rises. Random forest adds feature subsampling (here one random band per split, because we only have two). OOB accuracy tracks test accuracy without any held-out data. Bias is unchanged — that is what boosting attacks next.</aside>
+</section>
+
+<section data-title="Boosting: AdaBoost (interactive)" data-module="II · Classical learners" data-kind="theory" data-require="classical_ml" data-src="Schapire (1990) <i>Mach. Learn.</i> 5:197 · Freund &amp; Schapire (1997) <i>J. Comput. Syst. Sci.</i> 55:119 · Friedman, Hastie &amp; Tibshirani (2000) <i>Ann. Stat.</i> 28:337 · Hastie et al. (2009), Ch. 10">
+<h2>Boosting I · AdaBoost — <em>learn from your mistakes</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="adaboost">
+      <canvas width="660" height="420" style="width:660px;height:420px"></canvas>
+      <div class="ctrl">
+        <button class="btn sm" data-act="step">+1 learner</button><button class="btn sm gold" data-act="run">+25</button><button class="btn sm ghost" data-act="reset">Reset</button>
+        <span class="sep"></span>
+        <button class="btn sm ghost" data-ds="ring">Ring</button><button class="btn sm ghost" data-ds="xor">Seasons (XOR)</button><button class="btn sm ghost" data-ds="linear">Linear</button>
+        <span class="sep"></span>
+        <button class="btn sm ghost" data-wl="1">stumps</button><button class="btn sm ghost" data-wl="2">depth-2 trees</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">
+        $$\varepsilon_t=\sum_i w_i\,\mathbb{1}\big[h_t(\mathbf{x}_i)\neq y_i\big],\qquad \alpha_t=\tfrac12\ln\frac{1-\varepsilon_t}{\varepsilon_t}$$
+        $$w_i\leftarrow\frac{w_i\,e^{-\alpha_t\,y_i\,h_t(\mathbf{x}_i)}}{Z_t},\qquad H(\mathbf{x})=\operatorname{sign}\Big(\sum_{t=1}^{T}\alpha_t\,h_t(\mathbf{x})\Big)$$
+      </div>
+      <div class="card"><h4>Sequential, not parallel</h4><p class="small">Each weak learner — a one-split <b>stump</b> (dashed gold line) — trains on re-weighted pixels: the ones the ensemble still gets wrong grow bigger. AdaBoost is stage-wise minimisation of the exponential loss \(e^{-yF(\mathbf{x})}\).</p></div>
+      <div class="card clay"><h4>Try it</h4><p class="small"><b>Seasons (XOR)</b>: single-season crops vs bare land and orchards in (NDVI March, NDVI July). A sum of stumps uses one band at a time and cannot model the interaction — switch to depth-2 trees. Bagging cuts <b>variance</b>; boosting cuts <b>bias</b>, but it chases mislabelled pixels.</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Demo: on the ring, press +1 a few times. Each stump is a single threshold; the misclassified pixels swell; α is large when ε is small. Press +25: the staircase boundary wraps the ring. Then Seasons (XOR) with stumps — training error stays high because an additive model of single-band rules cannot express “high in March XOR high in July”. Switch to depth-2 trees and it is solved in a few rounds. In practice, boosting on noisy reference polygons can over-fit the label noise; gradient boosting with shrinkage and early stopping is the modern form.</aside>
+</section>
+
+<section data-title="Boosting: gradient boosting and XGBoost (interactive)" data-module="II · Classical learners" data-kind="theory" data-require="classical_ml" data-src="Friedman (2001) Greedy function approximation: a gradient boosting machine, <i>Ann. Stat.</i> 29:1189 · Chen &amp; Guestrin (2016) XGBoost, KDD · Ke et al. (2017) LightGBM, NeurIPS · Prokhorenkova et al. (2018) CatBoost, NeurIPS · Synthetic NDVI profile of a rain-fed cereal parcel (September–August season) with cloud-contaminated dips">
+<h2>Boosting II · Gradient boosting — <em>fit the residuals, step by step</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="gboost">
+      <canvas width="660" height="440" style="width:660px;height:440px"></canvas>
+      <div class="ctrl">
+        <button class="btn sm" data-act="step">+1 tree</button><button class="btn sm gold" data-act="run">+20</button><button class="btn sm ghost" data-act="reset">Reset</button>
+        <label>ν <input type="range" name="nu" min="0.05" max="1" step="0.05" value="0.3" style="width:130px"> <b class="nv"></b></label>
+        <label>depth <select name="depth"><option>1</option><option selected>2</option><option>3</option></select></label>
+        <label>loss <select name="loss"><option value="l2">squared</option><option value="l1">absolute</option></select></label>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">
+        $$r_i^{(m)}=-\left[\frac{\partial\,\ell\big(y_i,F(\mathbf{x}_i)\big)}{\partial F(\mathbf{x}_i)}\right]_{F=F_{m-1}}$$
+        $$h_m=\arg\min_h\sum_i\big(r_i^{(m)}-h(\mathbf{x}_i)\big)^2,\qquad F_m=F_{m-1}+\nu\,h_m$$
+        <div class="xs">Squared loss ⇒ \(r_i=y_i-F(\mathbf{x}_i)\): literally fit the residuals. Absolute loss ⇒ \(r_i=\operatorname{sign}(y_i-F)\): cloudy dips stop pulling the curve down.</div>
+      </div>
+      <div class="card ink"><h4>XGBoost · LightGBM · CatBoost</h4><p class="small" style="color:#DCE2F0">Newton (second-order) steps and regularised leaves, \(\mathcal{L}=\sum_i\ell(y_i,\hat y_i)+\sum_k\big(\gamma T_k+\tfrac12\lambda\lVert\mathbf{w}_k\rVert^2\big)\); histogram splits, missing-value handling, GPU training.</p></div>
+      <div class="callout green"><div>The go-to model for <b>tabular EO regression</b>: yield, ET, soil moisture, biomass from bands, weather and terrain features.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Demo: each click fits a small tree (gold, bottom panel) to the current residuals (blue bars) and adds ν times it to the model (terracotta). With ν = 1 it fits fast but chases noise; ν = 0.1–0.3 needs more trees and generalises better (shrinkage). Now look at the cloud dips: with squared loss the curve sags towards them; switch to absolute loss — the gradient is only the sign of the residual, so outliers have bounded influence. The loss you choose is the gradient you fit: that is the whole idea of gradient boosting, and of deep learning too.</aside>
+</section>
+
+<section data-title="Support vector machines (interactive)" data-module="II · Classical learners" data-kind="theory" data-require="classical_ml" data-src="Vapnik &amp; Lerner (1963) · Boser, Guyon &amp; Vapnik (1992) COLT · Cortes &amp; Vapnik (1995) <i>Mach. Learn.</i> 20:273 · Platt (1998) Sequential minimal optimization · Schölkopf &amp; Smola (2002) <i>Learning with Kernels</i> · Melgani &amp; Bruzzone (2004) <i>IEEE TGRS</i> 42:1778 · Mountrakis, Im &amp; Ogole (2011) <i>ISPRS J.</i> 66:247">
+<h2>Support vector machines — <em>the widest street</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="svm">
+      <canvas width="660" height="420" style="width:660px;height:420px;cursor:crosshair"></canvas>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-ds="linear">Water vs vegetation</button><button class="btn sm ghost" data-ds="xor">Seasons (XOR)</button><button class="btn sm ghost" data-ds="ring">Ring</button>
+        <span class="sep"></span>
+        <button class="btn sm ghost" data-k="lin">linear</button><button class="btn sm ghost" data-k="rbf">RBF kernel</button>
+        <label>C <input type="range" name="C" min="-2" max="3" step="0.25" value="1" style="width:110px"> <b class="cv"></b></label>
+        <label>γ <input type="range" name="g" min="-0.5" max="2.5" step="0.25" value="1" style="width:110px"> <b class="gv"></b></label>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">
+        $$\min_{\mathbf{w},b,\boldsymbol\xi}\ \tfrac12\lVert\mathbf{w}\rVert^2+C\sum_i\xi_i\quad\text{s.t.}\quad y_i(\mathbf{w}^\top\mathbf{x}_i+b)\ge1-\xi_i,\ \ \xi_i\ge0$$
+        <div class="xs" style="text-align:center">margin width \(=2/\lVert\mathbf{w}\rVert\) · same as hinge loss \(\sum_i\max\big(0,1-y_if(\mathbf{x}_i)\big)+\lambda\lVert\mathbf{w}\rVert^2\)</div>
+        $$f(\mathbf{x})=\sum_{i\in\text{SV}}\alpha_i\,y_i\,K(\mathbf{x}_i,\mathbf{x})+b,\qquad K(\mathbf{x},\mathbf{x}')=e^{-\gamma\lVert\mathbf{x}-\mathbf{x}'\rVert^2}$$
+      </div>
+      <div class="card"><h4>Kernel trick &amp; sparsity</h4><p class="small">Only the <b>support vectors</b> (gold rings) define the boundary. A kernel computes dot products in a high-dimensional feature space without building it. Small \(C\): wide, tolerant margin; large \(C\) and \(\gamma\): tight, wiggly fit.</p></div>
+      <div class="callout green"><div>SVMs ruled <b>hyperspectral</b> classification in the 2000s: hundreds of bands, few labelled pixels — where the margin principle shines. Scale features first.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Demo: linear kernel on water vs vegetation — solid line f = 0, dashed lines f = ±1, the light band between them is the margin; only the ringed points matter (delete any other point and nothing changes). Lower C: the margin widens and more points become support vectors. Switch to Seasons (XOR) — no line works; RBF kernel solves it. Push γ to the maximum and C high: islands around single pixels = over-fitting. Click to add vegetation pixels, shift-click (or right-click) for the other class. The optimiser running in the browser is Platt's simplified SMO.</aside>
+</section>
+
+<section data-title="Classical learners compared" data-module="II · Classical learners" data-kind="practice" data-require="classical_ml" data-src="Hastie, Tibshirani &amp; Friedman (2009) · Maxwell, Warner &amp; Fang (2018) Implementation of machine-learning classification in remote sensing: an applied review, <i>Int. J. Remote Sens.</i> 39:2784 · Belgiu &amp; Drăguţ (2016) · Mountrakis et al. (2011)">
+<h2>Five classical learners <em>at a glance</em></h2>
+<div class="s-body">
+  <table class="tbl small">
+    <tr><th style="width:190px">Model</th><th>Learns…</th><th>Strengths</th><th>Watch out</th><th>Typical EO use</th></tr>
+    <tr><td>Naive Bayes / MLC</td><td>class densities \(p(\mathbf{x}\mid k)\)</td><td>instant training, probabilities, few samples</td><td>Gaussian &amp; independence assumptions</td><td>quick baselines, classic land-cover maps</td></tr>
+    <tr><td>Decision tree</td><td>axis-aligned IF–THEN splits</td><td>readable rules, no scaling, mixed feature types</td><td>unstable, over-fits when deep</td><td>rule-based products, capturing expert knowledge</td></tr>
+    <tr><td>Random forest</td><td>vote of decorrelated bootstrap trees</td><td>robust defaults, OOB error, importances</td><td>large models, no extrapolation, biased importance</td><td>land cover &amp; crop types (Earth Engine)</td></tr>
+    <tr><td>Gradient boosting</td><td>additive trees fitted to gradients</td><td>top accuracy on tabular features</td><td>tuning, early stopping, noisy labels</td><td>yield, ET, biomass, soil-moisture regression</td></tr>
+    <tr><td>SVM</td><td>max-margin boundary in kernel space</td><td>high-d, small-n; few hyper-parameters</td><td>\(O(n^2)\) kernel matrix; scale features; tune \(C,\gamma\)</td><td>hyperspectral, few-label problems</td></tr>
+  </table>
+  <div class="cols c2 mt" style="height:auto">
+    <div class="callout"><div>All five consume <b>features you engineered</b> — bands, indices, textures, statistics. That ceiling is what deep learning lifted.</div></div>
+    <div class="callout clay"><div>Whatever the model: <b>spatial cross-validation</b> and a simple baseline before anything deep.</div></div>
+  </div>
+</div>
+<aside class="notes">A decision slide. In practice: start with a random forest (few knobs, OOB error), try gradient boosting if accuracy matters and you can tune, keep naive Bayes / MLC as the sanity baseline, use an SVM when labels are scarce and features many. The next slide shows the standard random-forest pipeline in code.</aside>
+</section>
+
+<section data-title="Classical machine learning in EO" data-module="II · Classical learners" data-kind="practice" data-src="Breiman (2001) Random Forests · Cortes &amp; Vapnik (1995) Support-Vector Networks · Belgiu &amp; Drăguţ (2016) <i>ISPRS J.</i> 114:24–31 (RF in remote sensing) · De Marchi &amp; Mitchell (2019), Ch. 1">
+<h2>The classical-ML era: <em>you design the features</em></h2>
+<div class="s-body">
+  <div class="cols c46">
+    <div class="rows">
+      <div class="flow">
+        <div class="step"><b>Raw bands</b>B2…B12</div><div class="arrow">→</div>
+        <div class="step"><b>Hand features</b>NDVI, NDWI, texture, stats</div><div class="arrow">→</div>
+        <div class="step"><b>Model</b>SVM · RF · XGBoost</div>
+      </div>
+      <ul class="list small">
+        <li><b>SVM</b> — maximise the margin; kernels give non-linear boundaries.</li>
+        <li><b>Random forest</b> — bagged decision trees; robust, fast, gives feature importance. Still the workhorse of land-cover mapping in Earth Engine.</li>
+        <li><b>Gradient boosting</b> — trees fitted to residuals; strong on tabular EO features.</li>
+      </ul>
+      <div class="callout clay"><div><b>Limit:</b> performance is capped by the features you thought of. Spatial context, shapes and temporal dynamics are hard to hand-craft.</div></div>
+    </div>
+    <pre class="py" data-file="classical_rf.py — Sentinel-2 pixels + indices → random forest" data-size="sm">
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GroupKFold, cross_val_score
+
+# X_bands: (n_pixels, 10) Sentinel-2 L2A reflectances
+# y: land-cover label, groups: id of the polygon each pixel came from
+def indices(X):
+    B2, B3, B4, B8, B11 = X[:, 0], X[:, 1], X[:, 2], X[:, 6], X[:, 8]
+    ndvi = (B8 - B4) / (B8 + B4 + 1e-6)
+    ndwi = (B3 - B8) / (B3 + B8 + 1e-6)
+    ndbi = (B11 - B8) / (B11 + B8 + 1e-6)   # built-up
+    return np.c_[X, ndvi, ndwi, ndbi]
+
+F = indices(X_bands)
+rf = RandomForestClassifier(n_estimators=300, n_jobs=-1,
+                            class_weight="balanced")
+# group-wise CV: pixels of one polygon never in train AND test
+scores = cross_val_score(rf, F, y, groups=groups,
+                         cv=GroupKFold(5), scoring="f1_macro")
+print(f"macro-F1 = {scores.mean():.3f} ± {scores.std():.3f}")
+</pre>
+  </div>
+</div>
+<aside class="notes">Show the code briefly. Two lessons carry through the whole course: (1) engineered indices are a form of prior knowledge; (2) evaluate with spatially grouped folds, otherwise neighbouring pixels leak between train and test and accuracy is inflated — the evaluation slides at the end of this part, and Lab 1, make this concrete.</aside>
+</section>
+
+<section data-title="From raw scenes to analysis-ready data" data-module="II · EO data for ML" data-kind="practice" data-require="eo_data" data-src="CEOS Analysis Ready Data for Land (CARD4L) specifications · ESA Sentinel-2 Level-2A Product Specification (Sen2Cor; scene classification layer) · Main-Knorn et al. (2017) Sen2Cor, SPIE 10427 · Zhu &amp; Woodcock (2012) Fmask, <i>RSE</i> 118:83 · Earth Search STAC API (Element 84) · pystac-client · odc-stac">
+<h2>From raw scenes to <em>analysis-ready data</em></h2>
+<div class="s-body">
+  <div class="flow" style="height:126px">
+    <div class="step" style="background:var(--majorelle-soft)"><b>L1C</b>top-of-atmosphere</div><div class="arrow">→</div>
+    <div class="step"><b>L2A</b>surface reflectance</div><div class="arrow">→</div>
+    <div class="step"><b>Masks</b>cloud, shadow, snow</div><div class="arrow">→</div>
+    <div class="step"><b>One grid</b>CRS, resampling</div><div class="arrow">→</div>
+    <div class="step"><b>Cube</b>time × band × y × x</div><div class="arrow">→</div>
+    <div class="step" style="background:var(--terracotta-soft)"><b>Samples</b>tiles + labels</div>
+  </div>
+  <div class="cols c55 mt" style="height:auto">
+    <pre class="py" data-file="find, mask and composite Sentinel-2 with STAC" data-size="sm">
+import pystac_client, odc.stac
+
+cat = pystac_client.Client.open("https://earth-search.aws.element84.com/v1")
+items = cat.search(collections=["sentinel-2-l2a"],
+                   bbox=[-8.1, 31.5, -7.8, 31.8],          # Marrakech
+                   datetime="2024-03-01/2024-05-31",
+                   query={"eo:cloud_cover": {"lt": 60}}).item_collection()
+
+ds = odc.stac.load(items, bands=["red", "green", "blue", "nir", "scl"],
+                   crs="EPSG:32629", resolution=10, chunks={})
+clear = ~ds.scl.isin([0, 3, 8, 9, 10])  # nodata, shadow, cloud, cirrus
+composite = ds[["red", "green", "blue", "nir"]].where(clear).median("time")
+</pre>
+    <div class="rows">
+      <div class="card"><h4>Analysis-ready data</h4><p class="small">Surface reflectance, per-pixel quality flags, one map grid and full metadata, so that two dates or two sensors can be compared without more processing (CEOS CARD4L).</p></div>
+      <div class="card clay"><h4>Easy to get wrong</h4><ul class="list compact small"><li>Mixing L1C and L2A, or scale factors and offsets</li><li>Resampling categorical masks with bilinear interpolation</li><li>Misregistration of a few pixels between dates or sensors</li><li>Training on clear scenes, predicting on hazy ones</li></ul></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">This is the part of an EO project that takes most of the time and that papers describe least. Sentinel-2 L2A from processing baseline 04.00 (January 2022) stores reflectance with an offset of −1000 (BOA_ADD_OFFSET): check the metadata before mixing old and new scenes. The SCL classes masked in the code are 0 no data, 3 cloud shadow, 8–9 cloud medium/high probability, 10 thin cirrus. STAC (SpatioTemporal Asset Catalog) is the common catalogue standard; the same code works on Microsoft Planetary Computer with its own URL and signing.</aside>
+</section>
+
+<section data-title="Clouds, shadows and compositing (interactive)" data-module="II · EO data for ML" data-kind="practice" data-require="eo_data" data-src="Zhu &amp; Woodcock (2012) Fmask, <i>RSE</i> 118:83 · Zupanc (2017) s2cloudless, Sentinel Hub · Aybar et al. (2022) CloudSEN12, <i>Sci. Data</i> 9:782 · Holben (1986) maximum-value NDVI compositing, <i>IJRS</i> 7:1417 · Griffiths et al. (2013) pixel-based compositing, <i>IEEE JSTARS</i> 6:2088 · Eight synthetic dates of the Part IV scene">
+<h2>Clouds, shadows and <em>compositing</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="composite">
+      <div class="thumbs"></div>
+      <div style="display:flex;gap:16px">
+        <div><div class="xs dl"></div><canvas class="date" width="320" height="320" style="width:300px;height:300px"></canvas></div>
+        <div><div class="xs">composite of the 8 dates</div><canvas class="comp" width="320" height="320" style="width:300px;height:300px"></canvas></div>
+      </div>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-m="last">latest date</button><button class="btn sm ghost" data-m="mean">mean</button><button class="btn sm ghost" data-m="median">median</button>
+        <button class="btn sm ghost" data-m="maxndvi">max NDVI</button><button class="btn sm ghost" data-m="medmask">median + cloud mask</button><button class="btn sm ghost" data-m="medfull">+ shadow mask</button>
+      </div>
+      <div class="ctrl">
+        <label>cloudiness <input type="range" name="cl" min="0" max="1.4" step="0.05" value="1" style="width:140px"></label>
+        <label><input type="checkbox" name="mask" checked> show detected cloud / shadow</label>
+        <label><input type="checkbox" name="buf"> 2-px mask buffer</label>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">$$\hat\rho_b(\mathbf{s})=\operatorname*{median}_{t\,:\,m_t(\mathbf{s})=0}\ \rho_{b,t}(\mathbf{s})$$<div class="xs" style="text-align:center">per pixel \(\mathbf{s}\) and band \(b\), over the dates \(t\) that the mask \(m_t\) calls clear</div></div>
+      <div class="card"><h4>Cloud masks</h4><p class="small">Rules and thresholds (Fmask, Sen2Cor SCL) → gradient boosting (s2cloudless) → deep segmentation networks trained on CloudSEN12. Thin cloud edges and shadows are the hard part.</p></div>
+      <div class="callout clay"><div class="small">Try <b>max NDVI</b>: it removes clouds but keeps <b>shadows</b>, because darkening both bands leaves NDVI unchanged. Then add the shadow mask and the buffer.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Eight synthetic acquisitions of the same scene, each with its own clouds and their shadows offset to the south-east. Yellow is the detected cloud mask, purple the detected shadow. The latest date and the mean are ruined by clouds; the median already removes most of them because clouds are bright outliers. Masking clouds before the median helps, but shadows and thin cloud edges (below the detection threshold) remain: the residual-contamination number counts pixels still more than 0.02 off in any visible band. The 2-pixel buffer removes most of those edges. Push the cloudiness up: some pixels never get a clear look and become gaps — this is why monthly composites in the tropics are hard and why SAR matters.</aside>
+</section>
+
+<section data-title="Where labels come from" data-module="II · EO data for ML" data-kind="theory" data-require="eo_data" data-src="Olofsson et al. (2014) <i>RSE</i> 148:42 · Frénay &amp; Verleysen (2014) Classification in the presence of label noise, <i>IEEE TNNLS</i> 25:845 · Zanaga et al. (2022) ESA WorldCover 10 m 2021 v200 · Brown et al. (2022) Dynamic World, <i>Sci. Data</i> 9:251 · Fritz et al. (2017) Geo-Wiki, <i>Sci. Data</i> 4:170075 · Lin et al. (2017) Focal loss, ICCV">
+<h2>Where do the <em>labels</em> come from?</h2>
+<div class="s-body">
+  <div class="cols c64">
+    <table class="tbl small">
+      <tr><th>Source</th><th>Strength</th><th>Watch out for</th></tr>
+      <tr><td>Field survey</td><td>closest to the truth; attributes you cannot see</td><td>few, clustered along roads; GPS error; date</td></tr>
+      <tr><td>Photo-interpretation of VHR</td><td>many labels, fast, any location</td><td>interpreter disagreement; image date ≠ satellite date</td></tr>
+      <tr><td>Existing maps (WorldCover, Dynamic World, cadastre)</td><td>wall-to-wall, free</td><td>you inherit their errors; circular if you also test on them</td></tr>
+      <tr><td>OpenStreetMap, crowdsourcing (Geo-Wiki)</td><td>buildings, roads, many countries</td><td>uneven completeness, rich areas mapped first</td></tr>
+      <tr><td>Weak labels (rules, indices, time series)</td><td>millions of samples at no cost</td><td>systematic, correlated noise</td></tr>
+    </table>
+    <div class="rows">
+      <div class="card"><h4>Label noise</h4><p class="small">Wrong class, shifted polygon, or a label from another date. A few % of random noise is tolerated; <b>systematic</b> noise is learned as truth.</p></div>
+      <div class="card green"><h4>Imbalance</h4><p class="small">Rare classes (settlements, landslides, ships): stratified sampling, class weights, Dice or focal loss <span style="white-space:nowrap">\(-(1-p_t)^\gamma\log p_t\)</span>.</p></div>
+      <div class="callout clay"><div class="small">Training labels can be collected anywhere. <b>Test labels</b> need a probability sample (random or stratified random), or accuracy and area estimates are biased.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Labels, not architectures, usually limit EO projects. The distinction in the callout carries into the evaluation block: a convenient, clustered training set is fine, but the accuracy you report must come from a probability sample of the map, otherwise you cannot generalise it to the whole area. Reusing an existing product as labels is legitimate for training but circular for testing against that same product.</aside>
+</section>
+
+<section data-title="Spatial autocorrelation and cross-validation (interactive)" data-module="II · Evaluating EO maps" data-kind="theory" data-require="evaluation" data-src="Tobler (1970) <i>Econ. Geogr.</i> 46:234 · Moran (1950) <i>Biometrika</i> 37:17 · Roberts et al. (2017) Cross-validation strategies for data with temporal, spatial, hierarchical, or phylogenetic structure, <i>Ecography</i> 40:913 · Ploton et al. (2020) <i>Nat. Commun.</i> 11:4540 · Wadoux et al. (2021) <i>Ecol. Model.</i> 457:109692 · Meyer &amp; Pebesma (2022) <i>Nat. Commun.</i> 13:2208">
+<h2>Spatial autocorrelation: <em>why random splits flatter you</em></h2>
+<div class="s-body">
+  <div class="cols c73">
+    <div class="demo" data-demo="spcv">
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div><div class="xs">crop parcels · dots = labelled pixels, coloured by CV fold</div><canvas class="map" width="360" height="360" style="width:330px;height:330px"></canvas></div>
+        <div><div class="xs">accuracy of the same 5-NN classifier</div><canvas class="bars" width="520" height="330" style="width:520px;height:330px"></canvas></div>
+      </div>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-view="random">show random folds</button><button class="btn sm ghost" data-view="blocks">show block folds</button>
+        <span class="sep"></span>
+        <button class="btn sm ghost" data-samp="survey">clustered field survey</button><button class="btn sm ghost" data-samp="random">random sample of the map</button>
+        <button class="btn sm ghost" data-act="new">New data</button>
+      </div>
+      <div class="ctrl">
+        <label>block size <input type="range" name="block" min="6" max="60" step="2" value="24" style="width:140px"> <b class="bv"></b></label>
+        <label>parcel effect <input type="range" name="pe" min="0" max="1.2" step="0.05" value="0.7" style="width:140px"> <b class="pv"></b></label>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small"><i>“Near things are more related than distant things”</i> (Tobler). Moran's \(I\):
+        $$I=\frac{n}{\sum_{ij}w_{ij}}\,\frac{\sum_{ij}w_{ij}(x_i-\bar x)(x_j-\bar x)}{\sum_i(x_i-\bar x)^2}$$</div>
+      <div class="card"><h4>Choose the split for the question</h4><p class="small"><b>Spatial blocks</b> or leave-region-out when the map extends beyond the sampled area. A random <b>probability sample</b> of the map makes ordinary CV unbiased (Wadoux et al. 2021).</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Each parcel has its own spectral “signature” (soil, sowing date, management): the parcel effect slider. The labels come from a field survey that visited three areas. Random 5-fold CV puts pixels of the same parcel in training and test, so a nearest-neighbour classifier simply recognises the parcel: accuracy is inflated (terracotta bar). Spatial-block CV holds out whole blocks and comes close to the true accuracy on parcels nobody visited (green bar). Set the parcel effect to 0 and the gap disappears; switch to a random sample of the whole map and random CV becomes honest again — the point made by Wadoux et al. (2021). The distance readout shows why: random-CV test pixels sit right next to training pixels.</aside>
+</section>
+
+<section data-title="Metrics under class imbalance (interactive)" data-module="II · Evaluating EO maps" data-kind="theory" data-require="evaluation" data-src="Congalton (1991) <i>RSE</i> 37:35 · Pontius &amp; Millones (2011) Death to Kappa, <i>IJRS</i> 32:4407 · Foody (2020) Explaining the unsuitability of the kappa coefficient, <i>RSE</i> 239:111630 · Saito &amp; Rehmsmeier (2015) Precision–recall vs ROC on imbalanced data, <i>PLoS ONE</i> 10:e0118432 · Simulated scores of a settlement detector">
+<h2>Metrics when the class you care about is <em>rare</em></h2>
+<div class="s-body">
+  <div class="cols c64" data-demo="metrics">
+    <div class="demo">
+      <div style="display:flex;gap:12px">
+        <canvas class="hist" width="560" height="320" style="width:560px;height:320px;cursor:col-resize"></canvas>
+        <canvas class="pr" width="250" height="320" style="width:250px;height:320px"></canvas>
+      </div>
+      <div class="ctrl">
+        <label>prevalence <input type="range" name="prev" min="1" max="50" step="1" value="3" style="width:140px"> <b class="pv"></b></label>
+        <label>threshold <input type="range" name="t" min="0.01" max="0.99" step="0.01" value="0.5" style="width:140px"> <b class="tv"></b></label>
+        <button class="btn sm ghost" data-act="half">t = 0.5</button><button class="btn sm gold" data-act="f1">best F1</button>
+        <label><input type="checkbox" name="log" checked> log counts</label>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="cm"></div>
+      <div class="eqbox small">$$\mathrm{F1}=\frac{2PR}{P+R},\qquad \mathrm{IoU}=\frac{TP}{TP+FP+FN}=\frac{\mathrm{F1}}{2-\mathrm{F1}}$$</div>
+    </div>
+  </div>
+</div>
+<aside class="notes">20 000 pixels, of which 3 % are informal settlement. Untick “log counts” to see how few positives there are. Overall accuracy is above 95 % even for a useless map that predicts “background” everywhere — compare it with the baseline row. Precision (user's accuracy) and recall (producer's accuracy), F1 and IoU expose the trade-off; the PR curve is more informative than ROC when positives are rare (the dashed line is chance). Move the prevalence slider: OA barely moves, precision collapses. Kappa is still reported in many papers, but Pontius &amp; Millones (2011) and Foody (2020) argue it adds nothing to the confusion matrix — report the matrix itself.</aside>
+</section>
+
+<section data-title="Area estimation from a sample (interactive)" data-module="II · Evaluating EO maps" data-kind="practice" data-require="evaluation" data-src="Olofsson et al. (2013) <i>RSE</i> 129:122 · Olofsson et al. (2014) Good practices for estimating area and assessing accuracy of land change, <i>RSE</i> 148:42 · Stehman (2014) <i>IJRS</i> 35:4923 · Cochran (1977) <i>Sampling Techniques</i>, 3rd ed. · Synthetic change map, 30 m pixels">
+<h2>Area estimation: <em>count the sample, not the pixels</em></h2>
+<div class="s-body">
+  <div class="cols c73">
+    <div class="demo" data-demo="area">
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div><div class="xs">change map · dots = reference sample (white = true change)</div><canvas class="map" width="360" height="360" style="width:320px;height:320px"></canvas></div>
+        <div><div class="xs">estimates of the change area</div><canvas class="est" width="560" height="320" style="width:560px;height:320px"></canvas></div>
+      </div>
+      <div class="ctrl">
+        <button class="btn sm" data-act="draw">Draw a sample</button><button class="btn sm gold" data-act="rep">Repeat 100×</button>
+        <label>n <input type="range" name="n" min="50" max="1000" step="50" value="300" style="width:130px"> <b class="nv"></b></label>
+        <select name="alloc"><option value="eq">equal allocation</option><option value="prop">proportional allocation</option></select>
+      </div>
+      <div class="ctrl">
+        <label>map errors: omission <input type="range" name="err" min="-1" max="1" step="0.1" value="0.5" style="width:150px"> commission</label>
+        <label><input type="checkbox" name="ref"> show the truth (<span style="color:#B5502E">hit</span>, <span style="color:#B07A10">commission</span>, <span style="color:#2E4BC6">omission</span>)</label>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">Strata \(h\) = map classes, weights \(W_h\), sample proportion \(\hat p_{h1}\) of true change in stratum \(h\):
+        $$\hat A=A_{\text{tot}}\sum_h W_h\,\hat p_{h1}$$
+        $$\widehat{SE}(\hat A)=A_{\text{tot}}\sqrt{\sum_h W_h^2\,\frac{\hat p_{h1}(1-\hat p_{h1})}{n_h-1}}$$</div>
+      <div class="card"><h4>Good practice</h4><p class="small">Stratified random sample, reference labels from better data, error matrix in area proportions, area ± 95 % CI. Pixel counting is biased whenever commission ≠ omission.</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">The map over-maps change (commission errors), so pixel counting overestimates the area. A stratified random sample checked against reference data (here: the truth) gives an unbiased estimate with a confidence interval. Repeat 100×: about 95 % of the intervals cover the true area — that is what “95 % confidence” means. Equal allocation puts more points in the small “change” stratum and usually gives a tighter interval than proportional allocation. Move the slider to omission: now pixel counting underestimates. This is the approach recommended in the GFOI methods guidance for REDD+ reporting.</aside>
+</section>
+
+<section data-title="An evaluation protocol for EO studies" data-module="II · Evaluating EO maps" data-kind="practice" data-require="evaluation" data-src="Olofsson et al. (2014) · Meyer &amp; Pebesma (2022) · Roberts et al. (2017) · Kapoor &amp; Narayanan (2023) Leakage and the reproducibility crisis in machine-learning-based science, <i>Patterns</i> 4:100804 · scikit-learn GroupKFold">
+<h2>An <em>evaluation protocol</em> reviewers will trust</h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="rows">
+      <div class="card"><h4>Checklist</h4><ol class="steps small" style="margin:0">
+        <li>Say what the map is for and which error matters most (missed vs false).</li>
+        <li>Split by space, time or region, matched to how the model will be used; no leakage through tiles, dates or normalisation.</li>
+        <li>Compare with simple baselines (thresholds, random forest) and an existing product.</li>
+        <li>Report the confusion matrix and per-class F1 / IoU, not only OA or kappa; mAP for detection; RMSE + bias for regression.</li>
+        <li>Give uncertainty: CIs by bootstrap or stratified estimators; area ± CI.</li>
+        <li>Map the errors and say where the model should not be used.</li></ol></div>
+    </div>
+    <div class="rows">
+      <pre class="py" data-file="random vs spatial-block cross-validation" data-size="sm">
+from sklearn.model_selection import KFold, GroupKFold, cross_val_score
+from sklearn.ensemble import RandomForestClassifier
+
+# X: features, y: labels, xs/ys: pixel coordinates in metres
+block = (xs // 5000).astype(int) * 100_000 + (ys // 5000).astype(int)  # 5-km blocks
+rf = RandomForestClassifier(n_estimators=300, n_jobs=-1, random_state=0)
+
+rand = cross_val_score(rf, X, y, cv=KFold(5, shuffle=True, random_state=0))
+spat = cross_val_score(rf, X, y, cv=GroupKFold(5), groups=block)
+print(f"random CV {rand.mean():.3f}  ·  spatial CV {spat.mean():.3f}")
+</pre>
+      <div class="callout clay"><div class="small">A large gap between the two numbers means your labels are spatially clustered and the random-CV accuracy should not be reported as map accuracy.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Leakage is the most common flaw in applied ML papers (Kapoor &amp; Narayanan 2023 list it across 17 fields). In EO it enters through overlapping tiles in train and test, the same field on different dates, or normalisation statistics computed on all data. The block size should be at least the range of spatial autocorrelation of the residuals (a variogram tells you). GroupKFold does not shuffle the groups; GroupKFold(shuffle=True) exists in scikit-learn ≥ 1.6, or use StratifiedGroupKFold.</aside>
+</section>
+
+<section data-title="Lab 1 — Classical ML for land cover" data-module="II · Lab 1" data-kind="lab" data-src="Notebook <b>notebooks/lab01_classical_ml_landcover.ipynb</b> · Microsoft Planetary Computer STAC: <code>sentinel-2-l2a</code>, <code>esa-worldcover</code> · Zanaga et al. (2022) ESA WorldCover 10 m 2021 v200 · Pedregosa et al. (2011) scikit-learn, <i>JMLR</i> 12:2825 · Roberts et al. (2017) Cross-validation for structured data, <i>Ecography</i> 40:913">
+<h2>Lab 1 · <em>Classical learners</em> and an honest score</h2>
+<div class="s-body">
+  <div class="cols c64">
+    <pre class="py" data-file="lab01_classical_ml_landcover.ipynb" data-size="xs">
+import pystac_client, planetary_computer, odc.stac
+from sklearn.model_selection import KFold, GroupKFold, cross_val_score
+from sklearn.ensemble import RandomForestClassifier
+
+cat = pystac_client.Client.open(PC_STAC, modifier=planetary_computer.sign_inplace)
+BBOX = [-8.15, 31.35, -7.90, 31.65]          # Marrakech · Haouz plain · Lalla Takerkoust
+s2 = cat.search(collections=["sentinel-2-l2a"], bbox=BBOX, datetime="2021-04-01/2021-06-30",
+                query={"eo:cloud_cover": {"lt": 10}}).item_collection()
+cube = odc.stac.load(best_day(s2), bands=BANDS + ["SCL"], bbox=BBOX,
+                     crs="EPSG:32629", resolution=20, groupby="solar_day")
+wc = odc.stac.load(cat.search(collections=["esa-worldcover"], bbox=BBOX,
+                              datetime="2021").item_collection(),
+                   bands=["map"], like=cube, resampling="mode")   # labels, same grid
+
+F, y, rows, cols = sample_polygons(F_img, wc, valid, radius=3)  # 7×7-px label patches
+blocks = (rows // 50) * 10_000 + cols // 50               # 1 km × 1 km spatial blocks
+for name, cv in {"random folds": KFold(5, shuffle=True, random_state=0),
+                 "spatial blocks": GroupKFold(5)}.items():
+    f1 = cross_val_score(RandomForestClassifier(300, n_jobs=-1), F, y,
+                         groups=blocks, cv=cv, scoring="f1_macro")
+    print(f"{name:15s} macro-F1 = {f1.mean():.3f}")</pre>
+    <div class="rows">
+      <div class="card"><h4>What you build</h4><ul class="list compact small"><li>A Sentinel-2 pixel table, labelled from WorldCover in 140 m patches</li><li>Naive Bayes, a tree, k-NN, a random forest, boosting and an SVM, side by side</li><li>Random vs spatially blocked CV, confusion matrix, permutation importance, a full map</li></ul></div>
+      <div class="card sand"><h4>Try</h4><ul class="list compact small"><li>Isolated pixels instead of patches: where does the gap go?</li><li>Block size 250 m → 5 km: which keeps polygons together?</li></ul></div>
+      <div class="callout clay small"><div>CPU only, a few minutes. WorldCover is itself a <b>model</b> (≈ 77 % accurate): your scores measure agreement with it, not with the ground.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">The notebook defines best_day (all tiles of the clearest date), sample_polygons (same-class 7 × 7-pixel patches around random seeds, the way an analyst digitises training polygons) and the band list. The headline result: random folds put pixels of the same polygon on both sides of the split, so every model looks better than it is. In our run (20 June 2021) the random forest scored 0.79 macro-F1 with random folds and 0.68 with 1 km spatial blocks; flexible models (k-NN, forests, boosting) gain 0.10–0.13, naive Bayes only 0.03; and the ranking flips — boosting wins under random folds, the SVM under spatial blocks. With isolated random pixels instead of patches the gap almost vanishes (≤ 0.02): the leak comes from how the labels were collected. WorldCover's reported overall accuracy for 2021 is about 77 %, so it is a reference, not truth — the 'Where labels come from' slide in this part.</aside>
+</section>

@@ -1,0 +1,213 @@
+<section class="dark" data-title="Part III — Unsupervised learning" data-module="III · Unsupervised learning" data-part="III" data-require="unsupervised">
+<div class="sec-wrap">
+  <div class="sec-arch" style="--sec-c:#B5502E"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>III</div></div>
+  <div class="sec-text">
+    <div class="time">{{slot:III}} · 1901 → 2000s</div>
+    <h2>Finding structure without labels</h2>
+    <div class="ar" data-lang="ar">التعلّم غير الموجَّه</div>
+    <ul>
+      <li>The unsupervised-learning era: Pearson's PCA to ISODATA and DBSCAN</li>
+      <li>k-means and unsupervised classification of an image (live)</li>
+      <li>Gaussian mixtures and EM; density clustering with DBSCAN</li>
+      <li>Principal component analysis — the first representation learning</li>
+      <li>Lab 2 — clustering, PCA and change detection on Sentinel-2</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<section data-title="The unsupervised-learning era" data-module="III · History" data-kind="theory" data-require="unsupervised" data-src="Pearson (1901) · Hotelling (1933) · Ball &amp; Hall (1965) ISODATA · MacQueen (1967); Lloyd (1982) k-means · Dempster, Laird &amp; Rubin (1977) EM · Ester et al. (1996) DBSCAN · Arthur &amp; Vassilvitskii (2007) k-means++ · van der Maaten &amp; Hinton (2008) t-SNE · McInnes et al. (2018) UMAP">
+<h2>Learning <em>without labels</em>: the unsupervised era</h2>
+<div class="s-body">
+  <div style="height:300px">
+    <div class="timeline compact">
+      <div class="axis"></div>
+      <div class="tl-era" style="left:30%;width:45%;background:#0F6B5C"></div>
+      <div class="tl-item up" style="left:5%"><div class="yr">1901–33</div><div class="ev">Pearson, Hotelling: principal components</div></div>
+      <div class="tl-item down" style="left:16%"><div class="yr">1957–67</div><div class="ev">Lloyd, MacQueen: k-means</div></div>
+      <div class="tl-item up" style="left:27%"><div class="yr">1965</div><div class="ev">ISODATA: clustering for remote sensing</div></div>
+      <div class="tl-item down" style="left:38%"><div class="yr">1977</div><div class="ev">Dempster, Laird &amp; Rubin: the EM algorithm</div></div>
+      <div class="tl-item up" style="left:49%"><div class="yr">1982–88</div><div class="ev">Kohonen maps; MNF transform for imagery</div></div>
+      <div class="tl-item down" style="left:60%"><div class="yr">1996</div><div class="ev">DBSCAN: density-based clusters</div></div>
+      <div class="tl-item up" style="left:71%"><div class="yr">2006–07</div><div class="ev">Autoencoders pre-train deep nets; k-means++</div></div>
+      <div class="tl-item down" style="left:82%"><div class="yr">2008–18</div><div class="ev">t-SNE, UMAP: maps of embeddings</div></div>
+      <div class="tl-item up" style="left:93%"><div class="yr">2018→</div><div class="ev">Self-supervised learning → foundation models</div></div>
+      <div class="tl-dot" style="left:5%"></div><div class="tl-dot" style="left:16%"></div><div class="tl-dot" style="left:27%"></div><div class="tl-dot" style="left:38%"></div><div class="tl-dot" style="left:49%"></div><div class="tl-dot" style="left:60%"></div><div class="tl-dot" style="left:71%"></div><div class="tl-dot" style="left:82%"></div><div class="tl-dot" style="left:93%"></div>
+    </div>
+  </div>
+  <div class="cols c3 mt" style="height:auto">
+    <div class="card blue"><h4>The task</h4><p class="small">Only \(\{\mathbf{x}_i\}\), no \(y\). Find structure in \(p(\mathbf{x})\): <b>groups</b> (clustering), <b>directions</b> (dimensionality reduction), <b>densities</b> (mixtures, anomalies).</p></div>
+    <div class="card green"><h4>In remote sensing</h4><p class="small"><b>Unsupervised classification</b> (k-means / ISODATA, then an analyst names the clusters), <b>PCA / MNF</b> for multi- and hyperspectral data, PCA-based <b>change detection</b>.</p></div>
+    <div class="card sand"><h4>Why it matters now</h4><p class="small">Labels are scarce, pixels are not. Self-supervised pre-training (Chapter V.6) is the modern heir: learn the structure of unlabelled archives first.</p></div>
+  </div>
+</div>
+<aside class="notes">Unsupervised learning answers “what is in my data?” before anyone has labelled it. In EO it was the first practical form of machine learning: ISODATA clustering in the image-processing packages of the 1970s–90s, PCA for multispectral compression and change detection. Five demos follow: k-means step by step, k-means as an unsupervised land-cover map, Gaussian mixtures with EM, DBSCAN, and PCA.</aside>
+</section>
+
+<section data-title="k-means clustering (interactive)" data-module="III · Unsupervised learning" data-kind="theory" data-require="unsupervised" data-src="Lloyd (1982) Least squares quantization in PCM, <i>IEEE Trans. Inf. Theory</i> 28:129 · MacQueen (1967) Berkeley Symp. · Arthur &amp; Vassilvitskii (2007) k-means++, SODA · Hastie et al. (2009), §14.3">
+<h2>k-means — <em>assign, update, repeat</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="kmeans">
+      <canvas width="660" height="420" style="width:660px;height:420px"></canvas>
+      <div class="ctrl">
+        <button class="btn sm" data-act="assign">1 · Assign</button><button class="btn sm" data-act="update">2 · Update</button><button class="btn sm gold" data-act="run">Run</button><button class="btn sm ghost" data-act="new">New init</button>
+        <label>k <input type="range" name="k" min="2" max="7" step="1" value="4" style="width:110px"> <b class="kv"></b></label>
+        <select name="init"><option value="rand">random init</option><option value="pp">k-means++</option></select>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">
+        $$J=\sum_{i=1}^{n}\big\lVert\mathbf{x}_i-\boldsymbol\mu_{c(i)}\big\rVert^2$$
+        $$\text{assign: } c(i)=\arg\min_k\lVert\mathbf{x}_i-\boldsymbol\mu_k\rVert^2\qquad \text{update: } \boldsymbol\mu_k=\frac{1}{|C_k|}\sum_{i\in C_k}\mathbf{x}_i$$
+      </div>
+      <div class="card"><h4>Coordinate descent on J</h4><p class="small">Each step can only lower \(J\), so the algorithm always converges — but to a <b>local</b> minimum that depends on the start. k-means++ picks each new centre with probability \(\propto D(\mathbf{x})^2\), the squared distance to the nearest centre already chosen.</p></div>
+      <div class="callout clay"><div>k-means assumes round, equal-size clusters and you must choose \(k\). Try k = 2 and k = 7, or several random inits.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Demo: alternate Assign (pixels join the nearest centroid; Voronoi cells shaded) and Update (centroids jump to the mean of their pixels). Run iterates until no pixel changes. New init with random starts sometimes ends with two centroids sharing one group — a local minimum; k-means++ avoids most of those. The four groups are water, dense vegetation, sparse vegetation and soil in (Red, NIR) space.</aside>
+</section>
+
+<section data-title="Unsupervised classification of an image (interactive)" data-module="III · Unsupervised learning" data-kind="practice" data-require="unsupervised" data-src="Ball &amp; Hall (1965) ISODATA, Stanford Research Institute · Tou &amp; Gonzalez (1974) <i>Pattern Recognition Principles</i> · Richards (2013) <i>Remote Sensing Digital Image Analysis</i>, Ch. 9 · Synthetic Sentinel-2-like scene from Part IV">
+<h2>Unsupervised classification: <em>cluster first, name later</em></h2>
+<div class="s-body">
+  <div class="cols c73">
+    <div class="demo" data-demo="ukscene">
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div><div class="xs">true colour</div><canvas class="src" width="160" height="160" style="width:300px;height:300px;image-rendering:pixelated"></canvas></div>
+        <div><div class="xs">k-means clusters (coloured by mean NDVI)</div><canvas class="dst" width="160" height="160" style="width:300px;height:300px;image-rendering:pixelated"></canvas></div>
+        <div style="flex:1"><div class="xs">clusters → the analyst names them</div><div class="legend"></div></div>
+      </div>
+      <div class="ctrl">
+        <label>k <input type="range" name="k" min="2" max="8" step="1" value="5" style="width:150px"> <b class="kv"></b></label>
+        <span class="sep"></span>
+        <button class="btn sm ghost" data-feat="rgb">features: visible B2–B4</button><button class="btn sm ghost" data-feat="s2">features: + NIR, SWIR</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="card"><h4>The classic workflow</h4><ol class="steps small" style="margin:0"><li>stack bands, standardise</li><li>cluster all pixels (k-means / ISODATA)</li><li>an analyst labels each cluster</li><li>merge or split clusters, check accuracy</li></ol></div>
+      <div class="card green"><h4>Try it</h4><p class="small">Visible bands only: fields and roofs blur together. Add NIR and SWIR: purity against the true cover jumps — more spectral information, better clusters.</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">This is how many first land-cover maps were made: no training data, just clustering 25 600 pixels into k spectral groups, then naming them. The purity number compares each cluster with the true dominant cover of its pixels (which only we know, because the scene is synthetic). ISODATA adds rules to split clusters that are too spread out and merge those that are too close, so k adapts.</aside>
+</section>
+
+<section data-title="Gaussian mixtures and EM (interactive)" data-module="III · Unsupervised learning" data-kind="theory" data-require="unsupervised" data-src="Dempster, Laird &amp; Rubin (1977) <i>J. R. Stat. Soc. B</i> 39:1 · Bishop (2006) <i>Pattern Recognition and Machine Learning</i>, Ch. 9 · Hastie et al. (2009), §8.5">
+<h2>Gaussian mixtures — <em>soft clusters, learned by EM</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="gmm">
+      <canvas width="660" height="420" style="width:660px;height:420px"></canvas>
+      <div class="ctrl">
+        <button class="btn sm" data-act="e">E-step</button><button class="btn sm" data-act="m">M-step</button><button class="btn sm gold" data-act="run">Run EM</button><button class="btn sm ghost" data-act="new">New init</button>
+        <label>K <input type="range" name="k" min="2" max="5" step="1" value="3" style="width:110px"> <b class="kv"></b></label>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">
+        $$p(\mathbf{x})=\sum_{k=1}^{K}\pi_k\,\mathcal{N}(\mathbf{x}\mid\boldsymbol\mu_k,\Sigma_k)$$
+        $$\textbf{E: }\ \gamma_{ik}=\frac{\pi_k\,\mathcal{N}(\mathbf{x}_i\mid\boldsymbol\mu_k,\Sigma_k)}{\sum_j\pi_j\,\mathcal{N}(\mathbf{x}_i\mid\boldsymbol\mu_j,\Sigma_j)}\qquad \textbf{M: }\ N_k=\sum_i\gamma_{ik},\ \ \boldsymbol\mu_k=\frac{1}{N_k}\sum_i\gamma_{ik}\mathbf{x}_i$$
+        <div class="xs" style="text-align:center">\(\Sigma_k=\frac{1}{N_k}\sum_i\gamma_{ik}(\mathbf{x}_i-\boldsymbol\mu_k)(\mathbf{x}_i-\boldsymbol\mu_k)^\top,\ \ \pi_k=N_k/n\)</div>
+      </div>
+      <div class="card"><h4>EM in one sentence</h4><p class="small">Guess who belongs where (E), refit each Gaussian to its weighted pixels (M), repeat. The log-likelihood never decreases. <b>k-means is the hard-assignment limit</b> of EM with equal round covariances.</p></div>
+      <div class="callout green"><div>Soft memberships suit <b>mixed pixels</b>: a 10 m pixel can be 60 % crop and 40 % soil. The tilted ellipses are the supervised MLC's Gaussians — learned without labels.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Demo: start from a fresh init and alternate E and M. Point colours blend the cluster colours by their responsibilities γ, so uncertain pixels between clusters look mixed. Ellipses grow and tilt to follow the elongated vegetation and soil-line clouds, which k-means cannot do. Watch the log-likelihood climb and flatten.</aside>
+</section>
+
+<section data-title="DBSCAN density clustering (interactive)" data-module="III · Unsupervised learning" data-kind="theory" data-require="unsupervised" data-src="Ester, Kriegel, Sander &amp; Xu (1996) A density-based algorithm for discovering clusters in large spatial databases with noise, KDD · Schubert et al. (2017) DBSCAN revisited, <i>ACM TODS</i> 42:19 · Synthetic detection points">
+<h2>DBSCAN — <em>clusters of any shape, plus noise</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="dbscan">
+      <canvas width="660" height="420" style="width:660px;height:420px;cursor:crosshair"></canvas>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-mode="db">DBSCAN</button><button class="btn sm ghost" data-mode="km">k-means (k = 3)</button>
+        <label>ε <input type="range" name="eps" min="0.015" max="0.15" step="0.005" value="0.055" style="width:130px"> <b class="ev"></b></label>
+        <label>minPts <input type="range" name="minpts" min="2" max="12" step="1" value="5" style="width:110px"> <b class="mv"></b></label>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">
+        $$N_\varepsilon(\mathbf{p})=\{\mathbf{q}:\lVert\mathbf{p}-\mathbf{q}\rVert\le\varepsilon\},\qquad \mathbf{p}\ \text{is core}\iff|N_\varepsilon(\mathbf{p})|\ge\text{minPts}$$
+        <div class="xs" style="text-align:center">A cluster = all points density-reachable from a core point · border points are reached but not core · the rest is <b>noise</b></div>
+      </div>
+      <div class="card"><h4>No k, no round shapes</h4><p class="small">Clusters grow through chains of dense neighbourhoods, so they follow rivers and roads. Isolated points stay <b>noise</b> (grey ×). Hover to see the ε-disc around the cursor.</p></div>
+      <div class="callout green"><div>EO uses: grouping building or ship detections, clustering fire hotspots into fire events, cleaning GNSS or LiDAR point clouds.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">The points could be building detections from a model, or VIIRS fire hotspots: a settlement strung along a river, a second curved one, a compact village, and scattered false alarms. Switch to k-means (k = 3): it cuts the curved groups into round pieces and must assign every false alarm to some cluster. With DBSCAN, make ε too small and everything becomes noise; too large and the settlements merge. minPts sets how dense “dense” is.</aside>
+</section>
+
+<section data-title="Principal component analysis (interactive)" data-module="III · Unsupervised learning" data-kind="theory" data-require="unsupervised" data-src="Pearson (1901) <i>Phil. Mag.</i> 2:559 · Hotelling (1933) <i>J. Educ. Psychol.</i> 24:417 · Green et al. (1988) MNF, <i>IEEE TGRS</i> 26:65 · Richards (2013), Ch. 6 · Synthetic Sentinel-2-like scene from Part IV">
+<h2>PCA — <em>the directions of greatest variance</em></h2>
+<div class="s-body">
+  <div class="cols c55" data-demo="pca">
+    <div class="demo">
+      <canvas class="p2" width="660" height="400" style="width:660px;height:400px"></canvas>
+      <div class="ctrl">
+        <label>direction <input type="range" name="angle" min="0" max="180" step="1" value="100" style="width:220px"> <b class="av"></b></label>
+        <button class="btn sm gold" data-act="snap">Snap to PC1</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">
+        $$\Sigma=\tfrac1n\sum_i(\mathbf{x}_i-\bar{\mathbf{x}})(\mathbf{x}_i-\bar{\mathbf{x}})^\top,\qquad \Sigma\,\mathbf{v}_k=\lambda_k\mathbf{v}_k,\qquad z_{ik}=\mathbf{v}_k^\top(\mathbf{x}_i-\bar{\mathbf{x}})$$
+        <div class="xs" style="text-align:center">\(\mathbf{v}_1=\arg\max_{\lVert\mathbf{u}\rVert=1}\operatorname{Var}(\mathbf{u}^\top\mathbf{x})\) · explained variance of PC \(k\) = \(\lambda_k/\sum_j\lambda_j\)</div>
+      </div>
+      <div class="demo">
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <div><div class="xs">13-band scene, PCs as image</div><canvas class="pcimg" width="160" height="160" style="width:200px;height:200px;image-rendering:pixelated"></canvas></div>
+          <div><div class="xs">explained variance per PC</div><canvas class="bars" width="380" height="200" style="width:380px;height:200px"></canvas></div>
+        </div>
+        <div class="ctrl"><button class="btn sm ghost" data-pc="rgb">PC1·PC2·PC3</button><button class="btn sm ghost" data-pc="0">PC1</button><button class="btn sm ghost" data-pc="1">PC2</button><button class="btn sm ghost" data-pc="2">PC3</button><button class="btn sm ghost" data-pc="3">PC4</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Left: 450 pixels in (red, SWIR-1). Rotate the blue direction: the thin lines are the projection residuals, and the readout gives the variance kept along that direction. It peaks exactly at PC1 (“Snap to PC1”). Right: the same eigen-decomposition on all 13 bands of the scene — a few components carry nearly all the variance, because neighbouring bands are strongly correlated. PC images are the classic input for compression, change detection (PCA on two dates) and, as MNF, for denoising hyperspectral cubes.</aside>
+</section>
+
+<section data-title="Lab 2 — Unsupervised mapping and change detection" data-module="III · Lab 2" data-kind="lab" data-require="unsupervised" data-src="Notebook <b>notebooks/lab02_unsupervised_change.ipynb</b> · Microsoft Planetary Computer: <code>sentinel-2-l2a</code>, <code>esa-worldcover</code> · Malila (1980) change vector analysis · Otsu (1979) <i>IEEE SMC</i> 9:62 · Hubert &amp; Arabie (1985) adjusted Rand index · Schwarz (1978) BIC">
+<h2>Lab 2 · Clusters, components and <em>change</em> — no labels</h2>
+<div class="s-body">
+  <div class="cols c64">
+    <pre class="py" data-file="lab02_unsupervised_change.ipynb" data-size="xs">
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
+from sklearn.mixture import GaussianMixture
+from sklearn.metrics import adjusted_rand_score
+from skimage.filters import threshold_otsu
+
+Z = (X - X.mean(0)) / X.std(0)                 # valid pixels × 10 bands, standardised
+pca = PCA(n_components=6).fit(Z)
+print(pca.explained_variance_ratio_.cumsum())   # 3 PCs ≈ 98 % of the variance
+
+km = KMeans(n_clusters=7, n_init=10, random_state=0).fit(Z[sample])
+gmm = min((GaussianMixture(k, covariance_type="full", random_state=0).fit(Z[sample])
+           for k in range(2, 13)), key=lambda g: g.bic(Z[sample]))
+print("ARI vs WorldCover:", adjusted_rand_score(wc_flat[sample], km.labels_))
+
+# change between two springs: change-vector magnitude + Otsu threshold
+d = np.linalg.norm(Z_2024 - Z_2019, axis=-1)      # same grid, standardised per date
+change = d > threshold_otsu(d[np.isfinite(d)])
+</pre>
+    <div class="rows">
+      <div class="card"><h4>What you build</h4><ul class="list compact small"><li>PCA of 10 bands: loadings, PC1–3 false colour</li><li>k-means (elbow, silhouette) and Gaussian mixtures (BIC); clusters named after the fact</li><li>Change map 2019 → 2024 by change-vector analysis, checked against the imagery</li></ul></div>
+      <div class="card sand"><h4>Try</h4><ul class="list compact small"><li>DBSCAN in PC space: which pixels are “noise”?</li><li>k = 12: do new clusters split a class or find a new one?</li><li>Run the change step on two dates of one year — what is seasonal?</li></ul></div>
+      <div class="callout clay small"><div>No model ever saw a label: the ARI against WorldCover is computed <b>only after</b> clustering — and it is low (≈ 0.1). Clusters are spectral, classes are thematic.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Same area and loader as Lab 1, so participants can compare supervised and unsupervised maps directly. PCA: the first component is overall brightness, the second separates vegetation (NIR) from soil and built-up (SWIR), the third picks up water and moisture — a reminder that PCA directions are statistical, not physical, but often interpretable. k-means finds compact groups of equal size and variance; a GMM with full covariances fits elongated spectral clouds better and gives a per-pixel probability. Change-vector analysis needs both dates on the same grid and comparable radiometry: standardising each date removes most of the illumination difference but also some real change — discuss. Comparing the same season avoids most phenological change, but not all: the clearest days fall in June, at the cereal harvest, so fields harvested a week apart flag as change — about 18 % of the Marrakech window is flagged, mostly field parcels, far more than real land-cover change. New construction on Marrakech's edges and new irrigated fields are among the true positives. Clusters versus WorldCover give a low ARI (about 0.1): bare soil, built-up and sparse grassland overlap spectrally in this semi-arid landscape, which is exactly why unsupervised maps need an analyst.</aside>
+</section>

@@ -1,6 +1,6 @@
 # %% [markdown]
-# # Lab 7 — Fine-tuning the Prithvi-EO-2.0 geospatial foundation model with TerraTorch
-# **Deep Learning for Earth Observation** · Part VIII
+# # Lab 11 — Fine-tuning the Prithvi-EO-2.0 geospatial foundation model with TerraTorch
+# **AI for Earth Observation** · Part V · Chapter V.7
 #
 # * **Model**: Prithvi-EO-2.0-300M (NASA & IBM; Szwarcman et al., 2024) — a ViT pre-trained as a spatio-temporal masked autoencoder on 4.2 M global HLS samples.
 # * **Toolkit**: TerraTorch — backbone + neck + decoder + head, trained with PyTorch Lightning.
@@ -105,5 +105,5 @@ plt.tight_layout(); plt.show()
 # ## Exercises
 # 1. `freeze_backbone=True` — how close does a frozen Prithvi get? (≈ linear-probe regime)
 # 2. Try `backbone="prithvi_eo_v2_300_tl"` (temporal + location embeddings) and pass metadata as described in the TerraTorch docs.
-# 3. Compare with the U-Net of Lab 3 trained from ImageNet weights on the same data. When does the foundation model pay off? (Hint: reduce the training set to 10 % of the images.)
+# 3. Compare with the U-Net of Lab 6 trained from ImageNet weights on the same data. When does the foundation model pay off? (Hint: reduce the training set to 10 % of the images.)
 # 4. The same code runs from a YAML file: `terratorch fit -c config.yaml`.

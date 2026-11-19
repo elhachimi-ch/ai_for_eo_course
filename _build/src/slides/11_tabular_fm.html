@@ -1,0 +1,212 @@
+<section class="dark" data-title="Chapter V.8 — Tabular foundation models" data-module="V.8 · Tabular foundation models" data-part="V8" data-require="tabular_fm">
+<div class="sec-wrap">
+  <div class="sec-arch" style="--sec-c:#B5502E"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num ch"><small>Chapter</small>V.8</div></div>
+  <div class="sec-text">
+    <div class="time">{{slot:V8}} · 2022 → 2026</div>
+    <h2>Foundation models for tables</h2>
+    <div class="ar" data-lang="ar">النماذج التأسيسية للبيانات الجدولية</div>
+    <ul>
+      <li>In-context learning as Bayesian inference under a prior (live)</li>
+      <li>Synthetic vs real pre-training; how a transformer reads a table</li>
+      <li>The 2023 → 2026 landscape and the TabArena leaderboard (live)</li>
+      <li>Scoring the whole predictive distribution (live)</li>
+      <li>On top of Lab 12's embeddings — with spatially blocked evaluation</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<section data-title="Tabular foundation models" data-module="V.8 · Tabular foundation models" data-kind="theory" data-require="tabular_fm" data-src="Müller et al. (2022) Transformers can do Bayesian inference, ICLR · Hollmann et al. (2025) Accurate predictions on small data with a tabular foundation model, <i>Nature</i> 637:319 · Manero, Upadhyay &amp; Sampalli (2026) Tabular foundation models: a survey, <i>Mach. Learn. Appl.</i> 26:101054, §2">
+<h2>Tabular foundation models: <em>learn a table in one forward pass</em></h2>
+<div class="s-body">
+  <div class="cols c46">
+    <div class="rows">
+      <div class="card"><h4>Most EO prediction is tabular</h4><p class="small"><b>Rows</b>: field plots, parcels, stations, labelled pixels. <b>Columns</b>: bands, indices, SAR, DEM, climate, or a 64-D AlphaEarth embedding (Lab 12). <b>Target</b>: class, yield, LAI, biomass, soil carbon. Few hundred to a few thousand labels — where tuned gradient-boosted trees have ruled.</p></div>
+      <div class="cols c2" style="height:auto;gap:14px">
+        <div class="card sand"><h4>Classical</h4><p class="small">For <b>each</b> dataset: fit \(\theta\), search hyper-parameters, cross-validate, ensemble. Hours of compute per table.</p></div>
+        <div class="card blue"><h4>Tabular FM</h4><p class="small">Train <b>once</b> on millions of tables. A new table is the <b>prompt</b>: no gradient step, no tuning.</p></div>
+      </div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">Inference: the whole labelled training set \(D_{\text{train}}=\{(\mathbf{x}_i,y_i)\}_{i=1}^n\) is the context
+        $$q_\theta\big(y_{\text{test}}\mid \mathbf{x}_{\text{test}},\,D_{\text{train}}\big)\quad\text{in one forward pass}$$
+        Pre-training: hide one label in a table drawn from \(p(D)\), predict it from the rest
+        $$\mathcal{L}(\theta)=\mathbb{E}_{D\sim p(D)}\,\mathbb{E}_{(\mathbf{x},y)\in D}\big[-\log q_\theta(y\mid \mathbf{x},D_{\text{train}})\big]$$
+        Minimiser = the Bayesian posterior predictive over data-generating mechanisms \(\phi\):
+        $$q_\theta\;\to\;p(y\mid\mathbf{x},D_{\text{train}})=\!\int p(y\mid\mathbf{x},\phi)\,p(\phi\mid D_{\text{train}})\,d\phi$$</div>
+      <p class="small">The forward pass <b>is</b> the inference algorithm: it averages over every hypothesis consistent with the context, without ever writing \(\phi\) down.</p>
+      <div class="callout clay small"><div>Optimal only <b>relative to its prior</b> \(p(D)\): data from a mechanism outside it give a model that is not unsure but <b>confidently wrong</b>.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">This is the Prior-data Fitted Network (PFN) idea of Müller et al. (2022), turned into a practical tabular model by TabPFN (Hollmann et al. 2023; v2 in Nature 2025). The convergence result needs three conditions: enough capacity, enough training, and — the one usually forgotten — a prior whose support contains the real data-generating mechanism. The first two are engineering; the third is a modelling assumption that more compute cannot fix (Manero et al. 2026, §2.1). This is the same in-context learning that LLMs do with text (Chapter V.6), but over the rows and columns of a table. The next interactive slide computes this posterior predictive exactly for a toy prior so you can see what the network is trained to imitate.</aside>
+</section>
+
+<section data-title="Priors and architectures" data-module="V.8 · Tabular foundation models" data-kind="theory" data-require="tabular_fm" data-src="Hollmann et al. (2023) TabPFN, ICLR; (2025) <i>Nature</i> 637:319 · Spinaci et al. (2025) ConTextTab, NeurIPS · Ma et al. (2026) TabDPT, NeurIPS · Garg et al. (2025) Real-TabPFN, arXiv:2507.03971 · Qu et al. (2025) TabICL, ICML · Kong &amp; Das (2026) TabFM, Google Research · Manero et al. (2026) <i>Mach. Learn. Appl.</i> 26:101054, §2.2, §3–4">
+<h2>Where the knowledge comes from: <em>prior and architecture</em></h2>
+<div class="s-body">
+  <div class="cols c3" style="height:auto">
+    <div class="card blue"><h4>① Synthetic prior</h4><p class="small">Sample a random <b>structural causal model</b>: a DAG, edge functions (small MLPs, tree rules, discretisations), noise. Features and target are nodes of the same graph:
+      \(z_j=f_j(z_{\mathrm{pa}(j)},\varepsilon_j),\;\mathbf{x}=z_S,\;y=z_t\).<br><b>TabPFN, TabICL, TabFM, EXAONE Tabular</b> — 10⁸ tables, none real, no leakage.</p></div>
+    <div class="card green"><h4>② Real tables</h4><p class="small">Pre-train on corpora of real tables; embed <b>column names and cell text</b> so “NDVI” or “soil_type” carry meaning: \(e_{ij}=\psi(\text{name}_j,\text{value}_{ij})\).<br><b>ConTextTab / SAP-RPT</b> (semantic), <b>TabDPT</b> (values + retrieval).</p></div>
+    <div class="card sand"><h4>③ Hybrid</h4><p class="small">Start from a synthetic prior, <b>continue pre-training on curated real tables</b>.<br><b>Real-TabPFN, Real-TabPFN-2.5.</b> The synthetic-vs-real split is softening.</p></div>
+  </div>
+  <table class="tbl small dense mt">
+    <tr><th>How the transformer sees the table</th><th>Models</th><th>Permute rows</th><th>Permute columns</th><th>Scales to</th></tr>
+    <tr><td>Row's features fused into one token</td><td>TabPFN v1</td><td>invariant</td><td>prediction may change → ensemble over orders</td><td>~10³ rows</td></tr>
+    <tr><td>Alternating attention over rows and over features, no positional code on features</td><td>TabPFN v2, ConTextTab</td><td>invariant</td><td>invariant by construction</td><td>10⁴–10⁵ rows</td></tr>
+    <tr><td>Each row compressed to one embedding, then in-context learning over rows</td><td>TabICL, TabPFN-3/3.5, TabFM</td><td>invariant</td><td>traded away (rotary code on features)</td><td>10⁶ rows</td></tr>
+  </table>
+  <p class="small mt">Alternating attention costs \(\mathcal{O}(d\,n^2+n\,d^2)\) per layer for \(n\) rows and \(d\) features — row compression and retrieval of a query-specific context (TabDPT, LoCalPFN) are how models escape it.</p>
+</div>
+<aside class="notes">The prior is the organising variable of this literature (Manero et al. 2026). In the SCM prior the target is just another node, so it can be a parent of some features, not only a function of them; missing values, outliers and categorical columns must be manufactured deliberately in post-processing, otherwise the model never learns to handle them. Real-data models gain semantics (a column literally named 'Country') but lose control over contamination with benchmark data. Permutation: row order never carries meaning, so every architecture here treats the context as a set. Column-order equivariance holds only when the feature axis has no positional encoding (TabPFN v2); row-compression designs give it up in exchange for a row representation whose size no longer grows with the number of features.</aside>
+</section>
+
+<section data-title="In-context learning is Bayesian averaging (interactive)" data-module="V.8 · Tabular foundation models" data-kind="theory" data-require="tabular_fm" data-src="Müller et al. (2022) ICLR · Rasmussen &amp; Williams (2006) <i>Gaussian Processes for Machine Learning</i>, MIT Press · Helli et al. (2024) Drift-resilient TabPFN, NeurIPS · Manero et al. (2026) §2.1 · Toy prior: a mixture of Gaussian processes, computed exactly in the browser">
+<h2>What the network learns: <em>the posterior predictive</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="icl">
+      <div style="display:flex;gap:12px">
+        <canvas class="fx" width="560" height="330" style="width:560px;height:330px;cursor:crosshair"></canvas>
+        <canvas class="w" width="228" height="330" style="width:228px;height:330px"></canvas>
+      </div>
+      <div class="ctrl">
+        <span class="xs">true mechanism</span><button class="btn sm ghost" data-truth="smooth">wavy</button><button class="btn sm ghost" data-truth="step">threshold</button><button class="btn sm ghost" data-truth="sat">saturating</button>
+        <span class="sep"></span>
+        <span class="xs">prior p(D)</span><button class="btn sm ghost" data-prior="broad">broad</button><button class="btn sm ghost" data-prior="smooth">smooth only</button>
+      </div>
+      <div class="ctrl">
+        <label>context rows n <input type="range" name="n" min="0" max="60" step="1" value="8" style="width:170px"> <b class="nv"></b></label>
+        <label><input type="checkbox" name="draws"> show tables drawn from the prior</label>
+        <button class="btn sm ghost" data-act="new">New data</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">Here the prior is a family of Gaussian processes, \(\phi=(\ell,\sigma)\): length-scale and noise. With \(K_\phi\) the kernel matrix of the context,
+        $$p(\phi\mid D)\propto p(\phi)\,\mathcal{N}\!\big(\mathbf{y}\mid\mathbf{0},K_\phi+\sigma^2 I\big)$$
+        and the prediction is the mixture \(\sum_\phi p(\phi\mid D)\,p(y\mid\mathbf{x},D,\phi)\)</div>
+      <div class="card"><h4>A PFN learns this map</h4><p class="small">We can compute it exactly only because the prior is tiny. A tabular FM's prior has millions of mechanisms; the transformer <b>amortises</b> the integral into one forward pass.</p></div>
+      <div class="callout clay small"><div>Pick <b>threshold</b> + <b>smooth only</b> and add rows: the band stays narrow while missing the step, and coverage <b>falls</b> as rows are added (≈ 67 % → 52 %). That is prior misspecification.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Left: context points (terracotta; gold ones are points you clicked), the posterior-predictive mean (blue) and 90 % band, and the true mechanism (dashed green). Right: how the posterior weight is spread over length-scales — the model averages over hypotheses rather than picking one. With few rows the band is wide and the weight is spread out; as n grows the weight concentrates. The 'single best φ' in the readout is what per-dataset tuning gives (type-II maximum likelihood): with few rows it can under-cover (saturating, n = 8: 86 % against 99 % for the average) because it ignores the uncertainty about φ itself; with many rows the two coincide. Threshold mechanisms, such as a water/land boundary in NDWI, are exactly what a smooth-only prior (ℓ ≥ 0.4) cannot express: with 40 rows its 90 % band covers only about half of new points, and more data makes it worse, not better. The saturating curve, which the narrow prior can express, stays near 89 %. Switching to the broad prior repairs the threshold case (≈ 84 %). This is the argument for richer priors — tree-generated tables (TabForestPFN), mixtures of priors (Mitra), drift-aware priors (Helli et al. 2024). Tick 'show tables drawn from the prior' to see what the network was trained on.</aside>
+</section>
+
+<section data-title="The tabular FM landscape" data-module="V.8 · Tabular foundation models" data-kind="theory" data-require="tabular_fm" data-src="Hollmann et al. (2025) · Grinsztajn et al. (2025) arXiv:2511.08667 · Prior Labs (2026) arXiv:2605.13986 · Jäger et al. (2026) arXiv:2609.17895 · Qu et al. (2026) ICML · Kong &amp; Das (2026) · Eo et al. (2026) arXiv:2608.25774 · Zhang et al. (2026) arXiv:2609.17488 · Spinaci et al. (2025) · Ma et al. (2026) · Hoo et al. (2026) · Manero et al. (2026) Tables 4–5">
+<h2>The landscape, <em>2023 → 2026</em></h2>
+<div class="s-body">
+  <table class="tbl small dense">
+    <tr><th>Model</th><th>From</th><th>Pre-training</th><th>Reported range</th><th>What it added</th><th>Weights</th></tr>
+    <tr><td>TabPFN v2 (2025)</td><td>Freiburg / Prior Labs</td><td>synthetic SCM</td><td>10 k rows · 500 feat.</td><td>classification + regression, predictive distributions; <i>Nature</i></td><td>open (attribution)</td></tr>
+    <tr><td>TabPFN-2.5 → 3 → 3.5</td><td>Prior Labs</td><td>synthetic</td><td>50 k → 1 M rows</td><td>row compression, text columns, “Thinking” test-time compute, distillation to MLP/trees</td><td>non-commercial / API</td></tr>
+    <tr><td>TabICL, TabICLv2</td><td>Inria</td><td>synthetic</td><td>≤ 5·10⁵ rows</td><td>row-compression backbone, fully open</td><td>open (BSD-3)</td></tr>
+    <tr><td>TabFM (2026)</td><td>Google Research</td><td>synthetic</td><td>≤ 150 k rows tested</td><td>row/column attention + row compression; planned BigQuery <code>AI.PREDICT</code></td><td>non-commercial</td></tr>
+    <tr><td>EXAONE Tabular (2026)</td><td>LG AI Research</td><td>synthetic</td><td>21 M parameters</td><td>cross-axis summary tokens; ≈ 10× smaller, chunked inference</td><td>non-commercial</td></tr>
+    <tr><td>LimiX-2 (2026)</td><td>Stable AI &amp; Tsinghua</td><td>—</td><td>—</td><td>tops the TabArena snapshot on the next slide</td><td>non-commercial</td></tr>
+    <tr><td>ConTextTab / SAP-RPT</td><td>SAP</td><td>real tables</td><td>65 k rows · 256 col.</td><td>column-name and text semantics; enterprise deployment</td><td>OSS, research-only</td></tr>
+    <tr><td>TabDPT</td><td>Layer 6 AI</td><td>real (OpenML)</td><td>retrieval context</td><td>k-NN context retrieval; scaling laws on real data</td><td>open (Apache-2.0)</td></tr>
+    <tr><td>TabPFN-TS</td><td>Freiburg</td><td>synthetic</td><td>univariate series</td><td>forecasting by calendar features, no retraining</td><td>as TabPFN</td></tr>
+  </table>
+  <div class="cols c2 mt" style="height:auto;gap:18px">
+    <div class="callout green small"><div><b>Three ways to deploy:</b> pure in-context (frozen, pay at every prediction) · <b>fine-tune</b> the checkpoint per dataset · <b>distil</b> into a small MLP or tree ensemble for wall-to-wall maps.</div></div>
+    <div class="callout clay small"><div>Most numbers here come from <b>the model teams' own reports</b>; licences increasingly decide what you can reproduce or deploy.</div></div>
+  </div>
+</div>
+<aside class="notes">Ranges are as reported by each source and are not directly comparable (Manero et al. 2026, Table 4). For LimiX-2 the leaderboard links its technical report (Zhang et al. 2026, arXiv:2609.17488); its pre-training data are not covered by the survey, so the cell is left empty rather than guessed. Several leaderboard entries (e.g. TabPFN-2.6, Kumo-Tabular, Seldon) have no peer-reviewed description at all — the survey counts 40 % of its 60 included studies as non-peer-reviewed. For EO, the practically important column is the last one: a non-commercial licence can rule a model out of an operational mapping service even if it tops the leaderboard.</aside>
+</section>
+
+<section data-title="TabArena: the living leaderboard (interactive)" data-module="V.8 · Tabular foundation models" data-kind="practice" data-require="tabular_fm" data-src="Erickson et al. (2025) TabArena, NeurIPS Datasets &amp; Benchmarks, arXiv:2506.16791 · Purucker et al. (2026) Beyond IID (BeyondArena), arXiv:2606.30410 · Leaderboard data: huggingface.co/spaces/TabArena/leaderboard, models-only, imputation on, downloaded 17 Nov 2026 · Manero et al. (2026) §5">
+<h2>TabArena: <em>who wins, where, and at what cost</em></h2>
+<div class="s-body">
+  <div class="cols c73">
+    <div class="demo" data-demo="arena">
+      <canvas width="930" height="408" style="width:930px;height:408px"></canvas>
+      <div class="ctrl" style="font-size:15px;gap:6px">
+        <span class="xs">TabArena</span><button class="btn sm ghost" data-view="all">all 51</button><button class="btn sm ghost" data-view="small">small</button><button class="btn sm ghost" data-view="medium">medium</button><button class="btn sm ghost" data-view="clf">classif.</button><button class="btn sm ghost" data-view="reg">regression</button>
+        <span class="sep"></span>
+        <span class="xs">BeyondArena</span><button class="btn sm ghost" data-view="iid">IID</button><button class="btn sm ghost" data-view="grouped">grouped</button><button class="btn sm ghost" data-view="temporal">temporal</button>
+        <span class="sep"></span>
+        <button class="btn sm ghost" data-mode="rank">ranking</button><button class="btn sm ghost" data-mode="cost">Elo vs cost</button>
+        <label class="xs"><input type="checkbox" name="def"> defaults only</label>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">Elo from pairwise wins over datasets:
+        $$P(A\succ B)=\frac{1}{1+10^{(R_B-R_A)/400}}$$
+        +400 Elo ≈ 10 : 1 (91 %). Anchor: a default random forest = 1000.</div>
+      <p class="xs"><b>TabArena</b>: 51 IID datasets curated from 1 053; 8-fold inner CV; “tuned + ens.” = 200 random configurations + post-hoc ensembling. <b>BeyondArena</b>: 142 datasets with IID, <b>grouped</b> and <b>temporal</b> splits.</p>
+      <div class="callout clay small"><div><b>EO reading:</b> pixels from one field or one region are a <b>group</b>. Under grouped splits, tuned MLPs and boosted trees catch up with or pass the FMs.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Snapshot of the live leaderboard (17 Nov 2026), so the order will have moved by the time you teach this. On TabArena the top 20 or so entries are foundation models in their default configuration — a single forward pass beats every tuned and ensembled boosted tree (best: LightGBM tuned + ens., 1411). Switch to 'Elo vs cost': foundation models sit top-left (fast, strong); tuned trees and MLPs need hours of search for less Elo. Now the important part: BeyondArena. With IID splits the best FM leads the best non-FM by about 300 Elo; with grouped splits RealMLP and TabM (tuned + ens.) come first and LightGBM is level with Kumo-Tabular; with temporal splits it is a tie. Spatially autocorrelated EO samples behave like grouped data (Part II, spatial CV). Hatched bars are models whose score is partly imputed because the dataset lay outside their operating range. Caveat from the survey (§5.2): the groups that build the leading TFMs overlap with those that maintain these benchmarks; the protocol is standardised, but this is not independent replication — and the BeyondArena finding is reported against the authors' own interest, which makes it more credible.</aside>
+</section>
+
+<section data-title="Scoring the whole distribution (interactive)" data-module="V.8 · Tabular foundation models" data-kind="theory" data-require="tabular_fm" data-src="Gneiting &amp; Raftery (2007) Strictly proper scoring rules, <i>JASA</i> 102:359 · Gneiting, Balabdaoui &amp; Raftery (2007) <i>JRSS-B</i> 69:243 · Landsgesell, Knoll &amp; Wenzel (2026) ScoringBench, arXiv:2603.29928 · Simulated heteroscedastic regression, 2 000 test points">
+<h2>Scoring rules: <em>RMSE only sees the mean</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="scoring">
+      <canvas width="800" height="210" style="width:800px;height:210px"></canvas>
+      <table class="tbl dense scoretab" style="font-size:15px"></table>
+      <div class="ctrl">
+        <label>A's spread <input type="range" name="k" min="0.2" max="2" step="0.05" value="0.45" style="width:170px"> <b class="kv"></b></label>
+        <label>C's bias <input type="range" name="b" min="0" max="1.5" step="0.05" value="0.5" style="width:170px"> <b class="bv"></b></label>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">Continuous ranked probability score (lower is better)
+        $$\mathrm{CRPS}(F,y)=\int_{-\infty}^{\infty}\big(F(z)-\mathbb{1}\{z\ge y\}\big)^2dz$$
+        a point forecast gives \(|y-\hat y|\). Interval score for \([l,u]\) at level \(1-\alpha\):
+        $$\mathrm{IS}_\alpha=(u-l)+\tfrac{2}{\alpha}(l-y)_+ +\tfrac{2}{\alpha}(y-u)_+$$</div>
+      <div class="card"><h4>ScoringBench (2026)</h4><p class="small">101 regression datasets, 50+ models. Rankings <b>change with the scoring rule</b>; EXAONE Tabular and TabPFN-3 lead on CRPS. Wrapping TabICLv2 in conformal prediction did <b>not</b> improve its interval score.</p></div>
+      <div class="callout green small"><div>For LAI, yield or biomass maps report CRPS or interval score <b>and</b> coverage, not only RMSE.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Three forecasters for the same heteroscedastic target (uncertainty grows from left to right, like biomass saturation). A has the true mean but intervals that are too narrow; B has a noisier mean but honest intervals; C ignores heteroscedasticity and is biased. RMSE and MAE rank A first because they see only the mean. CRPS, the interval score and the log score reward calibration and sharpness together, so B wins until A's spread approaches the true σ. Set C's bias to 0: its single spread is wrong everywhere but its mean is exact, and it can edge out B on CRPS while still losing on the interval and log scores — no single number tells the whole story. The log score punishes over-confidence hardest. PIT histograms: flat = calibrated, U-shape = too narrow, slope = bias. Tabular FMs output full predictive distributions (TabPFN: a histogram over bins; TabICLv2, EXAONE: many quantiles), so evaluate them with a proper scoring rule chosen for the decision at hand — e.g. a weighted CRPS on the right tail for flood depth (Landsgesell et al. 2026). ScoringBench numbers are a 8 Sep 2026 snapshot with training folds capped at 2 400 rows.</aside>
+</section>
+
+<section data-title="Tabular FMs in EO practice" data-module="V.8 · Tabular foundation models" data-kind="practice" data-require="tabular_fm" data-src="TabPFN Python package (Prior Labs, pip install tabpfn) · scikit-learn GroupKFold · Lab 12 AlphaEarth embeddings · Purucker et al. (2026) arXiv:2606.30410 · Manero et al. (2026) §8–9 · TabArena median predict times, Nov 2026">
+<h2>Tabular FMs in EO practice: <em>embeddings in, map out</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <pre class="py" data-file="tabular FM on AlphaEarth embeddings, spatially blocked CV" data-size="xs">
+import numpy as np
+from sklearn.model_selection import GroupKFold
+from sklearn.metrics import f1_score
+from lightgbm import LGBMClassifier
+from tabpfn import TabPFNClassifier, TabPFNRegressor  # pip install tabpfn
+
+# X: 64-D AlphaEarth embedding (+ indices, DEM) at labelled points
+# y: land-cover class   blocks: id of the 5 km block of each point
+X, y, blocks = load_points("labels_casablanca.parquet")  # your loader
+
+models = {"TabPFN":   lambda: TabPFNClassifier(device="cuda"),
+          "LightGBM": lambda: LGBMClassifier(n_estimators=500)}
+for name, make in models.items():
+    f1 = []
+    for tr, te in GroupKFold(n_splits=5).split(X, y, groups=blocks):
+        m = make().fit(X[tr], y[tr])   # TabPFN: fit = store the context
+        f1.append(f1_score(y[te], m.predict(X[te]), average="macro"))
+    print(f"{name}: macro-F1 {np.mean(f1):.3f} ± {np.std(f1):.3f}")
+
+# regression with a predictive distribution (LAI, yield, biomass)
+reg = TabPFNRegressor().fit(X_tr, lai_tr)
+q05, q50, q95 = reg.predict(X_te, output_type="quantiles",
+                            quantiles=[0.05, 0.5, 0.95])
+</pre>
+    <div class="rows">
+      <div class="card green"><h4>Good fits</h4><ul class="list compact small"><li>Field-plot regression: yield, biomass, soil properties — 10²–10⁴ samples</li><li>Classifying embeddings or pixel features from a few hundred labels</li><li>A fast, strong baseline before any tuning — and free uncertainty</li></ul></div>
+      <div class="card sand"><h4>Watch out</h4><ul class="list compact small"><li><b>Spatial autocorrelation</b>: always compare with GroupKFold blocks, not random folds</li><li><b>Wall-to-wall inference</b>: ≈ 0.1–0.5 s per 1 000 rows on a GPU → hours for a 10⁸-pixel scene; distil or tile</li><li>Operating range (rows, features, ≤ 10 classes for some), licence, calibration</li></ul></div>
+      <div class="callout blue small"><div>A tabular FM does not replace the GeoFM: it sits <b>on top</b> of its embeddings, replacing the random forest of Lab 12.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">The code mirrors Lab 12: the same AlphaEarth sample table, but the random forest is replaced by a tabular FM and evaluated with spatially blocked folds (Part II). load_points, X_tr, lai_tr and X_te are placeholders for your own data. TabPFN's fit() only stores the context — the cost is paid at predict time, which is why per-pixel inference over a whole scene is expensive; the TabArena median predict time for leading FMs is roughly 0.1–0.5 s per 1 000 rows on a GPU. Check the installed tabpfn version: argument names and licences change between releases, and the newest weights are non-commercial. TabICL (pip install tabicl) is a fully open alternative with the same scikit-learn interface. Expect the FM to win clearly under random folds and the margin to shrink under spatial blocks — the BeyondArena result on the previous slide.</aside>
+</section>

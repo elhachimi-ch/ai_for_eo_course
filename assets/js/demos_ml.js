@@ -545,4 +545,94 @@
     pick(root, "data-ds", kind); pick(root, "data-k", kern);
     load(); draw();
   };
+  /* ======================================================= 7 · generalisation: bias, variance and ridge (NDVI season) */
+  DEMOS.biasvar = function (root) {
+    const K = window.DemoKit, axes = K.axes, label = K.label, F = "Inter, Arial, sans-serif";
+    const fc = root.querySelector("canvas.fit"), fx = fc.getContext("2d"), ec = root.querySelector("canvas.err"), ex = ec.getContext("2d");
+    const out = root.querySelector(".readout"), dIn = root.querySelector("input[name=d]"), lIn = root.querySelector("input[name=lam]"), nIn = root.querySelector("input[name=n]");
+    const refIn = root.querySelector("input[name=refits]"), dv = root.querySelector(".dv"), lv = root.querySelector(".lv"), nv = root.querySelector(".nv");
+    const BLU = "#2E4BC6", GRN = "#0F6B5C", TER = "#B5502E", MAXD = 12, SIG = 0.06, R = 30;
+    const truth = (t) => 0.15 + 0.6 * (1 / (1 + Math.exp(-30 * (t - 0.3))) - 1 / (1 + Math.exp(-25 * (t - 0.75))));
+    /* Legendre basis on [-1, 1] keeps high-degree least squares well conditioned */
+    const basis = (t, d) => { const x = 2 * t - 1, p = [1, x]; for (let k = 2; k <= d; k++) p.push(((2 * k - 1) * x * p[k - 1] - (k - 1) * p[k - 2]) / k); return p.slice(0, d + 1); };
+    function solve(A, b) {
+      const n = b.length, M = A.map((r, i) => [...r, b[i]]);
+      for (let c = 0; c < n; c++) {
+        let p = c; for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r;
+        [M[c], M[p]] = [M[p], M[c]]; const piv = M[c][c] || 1e-12;
+        for (let r = c + 1; r < n; r++) { const f = M[r][c] / piv; for (let k = c; k <= n; k++) M[r][k] -= f * M[c][k]; }
+      }
+      const x = new Array(n).fill(0);
+      for (let r = n - 1; r >= 0; r--) { let s = M[r][n]; for (let k = r + 1; k < n; k++) s -= M[r][k] * x[k]; x[r] = s / (M[r][r] || 1e-12); }
+      return x;
+    }
+    function fit(data, d, lam) {
+      const m = d + 1, A = Array.from({ length: m }, () => new Array(m).fill(0)), b = new Array(m).fill(0);
+      data.forEach((p) => { const f = basis(p.t, d); for (let i = 0; i < m; i++) { b[i] += f[i] * p.y; for (let j = 0; j < m; j++) A[i][j] += f[i] * f[j]; } });
+      for (let i = 1; i < m; i++) A[i][i] += lam * data.length;          // no penalty on the intercept
+      A[0][0] += 1e-10;
+      const w = solve(A, b);
+      return (t) => { const f = basis(t, d); let s = 0; for (let i = 0; i < m; i++) s += w[i] * f[i]; return s; };
+    }
+    let seed = 1;
+    /* training dates: one random cloud-free date per equal slice of the season (no long gaps); test dates: anywhere */
+    const sample = (r, n) => Array.from({ length: n }, (_, i) => { const t = 0.02 + (0.96 * (i + r())) / n; return { t, y: truth(t) + SIG * K.gauss(r) }; });
+    const sampleTest = (r, n) => Array.from({ length: n }, () => { const t = 0.02 + 0.96 * r(); return { t, y: truth(t) + SIG * K.gauss(r) }; });
+    const TG = Array.from({ length: 41 }, (_, i) => 0.02 + (0.96 * i) / 40);
+    let curve = null, curveKey = "";
+    function errCurve(n, lam) {           // averaged over R replicate datasets: train and test RMSE, bias², variance
+      const key = n + "|" + lam + "|" + seed; if (key === curveKey) return curve;
+      curve = [];
+      for (let d = 0; d <= MAXD; d++) {
+        let tr = 0, te = 0; const preds = TG.map(() => []);
+        for (let k = 0; k < R; k++) {
+          const r = K.rng(seed * 7919 + k * 31 + 17), data = sample(r, n), f = fit(data, d, lam), test = sampleTest(r, 60);
+          data.forEach((p) => (tr += (f(p.t) - p.y) ** 2 / (n * R))); test.forEach((p) => (te += (f(p.t) - p.y) ** 2 / (60 * R)));
+          TG.forEach((t, i) => preds[i].push(f(t)));
+        }
+        let b2 = 0, va = 0;
+        TG.forEach((t, i) => { const m = preds[i].reduce((a, v) => a + v, 0) / R; b2 += (m - truth(t)) ** 2 / TG.length; va += preds[i].reduce((a, v) => a + (v - m) ** 2, 0) / (R * TG.length); });
+        curve.push({ d, tr: Math.sqrt(tr), te: Math.sqrt(te), b2, va });
+      }
+      curveKey = key; return curve;
+    }
+    const MONTH = ["Jan", "Apr", "Jul", "Oct", "Dec"];
+    function draw() {
+      const d = +dIn.value, lam = 10 ** +lIn.value, n = +nIn.value, lamOn = +lIn.value > -8;
+      dv.textContent = d; lv.textContent = lamOn ? lIn.value : "off"; nv.textContent = n;
+      const W = fc.width, H = fc.height; fx.clearRect(0, 0, W, H);
+      const A = axes(fx, 50, 14, W - 64, H - 60, { x: [0, 1], y: [-0.1, 1], xt: [0, 0.25, 0.5, 0.75, 1], fx: (v) => MONTH[Math.round(v * 4)], yt: [0, 0.25, 0.5, 0.75, 1], xl: "day of year →", yl: "NDVI" });
+      const ts = Array.from({ length: 161 }, (_, i) => i / 160);
+      fx.save(); fx.beginPath(); fx.rect(A.X(0), A.Y(1), A.X(1) - A.X(0), A.Y(-0.1) - A.Y(1)); fx.clip();
+      if (refIn.checked) for (let k = 0; k < 20; k++) { const r = K.rng(seed * 104729 + k * 13 + 5), f = fit(sample(r, n), d, lam); fx.beginPath(); ts.forEach((t) => fx.lineTo(A.X(t), A.Y(f(t)))); fx.strokeStyle = "rgba(91,100,120,.28)"; fx.lineWidth = 1; fx.stroke(); }
+      fx.beginPath(); ts.forEach((t) => fx.lineTo(A.X(t), A.Y(truth(t)))); fx.setLineDash([6, 4]); fx.strokeStyle = GRN; fx.lineWidth = 2; fx.stroke(); fx.setLineDash([]);
+      const r0 = K.rng(seed * 104729 + 999), data = sample(r0, n), f = fit(data, d, lam);
+      fx.beginPath(); ts.forEach((t) => fx.lineTo(A.X(t), A.Y(f(t)))); fx.strokeStyle = BLU; fx.lineWidth = 2.6; fx.stroke();
+      data.forEach((p) => { fx.beginPath(); fx.arc(A.X(p.t), A.Y(p.y), 4.5, 0, 7); fx.fillStyle = TER; fx.fill(); fx.strokeStyle = "#fff"; fx.lineWidth = 1.2; fx.stroke(); });
+      fx.restore();
+      label(fx, "— fit   - - true season   ● cloud-free dates" + (refIn.checked ? "   grey: fits to new data" : ""), A.X(0.01), 26, "#5B6478", "left", "12px " + F);
+      /* error vs degree */
+      const C = errCurve(n, lam), ew = ec.width, eh = ec.height; ex.clearRect(0, 0, ew, eh);
+      const ymax = 0.16, B = axes(ex, 44, 30, ew - 58, eh - 76, { x: [0, MAXD], y: [0, ymax], xt: [0, 3, 6, 9, 12], yt: [0, 0.05, 0.1, 0.15], fy: (v) => v.toFixed(2), xl: "polynomial degree" });
+      label(ex, "RMSE", 8, 18, "#14213D", "left", "600 13px " + F);
+      ex.save(); ex.beginPath(); ex.rect(B.X(0) - 2, B.Y(ymax), B.X(MAXD) - B.X(0) + 4, B.Y(0) - B.Y(ymax)); ex.clip();
+      ex.setLineDash([3, 4]); ex.strokeStyle = "#5B6478"; ex.beginPath(); ex.moveTo(B.X(0), B.Y(SIG)); ex.lineTo(B.X(MAXD), B.Y(SIG)); ex.stroke(); ex.setLineDash([]);
+      [["tr", BLU], ["te", TER]].forEach(([k, c]) => {
+        ex.beginPath(); C.forEach((q) => ex.lineTo(B.X(q.d), B.Y(Math.min(q[k], ymax * 1.5)))); ex.strokeStyle = c; ex.lineWidth = 2.2; ex.stroke();
+        C.forEach((q) => { ex.beginPath(); ex.arc(B.X(q.d), B.Y(Math.min(q[k], ymax * 1.5)), 2.6, 0, 7); ex.fillStyle = c; ex.fill(); });
+      });
+      ex.strokeStyle = "rgba(201,154,46,.9)"; ex.lineWidth = 2; ex.beginPath(); ex.moveTo(B.X(d), B.Y(0)); ex.lineTo(B.X(d), B.Y(ymax)); ex.stroke();
+      ex.restore();
+      label(ex, "train", B.X(MAXD) - 2, B.Y(Math.min(C[MAXD].tr, ymax)) - 6, BLU, "right", "600 12px " + F);
+      label(ex, "test", B.X(MAXD) - 2, B.Y(Math.min(C[MAXD].te, ymax * 0.97)) + 14, TER, "right", "600 12px " + F);
+      label(ex, "noise σ", B.X(0.2), B.Y(SIG) - 5, "#5B6478", "left", "11px " + F);
+      const q = C[d], best = C.reduce((a, c) => (c.te < a.te ? c : a), C[0]);
+      const verdict = q.b2 > 3 * q.va && q.te > best.te * 1.15 ? "under-fitting (bias dominates)" : q.va > 3 * q.b2 && q.te > best.te * 1.15 ? "over-fitting (variance dominates)" : "a good balance";
+      out.innerHTML = "degree " + d + (lamOn ? ", λ = 10^" + lIn.value : "") + ", " + n + " dates · train RMSE " + q.tr.toFixed(3) + " · test RMSE " + q.te.toFixed(3)
+        + " · bias² " + q.b2.toExponential(1) + " · variance " + q.va.toExponential(1) + " → <b>" + verdict + "</b>; lowest test error at degree " + best.d;
+    }
+    dIn.oninput = draw; lIn.oninput = draw; nIn.oninput = draw; refIn.onchange = draw;
+    root.querySelector("[data-act=new]").onclick = () => { seed++; draw(); };
+    draw();
+  };
 })();

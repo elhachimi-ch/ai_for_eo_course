@@ -1,0 +1,178 @@
+<section class="dark" data-title="Chapter V.6 — Self-supervised learning and foundation models" data-module="V.6 · Foundation models" data-part="V6">
+<div class="sec-wrap">
+  <div class="sec-arch" style="--sec-c:#0F6B5C"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num ch"><small>Chapter</small>V.6</div></div>
+  <div class="sec-text">
+    <div class="time">{{slot:V6}} · 2018 → 2024</div>
+    <h2>Learning from the data itself</h2>
+    <div class="ar" data-lang="ar">التعلّم الذاتي الإشراف والنماذج التأسيسية</div>
+    <ul>
+      <li>The four paradigms revisited: why self-supervision scales</li>
+      <li>What makes a foundation model; reconstruction, contrastive, distillation, predictive SSL</li>
+      <li>Language first: how LLMs are made — next token, scale, alignment by RLHF (Part IV)</li>
+      <li>Prompting, tokens, embeddings and retrieval-augmented generation</li>
+      <li>Lab 10 — a cited RAG assistant for EO documents</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<section data-title="From ML paradigms to foundation models" data-module="V.6 · Foundation models" data-kind="theory" data-src="Adapted from C. El Hachimi, <i>From Machine Learning to Foundation Models</i> (GeoFM seminar slides) · He et al. (2022) MAE · Assran et al. (2023) I-JEPA · Oquab et al. (2024) DINOv2">
+<h2>From machine learning to <em>foundation models</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="rows">
+      <table class="tbl">
+        <tr><th>Paradigm</th><th>Data</th><th>Objective</th><th>EO example</th></tr>
+        <tr><td>Supervised</td><td>labelled</td><td>learn input → output mapping</td><td>land-cover classification</td></tr>
+        <tr><td>Unsupervised</td><td>no labels</td><td>discover hidden patterns</td><td>clustering, PCA</td></tr>
+        <tr><td>Reinforcement</td><td>agent + environment</td><td>maximise cumulative reward</td><td>irrigation optimisation</td></tr>
+        <tr><td>Self-supervised</td><td>unlabelled</td><td>learn representations from pretext tasks</td><td>MAE, JEPA, DINO</td></tr>
+      </table>
+      <div class="callout"><div>Supervised learning is limited by <b>expensive labels</b>. SSL learns from the <b>massive unlabelled EO archives</b> — and becomes the base of foundation models.</div></div>
+    </div>
+    <div class="vcenter">
+      <div class="flow" style="flex-direction:column;gap:8px">
+        <div class="step" style="background:var(--majorelle-soft);text-align:center"><b>Self-supervised learning</b>labels come from the data itself</div>
+        <div class="arrow" style="height:30px">↓</div>
+        <div class="step" style="background:var(--zellige-soft);text-align:center"><b>Foundation models</b>GPT, Llama · DINOv2, SAM</div>
+        <div class="arrow" style="height:30px">↓</div>
+        <div class="step" style="background:var(--terracotta-soft);text-align:center"><b>Geo foundation models</b>Prithvi, TerraMind, Galileo, AnySat, AlphaEarth</div>
+      </div>
+    </div>
+  </div>
+</div>
+<aside class="notes">This table follows the opening slide of Chouaib's GeoFM seminar deck. The punchline: EO is the ideal setting for SSL — petabytes of imagery, very few labels.</aside>
+</section>
+
+<section data-title="What is a foundation model" data-module="V.6 · Foundation models" data-kind="theory" data-src="Bommasani et al. (2021) On the opportunities and risks of foundation models, arXiv:2108.07258 · Xiong, Z. et al. (2024) Neural plasticity-inspired multimodal foundation model for EO (DOFA), arXiv:2403.15356 (figure) · El Hachimi, GeoFM seminar slides">
+<h2>What is a <em>foundation model</em>?</h2>
+<div class="s-body">
+  <div class="cols c46">
+    <div class="rows">
+      <div class="card ink"><h4>Definition</h4><p style="color:#E5E9F4;font-size:22px">A model <b style="color:var(--saffron)">pre-trained on massive datasets</b> with self-supervised objectives and <b style="color:var(--saffron)">adaptable to many downstream tasks</b>.</p></div>
+      <ol class="steps small" style="margin-top:6px">
+        <li><b>Massive EO archive</b> — petabytes of unlabelled imagery</li>
+        <li><b>Self-supervised pre-training</b> — masking, contrast, distillation</li>
+        <li><b>General geospatial representation</b> — one encoder</li>
+        <li><b>Fine-tuning</b> → many downstream tasks</li>
+      </ol>
+      <div><span class="pill">NLP · GPT, Llama</span><span class="pill">Vision · DINOv2, SAM</span><span class="pill">Geo · Prithvi, TerraMind, Galileo, AnySat</span></div>
+    </div>
+    <figure class="framed"><img src="assets/img/dofa_xiong2024.jpg" alt="DOFA: one model for many sensors and downstream tasks"><figcaption>DOFA: a unified multimodal Earth FM — many sensors in, many tasks out (Xiong et al., 2024)</figcaption></figure>
+  </div>
+</div>
+<aside class="notes">Definition and figure taken from the GeoFM seminar deck. DOFA's idea: a wavelength-conditioned patch embedding lets one encoder accept optical, multispectral, hyperspectral and SAR inputs.</aside>
+</section>
+
+<section data-title="Self-supervised learning methods" data-module="V.6 · Foundation models" data-kind="theory" data-src="He et al. (2022) MAE · Radford et al. (2021) CLIP; Oord et al. (2018) InfoNCE · Caron et al. (2021) DINO; Oquab et al. (2024) DINOv2 · LeCun (2022) A path towards autonomous machine intelligence (figure) · Assran et al. (2023) I-JEPA · El Hachimi, GeoFM seminar slides">
+<h2>Four ways to learn <em>without labels</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="rows">
+      <div class="cols c2" style="height:auto;gap:16px">
+        <div class="card"><h4>Reconstruction · MAE, SatMAE</h4><p class="small">Mask ~75% of patches, reconstruct pixels → fine spatial detail.<br>\(\mathcal{L}=\tfrac{1}{|M|}\sum_{p\in M}\lVert \hat{\mathbf{x}}_p-\mathbf{x}_p\rVert^2\)</p></div>
+        <div class="card"><h4>Contrastive · CLIP, RemoteCLIP</h4><p class="small">Pull matching pairs together, push others apart → semantics.<br>\(\mathcal{L}=-\log\frac{e^{\mathrm{sim}(z_i,z_i^+)/\tau}}{\sum_j e^{\mathrm{sim}(z_i,z_j)/\tau}}\)</p></div>
+        <div class="card"><h4>Distillation · DINO, DINOv2</h4><p class="small">Student matches a momentum teacher on different crops/views → strong semantic features, no negatives.</p></div>
+        <div class="card"><h4>Predictive · JEPA</h4><p class="small">Predict the <b>latent representation</b> of masked regions, not pixels → abstract “world-model” features.</p></div>
+      </div>
+      <div class="callout green small"><div>In EO a natural “positive pair” is the <b>same place seen by two sensors or on two dates</b> — free supervision from geography.</div></div>
+    </div>
+    <figure class="framed"><img src="assets/img/jepa_lecun2022.jpg" alt="LeCun's cognitive architecture with JEPA world model"><figcaption>JEPA as the world-model module of an autonomous agent (LeCun, 2022)</figcaption></figure>
+  </div>
+</div>
+<aside class="notes">Four families from the seminar deck, with the defining loss for the two simplest. The EO-specific twist on contrastive learning (SeCo, CROMA, DeCUR) is to use co-located multi-sensor or multi-temporal views as positives.</aside>
+</section>
+
+<section data-title="How LLMs are made" data-module="V.6 · LLMs" data-kind="theory" data-src="Radford et al. (2018) GPT · Brown et al. (2020) GPT-3 · Kaplan et al. (2020) &amp; Hoffmann et al. (2022, “Chinchilla”) scaling laws · Ouyang et al. (2022) InstructGPT/RLHF · Rafailov et al. (2023) DPO · DeepSeek-AI (2025) DeepSeek-R1 · Rothman (2024), Ch. 7–8 · Rodriguez (2024), Ch. 3–6">
+<h2>How an LLM is made — <em>three stages</em></h2>
+<div class="s-body">
+  <div class="cols c3" style="height:auto">
+    <div class="card arch blue"><div class="icon">①</div><h3>Pre-training</h3><p class="small">Decoder-only Transformer predicts the next token on trillions of tokens:</p>$$\mathcal{L}=-\sum_t \log p_\theta(x_t\mid x_{&lt;t})$$<p class="small">Scaling laws: loss falls predictably with parameters, data, compute (Chinchilla: ≈ 20 tokens per parameter).</p></div>
+    <div class="card arch green"><div class="icon">②</div><h3>Instruction tuning</h3><p class="small">Supervised fine-tuning on (instruction, answer) pairs turns a text-completer into an assistant. PEFT/LoRA makes this affordable for domain models (e.g. climate, EO).</p></div>
+    <div class="card arch clay"><div class="icon">③</div><h3>Alignment &amp; reasoning</h3><p class="small">RLHF / DPO learn from human preferences — <b>Turing's rewards and punishments</b>, 75 years later. RL on verifiable tasks yields “reasoning” models (o1, DeepSeek-R1).</p></div>
+  </div>
+  <div class="cols c2 mt" style="height:auto">
+    <div class="card"><h4>Timeline</h4><p class="small">GPT-1 (2018) → GPT-3 (2020, 175 B) → ChatGPT (2022) → open-weight families (Llama, Mistral, Qwen, DeepSeek) and multimodal models that read images and maps.</p></div>
+    <div class="card sand"><h4>Limits that matter for science</h4><p class="small">Hallucination, stale knowledge, no access to your data, weak arithmetic on rasters — which is why we add <b>retrieval</b> and <b>tools</b>.</p></div>
+  </div>
+</div>
+<aside class="notes">Close the historical loop: the RLHF stage is literally the reward/punishment education Turing proposed in 1950. Stress that an LLM alone cannot compute an NDVI over a city — it needs tools.</aside>
+</section>
+
+<section data-title="Prompting, tokens and embeddings" data-module="V.6 · LLMs" data-kind="theory" data-src="Rodriguez (2024) <i>Generative AI Foundations in Python</i>, Ch. 7 Mastering the fundamentals of prompt engineering · Rothman (2024), Ch. 10 Tokenizers &amp; Ch. 11 LLM embeddings · Wei et al. (2022) Chain-of-thought prompting">
+<h2>Talking to an LLM: <em>tokens, prompts, embeddings</em></h2>
+<div class="s-body">
+  <div class="cols c3" style="height:auto">
+    <div class="card"><h4>Tokens</h4><p class="small">Text is split into sub-word tokens (“evapo|transp|iration”). Context windows, cost and speed are counted in tokens. Arabic and French often need more tokens than English.</p></div>
+    <div class="card"><h4>Prompt patterns</h4><ul class="list compact small"><li><b>Role + task + constraints + format</b></li><li>Few-shot examples</li><li>Step-by-step reasoning</li><li>Ask for citations / “say if unknown”</li></ul></div>
+    <div class="card"><h4>Embeddings</h4><p class="small">A text (or image, or pixel!) becomes a vector; similar meaning ⇒ nearby vectors. Search = nearest neighbours by cosine similarity — the engine of RAG, and the same idea as AlphaEarth.</p></div>
+  </div>
+<pre class="py" data-file="a structured prompt for an EO assistant" data-size="sm" style="margin-top:22px">
+SYSTEM = """You are an Earth-observation analyst.
+Use ONLY the provided context and tool outputs. If the answer is not there, say so.
+Return: (1) a short answer, (2) the evidence with [source, page], (3) caveats
+(sensor, resolution, date, cloud cover)."""
+USER = "Which Sentinel-2 bands are at 10 m and which index detects built-up areas?"
+</pre>
+</div>
+<aside class="notes">Point ahead to Lab 12 (Chapter V.7): AlphaEarth embeddings and text embeddings are the same mathematical object — vectors where cosine similarity means semantic similarity.</aside>
+</section>
+
+<section data-title="Retrieval-augmented generation" data-module="V.6 · LLMs" data-kind="theory" data-src="Lewis et al. (2020) Retrieval-augmented generation, NeurIPS · Rodriguez (2024), Ch. 7 “Practice project: implementing RAG with LlamaIndex” · Rothman (2024), Ch. 7 “RAG with GPT-4” · Zhu et al. (2026) list RAG over geo-temporal data as an emerging direction">
+<h2>RAG — give the model <em>a library card</em></h2>
+<div class="s-body">
+  <div class="flow" style="height:150px">
+    <div class="step" style="background:var(--majorelle-soft)"><b>1 · Ingest</b>PDFs, reports, metadata, STAC</div><div class="arrow">→</div>
+    <div class="step"><b>2 · Chunk</b>~500–1000 tokens, overlap</div><div class="arrow">→</div>
+    <div class="step"><b>3 · Embed &amp; index</b>vector DB (FAISS, Chroma)</div><div class="arrow">→</div>
+    <div class="step"><b>4 · Retrieve</b>top-k for the question</div><div class="arrow">→</div>
+    <div class="step" style="background:var(--terracotta-soft)"><b>5 · Generate</b>LLM answers with citations</div>
+  </div>
+  <div class="cols c2 mt2" style="height:auto">
+    <div class="eqbox">$$p(y\mid q)\;\approx\; p_{\text{LLM}}\big(y \mid q,\ \underbrace{\operatorname{top\text{-}k}_{d\in\mathcal{D}}\ \cos(\mathbf{e}_q,\mathbf{e}_d)}_{\text{retrieved context}}\big)$$<p class="small">Knowledge lives in the <b>index</b>, not the weights: update documents, no retraining.</p></div>
+    <div class="card"><h4>EO use cases</h4><ul class="list compact small"><li>Q&amp;A over mission handbooks, ATBDs, product specs</li><li>Search a lab's past reports and theses</li><li>Policy docs + maps: “what does the regional plan say about this zone?”</li><li>Retrieve similar <b>image chips</b> via EO embeddings (multimodal RAG)</li></ul></div>
+  </div>
+</div>
+<aside class="notes">Common failure modes: bad chunking (tables split), retrieving the wrong section, and the model ignoring context. Evaluate retrieval (did the right chunk come back?) separately from generation.</aside>
+</section>
+
+<section data-title="Lab 10 — RAG over EO documents" data-module="V.6 · LLMs" data-kind="lab" data-src="Notebook <b>notebooks/lab10_rag_eo_documents.ipynb</b> · LangChain, FAISS, sentence-transformers (BAAI/bge-small-en-v1.5) · any chat model via <code>init_chat_model</code> (local Ollama or a hosted API) · Book code: github.com/PacktPublishing/Generative-AI-Foundations-in-Python">
+<h2>Lab 10 · A cited <em>RAG assistant</em> for EO documents</h2>
+<div class="s-body">
+  <div class="cols c64">
+    <pre class="py" data-file="lab10_rag_eo_documents.ipynb" data-size="sm">
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain.chat_models import init_chat_model
+
+docs = []
+for f in ["S2_user_handbook.pdf", "zhu2026_earth_fm.pdf"]:
+    docs += PyPDFLoader(f).load()                  # one doc per page
+chunks = RecursiveCharacterTextSplitter(
+    chunk_size=1000, chunk_overlap=150).split_documents(docs)
+
+emb = HuggingFaceEmbeddings(model_name="BAAI/bge-small-en-v1.5")
+db = FAISS.from_documents(chunks, emb)
+retriever = db.as_retriever(search_kwargs={"k": 4})
+llm = init_chat_model("ollama:qwen2.5:7b")         # or "openai:..." etc.
+
+def ask(q):
+    ctx = retriever.invoke(q)
+    context = "\n\n".join(
+        f"[{d.metadata['source']} p.{d.metadata.get('page', 0) + 1}] "
+        f"{d.page_content}" for d in ctx)
+    msg = [("system", SYSTEM), ("user", f"Context:\n{context}\n\nQ: {q}")]
+    return llm.invoke(msg).content
+
+print(ask("What are the 11 features of an ideal Earth foundation model?"))
+</pre>
+    <div class="rows">
+      <div class="card"><h4>Exercises</h4><ul class="list compact small"><li>Ask a question whose answer is <i>not</i> in the PDFs — does it refuse?</li><li>Change <code>k</code> and chunk size; inspect retrieved chunks</li><li>Add French/Arabic documents; try a multilingual embedder (e.g. <code>BAAI/bge-m3</code>)</li></ul></div>
+      <div class="callout small"><div>Runs fully offline with <b>Ollama</b> + a local model — useful for confidential project documents.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">The SYSTEM prompt is the one from the previous slide. The notebook also shows the same pipeline with LlamaIndex, mirroring the practice project in Rodriguez (2024), Ch. 7.</aside>
+</section>

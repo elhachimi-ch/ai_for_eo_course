@@ -1,6 +1,6 @@
 # %% [markdown]
-# # Lab 3 — U-Net semantic segmentation on LandCover.ai
-# **Deep Learning for Earth Observation** · Part IV
+# # Lab 6 — U-Net semantic segmentation on LandCover.ai
+# **AI for Earth Observation** · Part V · Chapter V.2
 #
 # LandCover.ai (Boguszewski et al., 2021): 25–50 cm aerial orthophotos of Poland with 5 classes —
 # background, building, woodland, water, road. TorchGeo downloads it and cuts 512×512 tiles.
@@ -89,4 +89,4 @@ plt.tight_layout(); plt.show()
 # 1. Which class has the lowest IoU? Why are buildings and roads harder than woodland?
 # 2. Remove the Dice term. What happens to the small classes?
 # 3. Swap the encoder for `"efficientnet-b3"` or a Transformer encoder (`"mit_b2"`).
-# 4. This U-Net pattern is exactly what TerraTorch puts on top of Prithvi in Lab 7.
+# 4. This U-Net pattern is exactly what TerraTorch puts on top of Prithvi in Lab 11.

@@ -1,6 +1,6 @@
 # %% [markdown]
-# # Lab 1 — Perceptron & MLP on Sentinel-2 spectra (EuroSAT-MS)
-# **Deep Learning for Earth Observation** · Part III
+# # Lab 4 — Perceptron & MLP on Sentinel-2 spectra (EuroSAT-MS)
+# **AI for Earth Observation** · Part V · Chapter V.1
 #
 # Goals
 # 1. Implement Rosenblatt's perceptron from scratch (NumPy) and train it to separate **water** from **vegetation** using mean Red and NIR reflectance.
@@ -170,5 +170,5 @@ print("Random forest test accuracy:", (rf.predict(with_indices(Xte)) == yte.nump
 # %% [markdown]
 # ## Exercises
 # 1. Add NDVI/NDWI/NDBI as extra MLP inputs. Does accuracy change? Why might the MLP not need them?
-# 2. Which classes are confused most? Why does that motivate convolutional networks (Lab 2)?
+# 2. Which classes are confused most? Why does that motivate convolutional networks (Lab 5)?
 # 3. Replace ReLU with sigmoid in the MLP and compare the training curves.

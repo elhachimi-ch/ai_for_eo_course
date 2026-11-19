@@ -1,0 +1,402 @@
+<section class="dark" data-title="Part V — Deep learning" data-module="V.1 · Rise of deep learning" data-part="V">
+<div class="sec-wrap">
+  <div class="sec-arch" style="--sec-c:#0F6B5C"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>V</div></div>
+  <div class="sec-text">
+    <div class="time">{{slot:V}} · 1943 → today</div>
+    <h2>Deep learning: from one neuron to agents</h2>
+    <div class="ar" data-lang="ar">التعلّم العميق: من عصبون واحد إلى الوكلاء</div>
+    <ul style="columns:2;column-gap:36px">
+      <li><b>V.1</b> Foundations: neuron, gradient descent, back-prop, MLP</li>
+      <li><b>V.2</b> Vision: convolution and CNNs</li>
+      <li><b>V.3</b> Sequences: RNN and LSTM</li>
+      <li><b>V.4</b> Generation: GANs and diffusion</li>
+      <li><b>V.5</b> Attention and Transformers</li>
+      <li><b>V.6</b> Self-supervised learning, foundation models, LLMs</li>
+      <li><b>V.7</b> Geospatial foundation models</li>
+      <li data-require="tabular_fm"><b>V.8</b> Tabular foundation models</li>
+      <li data-require="trustworthy|responsible_ai"><b>V.9</b> Trustworthy and responsible AI</li>
+      <li><b>V.10</b> Agentic AI</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<section data-title="Hand-crafted vs learned features" data-module="V.1 · Rise of deep learning" data-kind="theory" data-src="LeCun, Bengio &amp; Hinton (2015) Deep learning. <i>Nature</i> 521:436–444 · Zhu et al. (2017) Deep learning in remote sensing. <i>IEEE GRSM</i> 5(4):8–36">
+<h2>The shift: from <em>feature engineering</em> to representation learning</h2>
+<div class="s-body">
+  <div class="cols c2" style="height:auto">
+    <div class="card">
+      <h4>Classical pipeline</h4>
+      <div class="flow"><div class="step">Image</div><div class="arrow">→</div><div class="step" style="background:var(--terracotta-soft)"><b>Human</b>designs features</div><div class="arrow">→</div><div class="step">Shallow classifier</div></div>
+      <p class="mt">Knowledge lives in the <b>features</b>. New sensor or region ⇒ redesign.</p>
+    </div>
+    <div class="card">
+      <h4>Deep pipeline</h4>
+      <div class="flow"><div class="step">Image</div><div class="arrow">→</div><div class="step" style="background:var(--zellige-soft)"><b>Layers</b>edges → textures → objects</div><div class="arrow">→</div><div class="step">Linear head</div></div>
+      <p class="mt">Knowledge lives in the <b>weights</b>, learned end-to-end by gradient descent.</p>
+    </div>
+  </div>
+  <div class="cols c3 mt2" style="height:auto">
+    <div class="stat"><div class="n">1 loss</div><div class="l">one objective and one optimiser replace many manual design decisions</div></div>
+    <div class="stat"><div class="n" style="color:var(--zellige)">Reuse</div><div class="l">learned features transfer: one backbone serves many tasks</div></div>
+    <div class="stat"><div class="n" style="color:var(--terracotta)">Cost</div><div class="l">the price: data, compute, and less transparency</div></div>
+  </div>
+</div>
+<aside class="notes">The point: the deep pipeline is uniform (one loss, one optimiser) and its learned features transfer, which leads directly to foundation models later.</aside>
+</section>
+
+<section data-title="Three ingredients of the deep-learning revolution" data-module="V.1 · Rise of deep learning" data-kind="theory" data-src="Deng et al. (2009) ImageNet · USGS opened the Landsat archive in 2008 · Copernicus free &amp; open data policy (Sentinel-1A launched 2014) · Glorot et al. (2011) ReLU · Srivastava et al. (2014) Dropout · Ioffe &amp; Szegedy (2015) BatchNorm · He et al. (2016) ResNet">
+<h2>Why now? <em>Data × algorithms × compute</em></h2>
+<div class="s-body">
+  <div class="cols c3">
+    <div class="card arch blue"><div class="icon">◈</div><h3>Data</h3>
+      <ul class="list compact small" style="text-align:left">
+        <li>ImageNet (2009): 14 M labelled images</li>
+        <li>Landsat archive opened free in 2008</li>
+        <li>Copernicus Sentinels: free &amp; open, petabytes per year</li>
+        <li>Labels from crowdsourcing &amp; OpenStreetMap</li>
+      </ul></div>
+    <div class="card arch green"><div class="icon">∂</div><h3>Algorithms</h3>
+      <ul class="list compact small" style="text-align:left">
+        <li>ReLU: gradients that do not vanish</li>
+        <li>Dropout, batch-norm, Adam</li>
+        <li>Residual connections (ResNet): 100+ layers</li>
+        <li>Self-supervised pre-training</li>
+      </ul></div>
+    <div class="card arch clay"><div class="icon">▦</div><h3>Compute</h3>
+      <ul class="list compact small" style="text-align:left">
+        <li>GPUs: thousands of cores for matrix maths</li>
+        <li>CUDA (2007) made them programmable</li>
+        <li>TPUs &amp; tensor cores (2016–17)</li>
+        <li>Cloud platforms: Earth Engine, Planetary Computer</li>
+      </ul></div>
+  </div>
+</div>
+<aside class="notes">All three were necessary. The 1986 back-prop algorithm already existed; what was missing was data at scale and hardware to multiply matrices quickly. Earth observation followed the same path a few years later once open archives and cloud computing met.</aside>
+</section>
+
+<section data-title="Chips: CPU, GPU, TPU" data-module="V.1 · Rise of deep learning" data-kind="theory" data-src="Raina, Madhavan &amp; Ng (2009) Large-scale deep unsupervised learning using graphics processors, ICML · Krizhevsky, Sutskever &amp; Hinton (2012) NeurIPS (2× GTX 580) · Jouppi et al. (2017) TPU, ISCA · NVIDIA datasheets (peak dense throughput; precisions differ)">
+<h2>Deep learning is <em>matrix multiplication</em> — chips made it cheap</h2>
+<div class="s-body">
+  <div class="cols c46">
+    <div class="rows">
+      <table class="tbl small">
+        <tr><th>Chip</th><th>Design</th><th>Good at</th></tr>
+        <tr><td>CPU</td><td>Few powerful cores, big caches</td><td>Branchy, sequential code</td></tr>
+        <tr><td>GPU</td><td>Thousands of simple cores, SIMT</td><td>Parallel multiply–add on tensors</td></tr>
+        <tr><td>Tensor core</td><td>Matrix-multiply unit inside a GPU</td><td>Mixed precision (FP16/BF16/FP8)</td></tr>
+        <tr><td>TPU</td><td>Systolic array (Google, 2015–16)</td><td>Dense matmul at scale</td></tr>
+      </table>
+      <div class="eqbox small">One dense layer = one matmul: \(\mathbf{Y}=\mathbf{X}\mathbf{W}\). For a batch of 256 Sentinel-2 patches through ResNet-50 that is ≈ 1–2 TFLOP per forward pass — seconds on a CPU, milliseconds on a GPU.</div>
+      <div class="callout"><div><b>2012:</b> AlexNet trained on <b>two consumer GTX 580 GPUs</b> and won ImageNet by a wide margin — the moment the field switched.</div></div>
+    </div>
+    <figure class="framed"><img src="assets/img/chart_chips.svg" alt="Peak throughput of GPU generations"><figcaption>Peak dense throughput per accelerator (log scale). Precisions differ, so read as an order-of-magnitude trend.</figcaption></figure>
+  </div>
+</div>
+<aside class="notes">The ResNet-50 number: about 4 G multiply–adds (≈ 8 GFLOP) per 224×224 image, so a batch of 256 is on the order of 1–2 TFLOP. Emphasise orders of magnitude, not exact marketing numbers.</aside>
+</section>
+
+<section data-title="Compute growth" data-module="V.1 · Rise of deep learning" data-kind="theory" data-src="Training-compute estimates from Epoch AI's “Notable AI Models” database and original papers; GPT-4 value is an external estimate · Sevilla et al. (2022) Compute trends across three eras of ML, IJCNN · Kaplan et al. (2020) Scaling laws">
+<h2>Training compute grew <em>~10 orders of magnitude</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <figure class="framed"><img src="assets/img/chart_compute.svg" alt="Training compute of landmark models on a log scale"></figure>
+    <div class="vcenter">
+      <ul class="list">
+        <li>Before 2010 compute followed Moore's law (doubling ≈ every 2 years).</li>
+        <li>In the deep-learning era it doubled roughly <b>every ~6 months</b> (Sevilla et al., 2022).</li>
+        <li><b>Scaling laws</b>: loss falls as a power law of parameters, data and compute — the bet behind LLMs and Earth foundation models.</li>
+        <li>Cost now matters: carbon-aware training is one of the “ideal Earth FM” features (Chapter V.7).</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<aside class="notes">Read the plot on a log scale: each gridline is 100×. Values are order-of-magnitude public estimates; GPT-4 is not officially disclosed (marked with *).</aside>
+</section>
+
+<section data-title="From neuron to perceptron" data-module="V.1 · The first neurons" data-kind="theory" data-src="McCulloch &amp; Pitts (1943) <i>Bull. Math. Biophys.</i> 5:115–133 · Rosenblatt (1958) <i>Psychol. Rev.</i> 65:386–408 · Novikoff (1962) convergence proof · De Marchi &amp; Mitchell (2019), Ch. 2 “The perceptron”">
+<h2>From the logical neuron to the <em>perceptron</em></h2>
+<div class="s-body">
+  <div class="cols c46">
+    <div class="center">
+      <svg viewBox="0 0 520 420" class="diagram" font-family="Inter" style="max-height:470px">
+        <g font-size="18" text-anchor="middle">
+          <g fill="#E6EAFA" stroke="#2E4BC6" stroke-width="2">
+            <circle cx="60" cy="70" r="30"/><circle cx="60" cy="170" r="30"/><circle cx="60" cy="270" r="30"/><circle cx="60" cy="370" r="30" fill="#F8EED5" stroke="#C99A2E"/>
+          </g>
+          <text x="60" y="76">x₁</text><text x="60" y="176">x₂</text><text x="60" y="276">xₙ</text><text x="60" y="376">1</text>
+          <g stroke="#14213D" stroke-width="2.4"><line x1="90" y1="72" x2="250" y2="205"/><line x1="90" y1="172" x2="250" y2="212"/><line x1="90" y1="270" x2="250" y2="220"/><line x1="90" y1="365" x2="250" y2="228"/></g>
+          <g font-size="16" fill="#B5502E" font-weight="700"><text x="170" y="120">w₁</text><text x="170" y="180">w₂</text><text x="170" y="252">wₙ</text><text x="170" y="320">b</text></g>
+          <circle cx="295" cy="215" r="48" fill="#14213D"/><text x="295" y="224" fill="#C99A2E" font-size="30">Σ</text>
+          <rect x="370" y="180" width="70" height="70" rx="12" fill="#fff" stroke="#14213D" stroke-width="2"/>
+          <path d="M380 236 L405 236 L405 194 L430 194" stroke="#B5502E" stroke-width="3" fill="none"/>
+          <line x1="343" y1="215" x2="370" y2="215" stroke="#14213D" stroke-width="2.4"/><line x1="440" y1="215" x2="500" y2="215" stroke="#14213D" stroke-width="2.4"/>
+          <text x="505" y="210" text-anchor="end">ŷ</text>
+          <text x="295" y="300" font-size="15" fill="#5B6478">weighted sum</text><text x="405" y="275" font-size="15" fill="#5B6478">step</text>
+        </g>
+      </svg>
+    </div>
+    <div class="rows">
+      <div class="eqbox small"><b>McCulloch–Pitts (1943)</b> — binary inputs, fixed weights, threshold θ; can implement AND, OR, NOT: \(\;y=\mathbb{1}\big[\textstyle\sum_i w_i x_i \ge \theta\big]\)</div>
+      <div class="eqbox">
+        <div class="xs"><b>Rosenblatt (1958)</b> — real inputs, weights <i>learned</i> from errors:</div>
+        $$\hat y = \operatorname{sign}(\mathbf{w}^\top\mathbf{x} + b),\qquad \mathbf{w}\leftarrow \mathbf{w} + \eta\,(y-\hat y)\,\mathbf{x}$$
+      </div>
+      <div class="card blue"><h4>Convergence theorem (Novikoff, 1962)</h4><p>If the classes are linearly separable with margin γ and \(\lVert\mathbf{x}\rVert\le R\), the perceptron makes at most \((R/\gamma)^2\) mistakes — then stops. If they are not separable, it never settles.</p></div>
+      <p class="xs">Rosenblatt's Mark I Perceptron was hardware: a 20×20 photocell “retina”, potentiometer weights driven by motors.</p>
+    </div>
+  </div>
+</div>
+<aside class="notes">Stress the two innovations: real-valued inputs and a learning rule — the Turing loop from Part I made concrete. The convergence theorem is both the promise (guaranteed learning) and the catch (only if linearly separable).</aside>
+</section>
+
+<section data-title="Perceptron playground" data-module="V.1 · The first neurons" data-kind="practice" data-src="Interactive demo — synthetic Red/NIR reflectances. Minsky &amp; Papert (1969) <i>Perceptrons</i>, MIT Press">
+<h2>Playground: <em>water vs vegetation</em> from Red &amp; NIR</h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="perceptron">
+      <canvas width="840" height="470"></canvas>
+      <div class="ctrl">
+        <button class="btn" data-act="step">1 epoch</button><button class="btn gold" data-act="train">Train</button>
+        <button class="btn clay" data-act="xor">Load XOR</button><button class="btn ghost" data-act="reset">Reset</button>
+        <span class="xs">click = vegetation · shift-click = water</span>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="card green"><h4>Separable case</h4><p>Water absorbs NIR; vegetation reflects it strongly. A single line in (Red, NIR) space separates them — the perceptron finds it in a few epochs. The line it learns is a cousin of NDVI.</p></div>
+      <div class="card clay"><h4>XOR: the 1969 critique</h4><p>Load XOR: no straight line works, the error never reaches 0. Minsky &amp; Papert proved single-layer limits; funding dried up for a decade.</p></div>
+      <div class="callout"><div>The fix — <b>hidden layers</b> + a differentiable activation + back-prop — took until 1986 to catch on.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Run “Train” on the default data: converges in a few epochs. Add some points by clicking to make it harder. Then “Load XOR” and Train: watch the line keep flipping. That is the historical moment that led to the first AI winter.</aside>
+</section>
+
+<section data-title="Gradient descent (interactive)" data-module="V.1 · Learning is optimisation" data-kind="theory" data-src="Cauchy (1847) · Robbins &amp; Monro (1951) stochastic approximation · Kingma &amp; Ba (2015) Adam · Danka (2025), Ch. 13 “The basics of gradient descent”">
+<h2>Gradient descent — <em>walk downhill</em></h2>
+<div class="s-body">
+  <div class="cols c46">
+    <div class="rows">
+      <div class="eqbox">$$\theta_{t+1} = \theta_t - \eta\,\nabla_\theta \mathcal{L}(\theta_t)$$</div>
+      <ul class="list small">
+        <li><b>Learning rate η</b>: too small = slow, too big = divergence or oscillation. Try it →</li>
+        <li><b>Stochastic GD</b>: estimate \(\nabla\mathcal{L}\) on a mini-batch of 32–512 patches; noise helps escape poor minima.</li>
+        <li><b>Momentum / Adam</b>: average past gradients and rescale per parameter — the default optimisers today (AdamW for Transformers).</li>
+        <li>Non-convex loss: start point and η decide which valley you land in.</li>
+      </ul>
+    </div>
+    <div class="demo" data-demo="gd">
+      <canvas width="760" height="400"></canvas>
+      <div class="ctrl">
+        <label>η <input type="range" name="lr" min="0.02" max="1.6" step="0.02" value="0.30"> <b class="lrv"></b></label>
+        <label>start θ₀ <select name="x0"><option value="2.6">2.6</option><option value="-2.8">−2.8</option><option value="0.3">0.3</option></select></label>
+        <button class="btn" data-act="step">Step</button><button class="btn gold" data-act="run">Run 40</button><button class="btn ghost" data-act="reset">Reset</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Live demo: with η = 0.3 from θ₀ = 2.6 the ball reaches the right-hand minimum. Push η to about 1.2+ and it oscillates or jumps valleys. Start at −2.8 to land in the deeper left minimum. This is the whole of training, in one dimension.</aside>
+</section>
+
+<section data-title="Multi-layer perceptron" data-module="V.1 · Perceptron &amp; MLP" data-kind="theory" data-src="Cybenko (1989) <i>Math. Control Signals Syst.</i> 2:303–314 · Hornik (1991) <i>Neural Networks</i> 4:251–257 · De Marchi &amp; Mitchell (2019), Ch. 2 · Danka (2025), Ch. 15–16">
+<h2>Multi-layer perceptron: <em>stack, bend, repeat</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="center">
+      <svg viewBox="0 0 560 430" class="diagram" style="max-height:480px" font-family="Inter">
+        <g stroke="#D8CCB4" stroke-width="1.3">
+        <!-- edges generated -->
+        <line x1="70" y1="80" x2="230" y2="60"/><line x1="70" y1="80" x2="230" y2="140"/><line x1="70" y1="80" x2="230" y2="220"/><line x1="70" y1="80" x2="230" y2="300"/><line x1="70" y1="80" x2="230" y2="380"/>
+        <line x1="70" y1="170" x2="230" y2="60"/><line x1="70" y1="170" x2="230" y2="140"/><line x1="70" y1="170" x2="230" y2="220"/><line x1="70" y1="170" x2="230" y2="300"/><line x1="70" y1="170" x2="230" y2="380"/>
+        <line x1="70" y1="260" x2="230" y2="60"/><line x1="70" y1="260" x2="230" y2="140"/><line x1="70" y1="260" x2="230" y2="220"/><line x1="70" y1="260" x2="230" y2="300"/><line x1="70" y1="260" x2="230" y2="380"/>
+        <line x1="70" y1="350" x2="230" y2="60"/><line x1="70" y1="350" x2="230" y2="140"/><line x1="70" y1="350" x2="230" y2="220"/><line x1="70" y1="350" x2="230" y2="300"/><line x1="70" y1="350" x2="230" y2="380"/>
+        <line x1="230" y1="60" x2="390" y2="100"/><line x1="230" y1="60" x2="390" y2="220"/><line x1="230" y1="60" x2="390" y2="340"/>
+        <line x1="230" y1="140" x2="390" y2="100"/><line x1="230" y1="140" x2="390" y2="220"/><line x1="230" y1="140" x2="390" y2="340"/>
+        <line x1="230" y1="220" x2="390" y2="100"/><line x1="230" y1="220" x2="390" y2="220"/><line x1="230" y1="220" x2="390" y2="340"/>
+        <line x1="230" y1="300" x2="390" y2="100"/><line x1="230" y1="300" x2="390" y2="220"/><line x1="230" y1="300" x2="390" y2="340"/>
+        <line x1="230" y1="380" x2="390" y2="100"/><line x1="230" y1="380" x2="390" y2="220"/><line x1="230" y1="380" x2="390" y2="340"/>
+        <line x1="390" y1="100" x2="510" y2="160"/><line x1="390" y1="100" x2="510" y2="280"/><line x1="390" y1="220" x2="510" y2="160"/><line x1="390" y1="220" x2="510" y2="280"/><line x1="390" y1="340" x2="510" y2="160"/><line x1="390" y1="340" x2="510" y2="280"/>
+        </g>
+        <g stroke-width="2.5">
+          <g fill="#E6EAFA" stroke="#2E4BC6"><circle cx="70" cy="80" r="22"/><circle cx="70" cy="170" r="22"/><circle cx="70" cy="260" r="22"/><circle cx="70" cy="350" r="22"/></g>
+          <g fill="#E2F1EC" stroke="#0F6B5C"><circle cx="230" cy="60" r="22"/><circle cx="230" cy="140" r="22"/><circle cx="230" cy="220" r="22"/><circle cx="230" cy="300" r="22"/><circle cx="230" cy="380" r="22"/>
+          <circle cx="390" cy="100" r="22"/><circle cx="390" cy="220" r="22"/><circle cx="390" cy="340" r="22"/></g>
+          <g fill="#F7E6DE" stroke="#B5502E"><circle cx="510" cy="160" r="22"/><circle cx="510" cy="280" r="22"/></g>
+        </g>
+        <g font-size="15" text-anchor="middle" fill="#14213D" font-weight="600"><text x="70" y="420">bands</text><text x="230" y="420">hidden 1</text><text x="390" y="420">hidden 2</text><text x="510" y="345">classes</text></g>
+      </svg>
+    </div>
+    <div class="rows">
+      <div class="eqbox">$$\mathbf{h}^{(\ell)} = \phi\!\left(\mathbf{W}^{(\ell)}\mathbf{h}^{(\ell-1)} + \mathbf{b}^{(\ell)}\right),\quad \mathbf{h}^{(0)}=\mathbf{x}$$</div>
+      <ul class="list small">
+        <li>Each layer = linear map (rotate/stretch) + non-linear <b>bend</b> φ. Without φ the whole net collapses to one linear map.</li>
+        <li>Hidden layers solve XOR: they <b>re-represent</b> the input so classes become linearly separable at the last layer.</li>
+        <li><b>Universal approximation</b> (Cybenko 1989; Hornik 1991): one wide hidden layer can approximate any continuous function on a compact set — but depth makes it far more <i>efficient</i>.</li>
+        <li>Parameters: 13→128→64→10 has 13·128+128 + 128·64+64 + 64·10+10 = <b>10 698</b> weights.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<aside class="notes">Parameter count check: 1792 + 8256 + 650 = 10 698. MLPs are the right tool when your input is a vector without spatial structure: a pixel spectrum, a set of tabular features, or an embedding vector (we will use MLP heads on top of foundation-model embeddings later).</aside>
+</section>
+
+<section data-title="Chain rule and back-propagation" data-module="V.1 · Learning is optimisation" data-kind="theory" data-src="Rumelhart, Hinton &amp; Williams (1986) <i>Nature</i> 323:533–536 · Danka (2025), Ch. 12 Differentiation (the chain rule) &amp; Ch. 16 Derivatives and gradients · De Marchi &amp; Mitchell (2019), Ch. 2">
+<h2>Back-propagation = the <em>chain rule</em>, applied backwards</h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="center">
+      <svg viewBox="0 0 640 330" class="diagram" font-family="Inter" style="max-height:420px">
+        <g font-size="18" text-anchor="middle">
+          <circle cx="60" cy="80" r="36" fill="#E6EAFA" stroke="#2E4BC6" stroke-width="2"/><text x="60" y="86">x</text>
+          <circle cx="60" cy="240" r="36" fill="#E6EAFA" stroke="#2E4BC6" stroke-width="2"/><text x="60" y="246">w</text>
+          <rect x="170" y="125" width="110" height="70" rx="14" fill="#fff" stroke="#14213D" stroke-width="2"/><text x="225" y="166">z = wx + b</text>
+          <rect x="340" y="125" width="110" height="70" rx="14" fill="#fff" stroke="#14213D" stroke-width="2"/><text x="395" y="166">ŷ = σ(z)</text>
+          <rect x="510" y="125" width="110" height="70" rx="14" fill="#F7E6DE" stroke="#B5502E" stroke-width="2"/><text x="565" y="166">L = (ŷ−y)²</text>
+        </g>
+        <g stroke="#14213D" stroke-width="2.5" fill="none" marker-end="url(#ar)">
+          <path d="M96 90 L170 145"/><path d="M96 230 L170 175"/><path d="M280 160 L340 160"/><path d="M450 160 L510 160"/>
+        </g>
+        <g stroke="#B5502E" stroke-width="2.5" fill="none" stroke-dasharray="7 6" marker-end="url(#ar2)">
+          <path d="M565 205 C 520 290, 440 290, 395 205"/><path d="M395 205 C 350 290, 270 290, 225 205"/><path d="M200 200 C 160 270, 120 270, 96 250"/>
+        </g>
+        <g font-size="16" fill="#B5502E" font-weight="600" text-anchor="middle">
+          <text x="480" y="300">∂L/∂ŷ = 2(ŷ−y)</text><text x="310" y="300">∂ŷ/∂z = σ(1−σ)</text><text x="120" y="300">∂z/∂w = x</text>
+        </g>
+        <g font-size="15" fill="#2E4BC6" font-weight="600" text-anchor="middle"><text x="310" y="110">forward →</text><text x="480" y="110">forward →</text></g>
+        <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#14213D"/></marker>
+        <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#B5502E"/></marker></defs>
+      </svg>
+    </div>
+    <div class="rows">
+      <div class="eqbox">$$\frac{\partial L}{\partial w} = \frac{\partial L}{\partial \hat y}\cdot\frac{\partial \hat y}{\partial z}\cdot\frac{\partial z}{\partial w} = 2(\hat y - y)\,\sigma(z)\big(1-\sigma(z)\big)\,x$$</div>
+      <ul class="list small">
+        <li><b>Forward pass</b> computes and caches every intermediate value.</li>
+        <li><b>Backward pass</b> multiplies local derivatives from the loss back to each weight — one sweep gives <i>all</i> gradients at ≈ the cost of one forward pass.</li>
+        <li>PyTorch/JAX do this automatically (<b>autograd</b>): you write the forward pass, <code>loss.backward()</code> does the rest.</li>
+        <li>Products of many small factors (σ′ ≤ 0.25) ⇒ <span class="hl-t">vanishing gradients</span> in deep or recurrent nets — the motivation for ReLU, ResNets and LSTMs.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<aside class="notes">Walk the dashed red arrows right to left. The final bullet sets up three later stories: ReLU (two slides on), residual connections (Chapter V.2) and LSTM gates (Chapter V.3) are all fixes for the vanishing-gradient problem.</aside>
+</section>
+
+<section data-title="Activation functions" data-module="V.1 · Perceptron &amp; MLP" data-kind="theory" data-src="Nair &amp; Hinton (2010) ReLU · Hendrycks &amp; Gimpel (2016) GELU · De Marchi &amp; Mitchell (2019), Ch. 2 (activation functions)">
+<h2>Activation functions: <em>where the non-linearity lives</em></h2>
+<div class="s-body">
+  <div class="cols c4" style="height:auto">
+    <div class="card" style="padding:12px"><img src="assets/img/act_sigmoid.svg" style="width:100%"><p class="small">\(\sigma(z)=\frac{1}{1+e^{-z}}\) — probabilities, gates in LSTMs. Saturates ⇒ vanishing gradients.</p></div>
+    <div class="card" style="padding:12px"><img src="assets/img/act_tanh.svg" style="width:100%"><p class="small">\(\tanh z\) — zero-centred, used in RNN/LSTM states. Also saturates.</p></div>
+    <div class="card" style="padding:12px"><img src="assets/img/act_relu.svg" style="width:100%"><p class="small">\(\max(0,z)\) — cheap, gradient 1 when active. Default for CNNs since AlexNet.</p></div>
+    <div class="card" style="padding:12px"><img src="assets/img/act_gelu.svg" style="width:100%"><p class="small">\(z\,\Phi(z)\) — smooth ReLU used in Transformers (BERT, ViT, Prithvi).</p></div>
+  </div>
+  <div class="callout blue mt2"><div><b>Output layer</b> follows the task, not fashion: linear for regression (ETo in mm/day), sigmoid for binary masks (slum / non-slum), softmax for K classes (land cover).</div></div>
+</div>
+<aside class="notes">Quick slide. The only thing to remember: hidden layers use ReLU/GELU; outputs match the loss (sigmoid + BCE, softmax + CE, linear + MSE).</aside>
+</section>
+
+<section data-title="Training recipe" data-module="V.1 · Perceptron &amp; MLP" data-kind="theory" data-src="Srivastava et al. (2014) Dropout, JMLR · Ioffe &amp; Szegedy (2015) Batch normalisation · Loshchilov &amp; Hutter (2019) AdamW · Roberts et al. (2017) Cross-validation strategies for data with spatial structure, <i>Ecography</i> 40:913–929">
+<h2>A training recipe that <em>works in EO</em></h2>
+<div class="s-body">
+  <div class="cols c3" style="height:auto">
+    <div class="card"><h4>1 · Data</h4><ul class="list compact small"><li>Normalise per band (mean/std of the training set)</li><li>Spatially blocked train / val / test</li><li>Augment: flips, 90° rotations, (careful) brightness</li><li>Handle imbalance: class weights, focal loss</li></ul></div>
+    <div class="card"><h4>2 · Optimisation</h4><ul class="list compact small"><li>AdamW, lr 1e-3 (scratch) or 1e-4 (fine-tune)</li><li>Mini-batches 32–256; cosine or one-cycle schedule</li><li>Mixed precision on GPU</li><li>Early stopping on validation loss</li></ul></div>
+    <div class="card"><h4>3 · Regularisation</h4><ul class="list compact small"><li>Weight decay \(\lambda\lVert\theta\rVert^2\)</li><li>Dropout (p = 0.1–0.5)</li><li>Batch / layer normalisation</li><li>Pre-trained weights (transfer)</li></ul></div>
+  </div>
+  <div class="cols c2 mt" style="height:auto">
+    <div class="card clay"><h4>Diagnose</h4><p class="small">Train ↓ val ↑ ⇒ over-fitting · both high ⇒ under-fitting / bad lr · val ≫ test on a new region ⇒ <b>domain shift</b>.</p></div>
+    <div class="card green"><h4>Report</h4><p class="small">Per-class F1, IoU, confusion matrix, and the <b>map</b> — numbers alone hide spatial errors.</p></div>
+  </div>
+</div>
+<aside class="notes">This recipe is reused in every lab. The band normalisation statistics must come from the training split only. In EO, “test on a new region” is the honest test.</aside>
+</section>
+
+<section data-title="Lab 4a — perceptron from scratch" data-module="V.1 · Perceptron &amp; MLP" data-kind="lab" data-src="Notebook <b>notebooks/lab04_perceptron_mlp_sentinel2.ipynb</b> · Data: EuroSAT-MS (Helber et al., 2019, <i>IEEE JSTARS</i> 12:2217) via TorchGeo · Book code: github.com/PacktPublishing/hands-on-neural-networks (Ch. 2)">
+<h2>Lab 4a · A perceptron in <em>20 lines of NumPy</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <pre class="py" data-file="lab04_perceptron_mlp_sentinel2.ipynb — part A" data-size="sm">
+import numpy as np
+
+class Perceptron:
+    """Rosenblatt (1958) with labels in {-1, +1}."""
+    def __init__(self, n_features, lr=0.01):
+        self.w = np.zeros(n_features); self.b = 0.0; self.lr = lr
+
+    def predict(self, X):
+        return np.where(X @ self.w + self.b >= 0, 1, -1)
+
+    def fit(self, X, y, epochs=100):
+        self.errors_ = []
+        for _ in range(epochs):
+            errors = 0
+            for xi, yi in zip(X, y):
+                if yi * (xi @ self.w + self.b) &lt;= 0:   # mistake
+                    self.w += self.lr * yi * xi         # update rule
+                    self.b += self.lr * yi
+                    errors += 1
+            self.errors_.append(errors)
+            if errors == 0:                             # converged
+                break
+        return self
+</pre>
+    <div class="rows">
+      <pre class="py" data-file="part A — data: mean Red &amp; NIR of EuroSAT-MS patches" data-size="sm">
+from torchgeo.datasets import EuroSAT
+ds = EuroSAT("data", split="train", bands=("B04", "B08"),
+             download=True)
+veg, water = {"Forest", "Pasture"}, {"River", "SeaLake"}
+X, y = [], []
+for s in ds:
+    name = ds.classes[int(s["label"])]
+    if name in veg | water:
+        X.append(s["image"].mean(dim=(1, 2)).numpy() / 1e4)
+        y.append(1 if name in veg else -1)
+X, y = np.array(X), np.array(y)
+p = Perceptron(2, lr=0.05).fit(X, y)
+print("train acc:", (p.predict(X) == y).mean())
+</pre>
+      <div class="callout green small"><div>Expected: near-perfect accuracy within a few epochs. Then try <b>Highway vs Industrial</b> — the error count no longer reaches 0 (not separable).</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">EuroSAT-MS stores digital numbers scaled by 10 000; dividing by 1e4 gives approximate reflectance. Band selection with the bands= argument is supported by TorchGeo's EuroSAT. The notebook adds plots of the decision line and the error curve.</aside>
+</section>
+
+<section data-title="Lab 4b — MLP in PyTorch" data-module="V.1 · Perceptron &amp; MLP" data-kind="lab" data-src="Notebook <b>notebooks/lab04_perceptron_mlp_sentinel2.ipynb</b> (part B) · PyTorch docs · De Marchi &amp; Mitchell (2019), Ch. 2 (Keras version of the same idea)">
+<h2>Lab 4b · MLP on <em>13-band spectra</em> → 10 land-cover classes</h2>
+<div class="s-body">
+  <div class="cols c55">
+    <pre class="py" data-file="lab04 — part B: model + training loop" data-size="sm">
+import torch, torch.nn as nn
+
+model = nn.Sequential(
+    nn.Linear(13, 128), nn.ReLU(), nn.Dropout(0.2),
+    nn.Linear(128, 64), nn.ReLU(),
+    nn.Linear(64, 10))                 # logits for 10 classes
+
+opt = torch.optim.AdamW(model.parameters(), lr=1e-3,
+                        weight_decay=1e-4)
+loss_fn = nn.CrossEntropyLoss()
+
+for epoch in range(40):
+    model.train()
+    for xb, yb in train_dl:            # xb: (B, 13) z-scored
+        opt.zero_grad()
+        loss = loss_fn(model(xb), yb)  # forward
+        loss.backward()                # back-prop
+        opt.step()                     # gradient step
+    val_acc = evaluate(model, val_dl)
+    print(f"{epoch:02d}  loss {loss.item():.3f}  val {val_acc:.3f}")
+</pre>
+    <div class="rows">
+      <div class="card"><h4>What to observe</h4><ul class="list compact small"><li>Band-mean spectra alone reach a good but limited accuracy: <b>Highway, Industrial and Residential get confused</b> — they differ by <i>spatial pattern</i>, not spectrum.</li><li>Confusion matrix shows which classes need context.</li></ul></div>
+      <div class="callout clay"><div>This is the cliff that motivates <b>CNNs</b>: to tell a road from a roof you must look at neighbouring pixels.</div></div>
+      <div class="card sand"><h4>Exercise</h4><p class="small">Add NDVI/NDBI as extra inputs. Does the MLP still need them? Compare with the random forest of Lab 1.</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Pedagogical twist: the MLP is a good pixel classifier, but the confusion between built-up classes shows the limits of spectral information. That sets up the convolution story.</aside>
+</section>

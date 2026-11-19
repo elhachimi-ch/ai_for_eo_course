@@ -1,0 +1,196 @@
+<section class="dark" data-title="Chapter V.9 — Trustworthy and responsible AI" data-module="V.9 · Trustworthy EO AI" data-part="V9" data-extra="trustworthy,responsible_ai" data-require="trustworthy|responsible_ai">
+<div class="sec-wrap">
+  <div class="sec-arch" style="--sec-c:#0F6B5C"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num ch"><small>Chapter</small>V.9</div></div>
+  <div class="sec-text">
+    <div class="time">{{slot:V9}}</div>
+    <h2>Can we trust the map?</h2>
+    <div class="ar" data-lang="ar">ذكاء اصطناعي موثوق ومسؤول</div>
+    <ul>
+      <li data-require="trustworthy">Calibration: does 90 % mean 90 %? (live)</li>
+      <li data-require="trustworthy">Uncertainty from ensembles; explaining a classifier; domain shift (live)</li>
+      <li data-require="responsible_ai">Geographic bias and the carbon cost of EO AI (live)</li>
+      <li data-require="responsible_ai">Privacy, dual use and documentation</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<section data-title="Calibration: can you trust the probability? (interactive)" data-module="V.9 · Trustworthy EO AI" data-kind="theory" data-require="trustworthy" data-src="Guo et al. (2017) On calibration of modern neural networks, ICML · Naeini et al. (2015) Expected calibration error, AAAI · Niculescu-Mizil &amp; Caruana (2005) ICML · Minderer et al. (2021) Revisiting the calibration of modern neural networks, NeurIPS · Simulated 5-class classifier, 4 000 validation pixels">
+<h2>Calibration: <em>does 90 % mean 90 %?</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="calib">
+      <canvas class="rel" width="800" height="330" style="width:800px;height:330px"></canvas>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-model="over">over-confident network</button><button class="btn sm ghost" data-model="under">under-confident model</button>
+        <span class="sep"></span>
+        <label>temperature T <input type="range" name="T" min="0.2" max="5" step="0.05" value="1" style="width:200px"> <b class="tv"></b></label>
+        <button class="btn sm gold" data-act="fit">fit T on validation</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">Temperature scaling of the logits \(\mathbf{z}\):
+        $$\hat{\mathbf{p}}=\operatorname{softmax}(\mathbf{z}/T)$$
+        Expected calibration error over confidence bins \(B_m\):
+        $$\mathrm{ECE}=\sum_m\frac{|B_m|}{n}\,\big|\operatorname{acc}(B_m)-\operatorname{conf}(B_m)\big|$$</div>
+      <div class="card"><h4>Why EO needs it</h4><p class="small">Probabilities feed thresholds, area estimates, alerts and decisions. Deep networks trained with cross-entropy are usually <b>over-confident</b>; one scalar \(T\), fitted on held-out data, fixes much of it.</p></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Left: reliability diagram. Blue bars are the accuracy in each confidence bin; the shaded part is the gap to the confidence the model claimed; the diagonal is perfect calibration. Right: how often each confidence occurs. The over-confident network puts most pixels near 100 % confidence but is right less often. Drag T above 1 (softer probabilities) or press “fit T”: ECE and NLL drop, accuracy does not change because the arg-max is the same. Calibration holds only for data like the validation set — after a domain shift it degrades again (two slides on).</aside>
+</section>
+
+<section data-title="Uncertainty from ensembles (interactive)" data-module="V.9 · Trustworthy EO AI" data-kind="theory" data-require="trustworthy" data-src="Lakshminarayanan et al. (2017) Deep ensembles, NeurIPS · Gal &amp; Ghahramani (2016) MC dropout, ICML · Kendall &amp; Gal (2017) NeurIPS · Angelopoulos &amp; Bates (2023) Conformal prediction, <i>Found. Trends ML</i> 16:494 · Lang et al. (2023) Global canopy height, <i>Nat. Ecol. Evol.</i> 7:1778 · Synthetic biomass data">
+<h2>Ensembles: <em>aleatoric vs epistemic</em> uncertainty</h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="ens">
+      <canvas width="800" height="360" style="width:800px;height:360px"></canvas>
+      <div class="ctrl">
+        <label>members M <input type="range" name="m" min="1" max="20" step="1" value="8" style="width:150px"> <b class="mv"></b></label>
+        <label><input type="checkbox" name="gap" checked> gap in the field data</label>
+        <label>noise <input type="range" name="noise" min="0.2" max="2" step="0.1" value="1" style="width:120px"> <b class="nv"></b></label>
+        <button class="btn sm ghost" data-act="new">New data</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">Each member \(m\) predicts a mean \(\mu_m\) and a noise variance \(\sigma_m^2\):
+        $$\sigma^2(\mathbf{x})=\underbrace{\tfrac1M\textstyle\sum_m\sigma_m^2}_{\text{aleatoric}}+\underbrace{\tfrac1M\textstyle\sum_m(\mu_m-\bar\mu)^2}_{\text{epistemic}}$$</div>
+      <div class="card"><h4>Two kinds of “don't know”</h4><p class="small"><b>Aleatoric</b>: noise in the data (saturation, speckle) — more data won't remove it. <b>Epistemic</b>: the model has not seen such inputs — it grows in gaps and outside the training range.</p></div>
+      <div class="callout green"><div class="small"><b>Conformal prediction</b> wraps any model: widen intervals by the \((1-\alpha)\) quantile of held-out residuals to guarantee coverage.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Biomass from L-band backscatter saturates and gets noisier at high biomass (heteroscedastic, aleatoric noise). Each ensemble member is trained on a bootstrap sample with different random features; where they agree the dark (epistemic) band is thin. Inside the gap and beyond the data (gold zone) they disagree — that disagreement is the warning. With M = 1 there is no epistemic estimate at all. MC dropout approximates the same idea with one network. Global canopy-height and biomass maps (e.g. Lang et al. 2023) now ship a per-pixel uncertainty layer built this way.</aside>
+</section>
+
+<section data-title="Explaining a classifier (interactive)" data-module="V.9 · Trustworthy EO AI" data-kind="theory" data-require="trustworthy" data-src="Selvaraju et al. (2017) Grad-CAM, ICCV · Sundararajan et al. (2017) Integrated gradients, ICML · Lundberg &amp; Lee (2017) SHAP, NeurIPS · Breiman (2001) <i>Mach. Learn.</i> 45:5 · Adebayo et al. (2018) Sanity checks for saliency maps, NeurIPS · Tuia et al. (2021) AI for Earth science, <i>IEEE GRSM</i> 9(2):88">
+<h2>Explaining a classifier: <em>which bands, which pixels?</em></h2>
+<div class="s-body">
+  <div class="cols c73">
+    <div class="demo" data-demo="xai">
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div><div class="xs">click a pixel</div><canvas class="img" width="320" height="320" style="width:250px;height:250px;cursor:crosshair"></canvas></div>
+        <div><div class="xs">attribution map of one band (<span style="color:#B5502E">for</span> / <span style="color:#2E4BC6">against</span> the predicted class)</div><canvas class="att" width="320" height="320" style="width:250px;height:250px;cursor:crosshair"></canvas></div>
+        <div><div class="xs">per-band evidence</div><canvas class="bars" width="420" height="250" style="width:420px;height:250px"></canvas></div>
+      </div>
+      <div class="ctrl">
+        <button class="btn sm ghost" data-view="rgb">true colour</button><button class="btn sm ghost" data-view="pred">prediction</button>
+        <span class="sep"></span>
+        <span class="xs">map band</span><button class="btn sm ghost" data-band="2">B4 red</button><button class="btn sm ghost" data-band="6">B8 NIR</button><button class="btn sm ghost" data-band="8">B11 SWIR</button><button class="btn sm ghost" data-band="0">B2 blue</button>
+        <span class="sep"></span>
+        <button class="btn sm ghost" data-mode="local">this pixel</button><button class="btn sm gold" data-mode="global">permutation importance</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">Linear model, baseline = mean pixel: attribution of band \(j\) is exact
+        $$a_j=w_{k,j}\,(x_j-\bar x_j),\quad \textstyle\sum_j a_j=z_k(\mathbf{x})-z_k(\bar{\mathbf{x}})$$</div>
+      <div class="eqbox small">CNNs — Grad-CAM for class \(c\):
+        $$L^c=\mathrm{ReLU}\Big(\textstyle\sum_k\alpha_k^c A^k\Big),\quad \alpha_k^c=\frac1Z\sum_{i,j}\frac{\partial y^c}{\partial A^k_{ij}}$$</div>
+      <div class="callout clay"><div class="small">Explanations show what the <b>model</b> uses, not what causes the land cover. Correlated bands share credit; check saliency maps with sanity tests.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">A softmax regression on 10 Sentinel-2 bands of the synthetic scene. For a linear model, gradient × (input − baseline) is the exact decomposition of the logit (it equals integrated gradients and, with independent features, SHAP). Click a field: NIR (B8) is strong evidence for vegetation; click the river: SWIR and NIR count against everything but water. The attribution map shows one band's contribution everywhere. Permutation importance asks a global question: how much does accuracy drop if I scramble this band? Correlated red-edge and NIR bands each look unimportant because the others carry the same information — a classic trap. For deep networks Grad-CAM gives coarse “where” maps; Adebayo et al. showed some saliency methods barely depend on the model, so test them.</aside>
+</section>
+
+<section data-title="Domain shift (interactive)" data-module="V.9 · Trustworthy EO AI" data-kind="theory" data-require="trustworthy" data-src="Tuia, Persello &amp; Bruzzone (2016) Domain adaptation in remote sensing, <i>IEEE GRSM</i> 4(2):41 · Ganin et al. (2016) DANN, <i>JMLR</i> 17:59 · Wang et al. (2021) Tent, ICLR · Koh et al. (2021) WILDS (incl. FMoW, PovertyMap), ICML · Lee et al. (2018) Mahalanobis OOD detection, NeurIPS">
+<h2>Domain shift: <em>new region, new season, new sensor</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="demo" data-demo="shift">
+      <canvas width="660" height="400" style="width:660px;height:400px"></canvas>
+      <div class="ctrl">
+        <label>shift <input type="range" name="s" min="0" max="1" step="0.05" value="0.8" style="width:150px"> <b class="sv"></b></label>
+        <button class="btn sm ghost" data-a="none">no adaptation</button><button class="btn sm ghost" data-a="std">per-domain standardisation</button><button class="btn sm ghost" data-a="ft">fine-tune, 11 labels</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">Trained on source \(p_S(\mathbf{x},y)\), used on target \(p_T(\mathbf{x},y)\):
+        $$p_T(\mathbf{x})\neq p_S(\mathbf{x})\ \ \text{(covariate shift)},\qquad p_T(y\mid\mathbf{x})\neq p_S(y\mid\mathbf{x})\ \ \text{(concept shift)}$$</div>
+      <table class="tbl small">
+        <tr><th>Remedy</th><th>Needs</th></tr>
+        <tr><td>Normalise per scene / augment</td><td>nothing</td></tr>
+        <tr><td>Domain-adversarial, test-time adaptation</td><td>unlabelled target data</td></tr>
+        <tr><td>Fine-tune / few-shot</td><td>a few target labels</td></tr>
+        <tr><td>Detect out-of-distribution, abstain</td><td>a confidence score</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+<aside class="notes">Hollow points: the source region used for training. Filled points: the target region, after a shift that brightens red (haze, drier soils) and darkens the NIR of vegetation (dry season). Black rings mark target errors. With no adaptation, vegetation is mistaken for soil. Per-domain standardisation removes most of the global gain/offset without any target labels; 11 labelled target points (gold rings) fix the rest. The readout also counts how many target points a Mahalanobis test flags as out-of-distribution — a model that knows when it is outside its training data can abstain instead of being confidently wrong.</aside>
+</section>
+
+<section data-title="Geographic bias (interactive)" data-module="V.9 · Responsible EO AI" data-kind="practice" data-require="responsible_ai" data-src="Zhu et al. (2026) <i>Commun. Earth Environ.</i> (balanced geography) · Kerner et al. (2024) How accurate are existing land cover maps for agriculture in Sub-Saharan Africa? <i>Sci. Data</i> 11:486 · Meyer &amp; Pebesma (2022) <i>Nat. Commun.</i> 13:2208 · Sagawa et al. (2020) Distributionally robust optimisation, ICLR · Simulated regions in (Red, NIR) space">
+<h2>Geographic bias: <em>who is the model good for?</em></h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="region">
+      <canvas class="bars" width="800" height="300" style="width:800px;height:300px"></canvas>
+      <div class="xs">where the 600 training labels come from</div>
+      <canvas class="mix" width="800" height="44" style="width:800px;height:44px"></canvas>
+      <div class="ctrl">
+        <label>labels from Africa <input type="range" name="africa" min="0" max="60" step="1" value="0" style="width:200px"> <b class="av"></b></label>
+        <button class="btn sm ghost" data-preset="0">typical benchmark</button><button class="btn sm ghost" data-preset="33">balanced by region</button>
+      </div>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="card"><h4>The pattern</h4><p class="small">Most EO benchmarks and pre-training data come from Europe, North America and China. Accuracy is then lowest where maps are needed most — smallholder farms, drylands, informal settlements.</p></div>
+      <div class="eqbox small">Report the <b>worst</b> region, not only the mean:
+        $$\text{Acc}_{\min}=\min_{g}\ \text{Acc}_g$$
+        and train for it (group re-weighting, distributionally robust optimisation).</div>
+      <div class="callout clay"><div class="small">Kerner et al. (2024) found low agreement between existing cropland maps across Sub-Saharan Africa.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Six regions share the same three land-cover classes but differ in spectra: drier vegetation and brighter soils in North and Sub-Saharan Africa, haze and different crops elsewhere. With a typical benchmark mix (no African labels) the model is excellent in Europe and poor in Africa, although the mean accuracy looks acceptable. Move the slider: a modest share of local labels closes most of the gap at almost no cost elsewhere. The general lesson for every map you publish: report accuracy per region (or per city, per agro-ecological zone) and say where the model should not be used.</aside>
+</section>
+
+<section data-title="The carbon cost of EO AI (interactive)" data-module="V.9 · Responsible EO AI" data-kind="practice" data-require="responsible_ai" data-src="Lacoste et al. (2019) Quantifying the carbon emissions of ML, arXiv:1910.09700 · Strubell et al. (2019) ACL · Patterson et al. (2021) arXiv:2104.10350 · Luccioni et al. (2023) Carbon footprint of BLOOM, <i>JMLR</i> 24:253 · Grid intensities and equivalences are rounded orders of magnitude">
+<h2>The <em>carbon cost</em> of training and inference</h2>
+<div class="s-body">
+  <div class="cols c64">
+    <div class="demo" data-demo="carbon">
+      <div class="ctrl">
+        <button class="btn sm ghost" data-pre="unet">fine-tune a U-Net</button><button class="btn sm ghost" data-pre="map">map a continent</button><button class="btn sm ghost" data-pre="fm">pre-train a GeoFM</button><button class="btn sm ghost" data-pre="agent">serve an LLM agent 3 months</button>
+      </div>
+      <div class="ctrl">
+        <select name="hw"><option value="rtx">RTX 4090 (0.45 kW)</option><option value="a100">A100 (0.4 kW)</option><option value="h100">H100 (0.7 kW)</option><option value="cpu">CPU server (0.25 kW)</option></select>
+        <label>devices <input type="range" name="g" min="0" max="9" step="1" value="0" style="width:120px"> <b class="gv"></b></label>
+        <label>time <input type="range" name="h" min="0" max="12" step="1" value="3" style="width:120px"> <b class="hv"></b></label>
+      </div>
+      <div class="ctrl">
+        <label>PUE <input type="range" name="pue" min="1" max="2" step="0.05" value="1.2" style="width:120px"> <b class="pv"></b></label>
+        <select name="grid"><option value="low">low-carbon grid ≈ 0.03 kg/kWh</option><option value="eu">EU average ≈ 0.25 kg/kWh</option><option value="world" selected>world average ≈ 0.47 kg/kWh</option><option value="coal">coal-heavy grid ≈ 0.8 kg/kWh</option></select>
+      </div>
+      <div class="big"></div>
+      <canvas width="800" height="190" style="width:800px;height:190px"></canvas>
+      <div class="readout"></div>
+    </div>
+    <div class="rows">
+      <div class="eqbox small">$$E=n_{\text{dev}}\cdot P\cdot t\cdot \text{PUE},\qquad \text{CO}_2\text{e}=E\cdot \text{CI}_{\text{grid}}$$<div class="xs" style="text-align:center">PUE: data-centre overhead · CI: carbon intensity of the electricity</div></div>
+      <div class="card green"><h4>Lighter options</h4><ul class="list compact small"><li>Use embeddings or a frozen FM before full fine-tuning</li><li>Smaller models, mixed precision, early stopping</li><li>Run where and when the grid is clean</li><li>Report energy and CO₂e in the paper</li></ul></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">Presets: fine-tuning a U-Net is a few kWh — negligible. Pre-training a foundation model on 64 A100s for two weeks is in the tonnes of CO₂e, comparable to several long-haul flights, and strongly dependent on the grid. Serving a model for months can exceed training. Numbers are orders of magnitude: real power draw is below the rated TDP, and embodied emissions from manufacturing the hardware are not counted. Zhu et al. (2026) list “carbon-minimised” as one of the 11 features of an ideal Earth FM.</aside>
+</section>
+
+<section data-title="Privacy, dual use and documentation" data-module="V.9 · Responsible EO AI" data-kind="theory" data-require="responsible_ai" data-src="Gebru et al. (2021) Datasheets for datasets, <i>CACM</i> 64(12):86 · Mitchell et al. (2019) Model cards, FAT* · Wilkinson et al. (2016) FAIR, <i>Sci. Data</i> 3:160018 · Carroll et al. (2020) CARE principles, <i>Data Sci. J.</i> 19:43 · Kochupillai et al. (2022) Ethics of EO and AI, <i>IEEE GRSM</i> 10(4):90">
+<h2>Privacy, dual use and <em>documentation</em></h2>
+<div class="s-body">
+  <div class="cols c4" style="height:auto">
+    <div class="card arch blue"><div class="icon">◉</div><h3>Privacy</h3><p class="small">At 30–50 cm, houses, cars and gatherings are visible. Combined with other data, a map can identify people. Aggregate before publishing.</p></div>
+    <div class="card arch clay"><div class="icon">⚠</div><h3>Dual use</h3><p class="small">The same detector counts ships for fisheries control or for military targeting; a settlement map guides upgrading — or evictions.</p></div>
+    <div class="card arch green"><div class="icon">⇄</div><h3>Communities</h3><p class="small">Involve the people being mapped: co-design, consent for field data, CARE principles for Indigenous data.</p></div>
+    <div class="card arch sand"><div class="icon">≡</div><h3>Document</h3><p class="small">Datasheet for the labels, model card for the model (data, regions, limits, metrics per group), licence, FAIR release.</p></div>
+  </div>
+  <div class="callout mt2"><div>Before publishing a map, ask: <b>who could be harmed by it, and who was not asked?</b> Write the answer in the model card.</div></div>
+</div>
+<aside class="notes">These four cards turn the lessons of the course into general rules. A model card is a one-page document: intended use, training data and regions, evaluation per group and region, known failure cases, ethical considerations. A datasheet does the same for a dataset: who collected the labels, when, how, with what consent and licence. Both take an afternoon and make a paper easier to review and reuse.</aside>
+</section>

@@ -1,21 +1,21 @@
-<section class="dark" data-title="Part V — RNN and LSTM" data-module="V · RNN &amp; LSTM" data-part="V">
+<section class="dark" data-title="Chapter V.3 — RNN and LSTM" data-module="V.3 · RNN &amp; LSTM" data-part="V3">
 <div class="sec-wrap">
-  <div class="sec-arch" style="--sec-c:#0F6B5C"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>V</div></div>
+  <div class="sec-arch" style="--sec-c:#0F6B5C"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num ch"><small>Chapter</small>V.3</div></div>
   <div class="sec-text">
-    <div class="time">{{slot:V}}</div>
+    <div class="time">{{slot:V3}} · 1986 → 1997</div>
     <h2>Learning time: RNN &amp; LSTM</h2>
     <div class="ar" data-lang="ar">الشبكات المتكررة والذاكرة الطويلة</div>
     <ul>
       <li>Recurrence, back-propagation through time, vanishing gradients</li>
       <li>LSTM gates — a memory cell you can train</li>
       <li>EO time series: phenology, crops, hydrology, ETo</li>
-      <li>Lab 4 — forecasting reference evapotranspiration</li>
+      <li>Lab 7 — forecasting reference evapotranspiration</li>
     </ul>
   </div>
 </div>
 </section>
 
-<section data-title="Recurrent neural networks" data-module="V · RNN &amp; LSTM" data-kind="theory" data-src="Elman (1990) Finding structure in time · Bengio, Simard &amp; Frasconi (1994) <i>IEEE TNN</i> 5:157 (vanishing gradients) · De Marchi &amp; Mitchell (2019), Ch. 5 Working with RNNs">
+<section data-title="Recurrent neural networks" data-module="V.3 · RNN &amp; LSTM" data-kind="theory" data-src="Elman (1990) Finding structure in time · Bengio, Simard &amp; Frasconi (1994) <i>IEEE TNN</i> 5:157 (vanishing gradients) · De Marchi &amp; Mitchell (2019), Ch. 5 Working with RNNs">
 <h2>Recurrent networks: <em>a loop with memory</em></h2>
 <div class="s-body">
   <div class="cols c55">
@@ -50,7 +50,7 @@
 <aside class="notes">Connect to the backprop slide: the product of Jacobians is the time-axis version of the vanishing-gradient problem. A season of 10-day Sentinel-2 composites is ~36 steps; daily weather over a growing season is 150+ steps.</aside>
 </section>
 
-<section data-title="LSTM" data-module="V · RNN &amp; LSTM" data-kind="theory" data-src="Hochreiter &amp; Schmidhuber (1997) Long short-term memory, <i>Neural Computation</i> 9:1735 · Gers et al. (2000) forget gate · Cho et al. (2014) GRU · De Marchi &amp; Mitchell (2019), Ch. 5 “LSTM architecture”">
+<section data-title="LSTM" data-module="V.3 · RNN &amp; LSTM" data-kind="theory" data-src="Hochreiter &amp; Schmidhuber (1997) Long short-term memory, <i>Neural Computation</i> 9:1735 · Gers et al. (2000) forget gate · Cho et al. (2014) GRU · De Marchi &amp; Mitchell (2019), Ch. 5 “LSTM architecture”">
 <h2>LSTM: a <em>gated memory cell</em></h2>
 <div class="s-body">
   <div class="cols c55">
@@ -74,25 +74,25 @@
 <aside class="notes">Sigmoid gates output values between 0 and 1: they act as soft switches. Make the analogy with irrigation management: the cell state is like the soil water bucket — inputs fill it, the forget gate drains it.</aside>
 </section>
 
-<section data-title="Sequences in Earth observation" data-module="V · RNN &amp; LSTM" data-kind="practice" data-src="Rußwurm &amp; Körner (2017) CVPRW; Rußwurm et al. (2020) BreizhCrops, ISPRS Arch. · Kratzert et al. (2018) <i>HESS</i> 22:6005 (LSTM rainfall–runoff) · Shi et al. (2015) ConvLSTM, NeurIPS · Allen et al. (1998) FAO-56 Penman–Monteith">
+<section data-title="Sequences in Earth observation" data-module="V.3 · RNN &amp; LSTM" data-kind="practice" data-src="Rußwurm &amp; Körner (2017) CVPRW; Rußwurm et al. (2020) BreizhCrops, ISPRS Arch. · Kratzert et al. (2018) <i>HESS</i> 22:6005 (LSTM rainfall–runoff) · Shi et al. (2015) ConvLSTM, NeurIPS · Allen et al. (1998) FAO-56 Penman–Monteith">
 <h2>Where time matters in <em>Earth observation</em></h2>
 <div class="s-body">
   <div class="cols c2" style="height:auto">
     <div class="card"><h4>Crop-type mapping</h4><p class="small">Sentinel-2 time series per parcel → LSTM / temporal attention. Phenology (green-up, peak, harvest) separates wheat from barley better than any single date (BreizhCrops benchmark).</p></div>
     <div class="card"><h4>Hydrology</h4><p class="small">LSTMs trained on hundreds of catchments predict river discharge from meteorological forcings and rival process models (Kratzert et al., 2018).</p></div>
     <div class="card"><h4>Nowcasting</h4><p class="small">ConvLSTM replaces matrix products with convolutions to forecast radar-precipitation fields — space <i>and</i> time.</p></div>
-    <div class="card clay"><h4>Evapotranspiration &amp; drought</h4><p class="small">Forecast FAO-56 reference ETo from temperature, radiation, wind and humidity for irrigation scheduling — Lab 4, with a Marrakech example.</p></div>
+    <div class="card clay"><h4>Evapotranspiration &amp; drought</h4><p class="small">Forecast FAO-56 reference ETo from temperature, radiation, wind and humidity for irrigation scheduling — Lab 7, with a Marrakech example.</p></div>
   </div>
-  <div class="callout mt"><div>Today, temporal <b>Transformers</b> (Part VII) often replace LSTMs on long, irregular satellite time series — but LSTMs stay strong, light baselines on small data.</div></div>
+  <div class="callout mt"><div>Today, temporal <b>Transformers</b> (Chapter V.5) often replace LSTMs on long, irregular satellite time series — but LSTMs stay strong, light baselines on small data.</div></div>
 </div>
 <aside class="notes">Reference ETo is the FAO-56 Penman–Monteith quantity; Open-Meteo provides it computed from ERA5 reanalysis, which makes a quick, reproducible lab. For operational work, compute it from station or ERA5-Land variables yourself.</aside>
 </section>
 
-<section data-title="Lab 4 — LSTM ETo forecasting" data-module="V · RNN &amp; LSTM" data-kind="lab" data-src="Notebook <b>notebooks/lab04_lstm_eto_forecasting.ipynb</b> · Data: Open-Meteo historical weather API (ERA5 / ERA5-Land reanalysis, Copernicus C3S) incl. FAO-56 <code>et0_fao_evapotranspiration</code>">
-<h2>Lab 4 · Forecast next-week <em>ETo</em> with an LSTM</h2>
+<section data-title="Lab 7 — LSTM ETo forecasting" data-module="V.3 · RNN &amp; LSTM" data-kind="lab" data-src="Notebook <b>notebooks/lab07_lstm_eto_forecasting.ipynb</b> · Data: Open-Meteo historical weather API (ERA5 / ERA5-Land reanalysis, Copernicus C3S) incl. FAO-56 <code>et0_fao_evapotranspiration</code>">
+<h2>Lab 7 · Forecast next-week <em>ETo</em> with an LSTM</h2>
 <div class="s-body">
   <div class="cols c55">
-    <pre class="py" data-file="lab04_lstm_eto_forecasting.ipynb — data" data-size="sm">
+    <pre class="py" data-file="lab07_lstm_eto_forecasting.ipynb — data" data-size="sm">
 import pandas as pd, requests
 url = "https://archive-api.open-meteo.com/v1/archive"
 q = dict(latitude=31.63, longitude=-8.01,          # Marrakech
@@ -113,7 +113,7 @@ def windows(a, target, lookback=30, horizon=7):
 # temporal split: 2000-18 train | 2019-21 val | 2022-24 test
 </pre>
     <div class="rows">
-      <pre class="py" data-file="lab04 — model" data-size="sm">
+      <pre class="py" data-file="lab07 — model" data-size="sm">
 class EToLSTM(nn.Module):
     def __init__(self, n_in, hidden=64, horizon=7):
         super().__init__()
@@ -131,24 +131,24 @@ class EToLSTM(nn.Module):
 <aside class="notes">Splitting by time (not randomly) is the temporal equivalent of spatial blocking. A model that cannot beat climatology at lead day 7 has not learned anything useful beyond the seasonal cycle.</aside>
 </section>
 
-<section class="dark" data-title="Part VI — Generative models and GANs" data-module="VI · Generative models" data-part="VI">
+<section class="dark" data-title="Chapter V.4 — Generative models" data-module="V.4 · Generative models" data-part="V4">
 <div class="sec-wrap">
-  <div class="sec-arch" style="--sec-c:#B5502E"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num"><small>Part</small>VI</div></div>
+  <div class="sec-arch" style="--sec-c:#B5502E"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num ch"><small>Chapter</small>V.4</div></div>
   <div class="sec-text">
-    <div class="time">{{slot:VI}}</div>
+    <div class="time">{{slot:V4}} · 2014 → 2022</div>
     <h2>Learning to generate</h2>
     <div class="ar" data-lang="ar">النماذج التوليدية</div>
     <ul>
       <li>Autoencoders → GANs: a two-player game</li>
       <li>Conditional GANs (pix2pix, CycleGAN) and diffusion</li>
       <li>EO uses: SAR→optical, cloud removal, super-resolution</li>
-      <li>Lab 5 — Sentinel-1 → Sentinel-2 translation</li>
+      <li>Lab 8 — Sentinel-1 → Sentinel-2 translation</li>
     </ul>
   </div>
 </div>
 </section>
 
-<section data-title="Generative adversarial networks" data-module="VI · Generative models" data-kind="theory" data-src="Goodfellow et al. (2014) Generative adversarial nets, NeurIPS · Kingma &amp; Welling (2014) VAE · De Marchi &amp; Mitchell (2019), Ch. 7–8 · Rodriguez (2024) <i>Generative AI Foundations in Python</i>, Ch. 2 (GANs, diffusers, transformers)">
+<section data-title="Generative adversarial networks" data-module="V.4 · Generative models" data-kind="theory" data-src="Goodfellow et al. (2014) Generative adversarial nets, NeurIPS · Kingma &amp; Welling (2014) VAE · De Marchi &amp; Mitchell (2019), Ch. 7–8 · Rodriguez (2024) <i>Generative AI Foundations in Python</i>, Ch. 2 (GANs, diffusers, transformers)">
 <h2>GANs: a forger and a detective</h2>
 <div class="s-body">
   <div class="cols c55">
@@ -170,14 +170,14 @@ class EToLSTM(nn.Module):
           <tr><td>GAN</td><td>adversarial game, sharp images</td></tr>
           <tr><td>Diffusion</td><td>learn to remove noise step by step</td></tr>
         </table></div>
-      <div class="callout clay small"><div>Masked autoencoders (Part VIII) are the autoencoder idea scaled into <b>foundation-model pre-training</b>.</div></div>
+      <div class="callout clay small"><div>Masked autoencoders (Chapters V.5 and V.7) are the autoencoder idea scaled into <b>foundation-model pre-training</b>.</div></div>
     </div>
   </div>
 </div>
 <aside class="notes">Keep it intuitive: the generator improves because the discriminator keeps raising the bar. Mention that the autoencoder idea returns at scale as MAE, the pre-training objective of Prithvi and SatMAE.</aside>
 </section>
 
-<section data-title="Conditional GANs and diffusion in EO" data-module="VI · Generative models" data-kind="theory" data-src="Isola et al. (2017) pix2pix, CVPR · Zhu et al. (2017) CycleGAN, ICCV · Ho et al. (2020) DDPM · Schmitt et al. (2018) SEN1-2 dataset · Ebel et al. (2021) SEN12MS-CR cloud removal, <i>IEEE TGRS</i> · Rothman (2024), Ch. 17 Stable Diffusion">
+<section data-title="Conditional GANs and diffusion in EO" data-module="V.4 · Generative models" data-kind="theory" data-src="Isola et al. (2017) pix2pix, CVPR · Zhu et al. (2017) CycleGAN, ICCV · Ho et al. (2020) DDPM · Schmitt et al. (2018) SEN1-2 dataset · Ebel et al. (2021) SEN12MS-CR cloud removal, <i>IEEE TGRS</i> · Rothman (2024), Ch. 17 Stable Diffusion">
 <h2>Image-to-image: <em>pix2pix, CycleGAN, diffusion</em></h2>
 <div class="s-body">
   <div class="cols c3" style="height:auto">
@@ -196,11 +196,11 @@ class EToLSTM(nn.Module):
 <aside class="notes">Important caveat for scientists: generated pixels are plausible, not measured. Never use GAN or diffusion outputs as if they were observations without validation; they can hallucinate structures (buildings, fields) that do not exist.</aside>
 </section>
 
-<section data-title="Lab 5 — pix2pix SAR to optical" data-module="VI · Generative models" data-kind="lab" data-src="Notebook <b>notebooks/lab05_pix2pix_sar_to_optical.ipynb</b> · Data: Microsoft Planetary Computer STAC — <code>sentinel-1-rtc</code> &amp; <code>sentinel-2-l2a</code> · Isola et al. (2017)">
-<h2>Lab 5 · pix2pix: <em>Sentinel-1 → Sentinel-2</em></h2>
+<section data-title="Lab 8 — pix2pix SAR to optical" data-module="V.4 · Generative models" data-kind="lab" data-src="Notebook <b>notebooks/lab08_pix2pix_sar_to_optical.ipynb</b> · Data: Microsoft Planetary Computer STAC — <code>sentinel-1-rtc</code> &amp; <code>sentinel-2-l2a</code> · Isola et al. (2017)">
+<h2>Lab 8 · pix2pix: <em>Sentinel-1 → Sentinel-2</em></h2>
 <div class="s-body">
   <div class="cols c55">
-    <pre class="py" data-file="lab05_pix2pix_sar_to_optical.ipynb — models" data-size="sm">
+    <pre class="py" data-file="lab08_pix2pix_sar_to_optical.ipynb — models" data-size="sm">
 import torch, torch.nn as nn
 import segmentation_models_pytorch as smp
 
@@ -221,7 +221,7 @@ class PatchD(nn.Module):           # judges 70x70 patches
         return self.net(torch.cat([s1, s2], 1))
 D = PatchD()
 </pre>
-    <pre class="py" data-file="lab05 — one training step" data-size="sm">
+    <pre class="py" data-file="lab08 — one training step" data-size="sm">
 bce, l1 = nn.BCEWithLogitsLoss(), nn.L1Loss()
 optG = torch.optim.Adam(G.parameters(), 2e-4, betas=(0.5, 0.999))
 optD = torch.optim.Adam(D.parameters(), 2e-4, betas=(0.5, 0.999))

@@ -3,42 +3,45 @@
 <div class="s-body">
   <table class="tbl small dense">
     <tr><th>Your data / question</th><th>Start with</th><th>Upgrade to</th><th>Lab</th></tr>
-    <tr data-require="unsupervised"><td>No labels at all</td><td>k-means / GMM clustering, PCA</td><td>Self-supervised FM embeddings + clustering</td><td>8</td></tr>
-    <tr><td>Pixel spectra, tabular features</td><td>Random forest · MLP</td><td>FM embeddings + MLP</td><td>1, 8</td></tr>
-    <tr data-require="tabular_fm"><td>Plots or labelled points, ≤ 10⁵ rows</td><td>Tuned LightGBM / CatBoost, spatial CV</td><td>Tabular FM (TabPFN, TabICL) on embeddings</td><td>8</td></tr>
+    <tr><td>Pixel spectra, tabular features</td><td>Random forest · gradient boosting, spatial CV</td><td>MLP; FM embeddings + forest</td><td>1, 4, 12</td></tr>
+    <tr data-require="tabular_fm"><td>Plots or labelled points, ≤ 10⁵ rows</td><td>Tuned LightGBM / CatBoost</td><td>Tabular FM (TabPFN, TabICL) on embeddings</td><td>1, 12</td></tr>
+    <tr data-require="unsupervised"><td>No labels; what changed?</td><td>k-means / GMM, PCA, change vectors</td><td>Self-supervised embeddings + clustering</td><td>2, 12</td></tr>
+    <tr data-require="reinforcement"><td>Sequential decisions (tasking, paths, control)</td><td>Bandits, Q-learning in a simulator</td><td>Deep RL (DQN, PPO); RL-tuned agents</td><td>3</td></tr>
+    <tr><td>Image patches → one label</td><td>Pre-trained ResNet</td><td>ViT / GeoFM, linear probe or LoRA</td><td>5, 9, 11</td></tr>
+    <tr><td>Pixel-wise maps</td><td>U-Net (ResNet encoder)</td><td>Prithvi / Clay + UNet/UPerNet decoder; SAM refinement</td><td>6, 11</td></tr>
     <tr data-require="detection"><td>Count / locate objects (ships, buildings)</td><td>YOLO / Faster R-CNN, sliced inference</td><td>Oriented detectors; SAM masks from boxes</td><td>—</td></tr>
-    <tr><td>Image patches → one label</td><td>Pre-trained ResNet</td><td>ViT / GeoFM, linear probe or LoRA</td><td>2, 6</td></tr>
-    <tr><td>Pixel-wise maps</td><td>U-Net (ResNet encoder)</td><td>Prithvi / Clay + UNet/UPerNet decoder; SAM refinement</td><td>3, 7, 9</td></tr>
-    <tr data-require="fusion"><td>Cloudy optical, need regular maps</td><td>SAR + optical fusion with a cloud mask</td><td>Multimodal GeoFM (CROMA, TerraMind)</td><td>5</td></tr>
+    <tr data-require="fusion"><td>Cloudy optical, need regular maps</td><td>SAR + optical fusion with a cloud mask</td><td>Multimodal GeoFM (CROMA, TerraMind)</td><td>8</td></tr>
+    <tr><td>Time series (weather, NDVI)</td><td>LSTM / GRU</td><td>Temporal Transformer; physics-aware FM</td><td>7, 9</td></tr>
     <tr data-require="physics_ml"><td>Biophysical variables (LAI, biomass)</td><td>Hybrid retrieval on RTM simulations</td><td>Physics-constrained or differentiable hybrid models</td><td>—</td></tr>
-    <tr><td>Time series (weather, NDVI)</td><td>LSTM / GRU</td><td>Temporal Transformer; physics-aware FM</td><td>4, 6</td></tr>
-    <tr><td>Translate / fill images</td><td>pix2pix (cGAN)</td><td>Diffusion models</td><td>5</td></tr>
-    <tr><td>Few labels, many places</td><td>AlphaEarth embeddings + RF</td><td>Few-shot FM, semi-supervised, test-time adaptation</td><td>8, 9</td></tr>
+    <tr><td>Translate / fill images</td><td>pix2pix (cGAN)</td><td>Diffusion models</td><td>8</td></tr>
+    <tr><td>Few labels, many places</td><td>AlphaEarth embeddings + RF</td><td>Few-shot FM, semi-supervised, test-time adaptation</td><td>12</td></tr>
     <tr><td>Documents, reports, specs</td><td>RAG</td><td>Multimodal RAG (text + image embeddings)</td><td>10</td></tr>
-    <tr><td>Multi-step workflows</td><td>Tool-calling agent</td><td>LangGraph multi-agent + human-in-the-loop</td><td>11</td></tr>
-    <tr data-require="reinforcement"><td>Sequential decisions (tasking, paths, control)</td><td>Bandits, tabular Q-learning in a simulator</td><td>Deep RL (PPO, DQN); RL-tuned LLM agents</td><td>—</td></tr>
+    <tr><td>Multi-step workflows</td><td>Tool-calling agent</td><td>LangGraph multi-agent + human-in-the-loop</td><td>13</td></tr>
   </table>
   <div class="callout mt"><div>Always: a <b>simple baseline</b>, <b>spatial/temporal splits</b>, a <b>map</b> of the errors, and a statement of <b>uncertainty</b>.</div></div>
 </div>
 <aside class="notes">Leave this slide up during the final Q&amp;A — it summarises the whole course in decision form.</aside>
 </section>
 
-<section data-title="Practical notebooks and resources" data-module="Wrap-up" data-kind="lab" data-src="Book code repositories as provided for the course (links.txt) · All notebooks are Colab-ready; GPU recommended for Labs 2, 3, 5, 6, 7 and 9C">
+<section data-title="Practical notebooks and resources" data-module="Wrap-up" data-kind="lab" data-src="Book code repositories as provided for the course (links.txt) · All notebooks are Colab-ready; GPU recommended for Labs 5, 6, 8, 9 and 11">
 <h2>Notebooks &amp; <em>resources</em></h2>
 <div class="s-body">
   <div class="cols c55">
-    <table class="tbl small">
+    <table class="tbl small dense">
       <tr><th>#</th><th>Notebook</th><th>Model</th></tr>
-      <tr><td>1</td><td>lab01_perceptron_mlp_sentinel2</td><td>Perceptron, MLP</td></tr>
-      <tr><td>2</td><td>lab02_cnn_eurosat_resnet</td><td>CNN transfer learning</td></tr>
-      <tr><td>3</td><td>lab03_unet_landcoverai</td><td>U-Net</td></tr>
-      <tr><td>4</td><td>lab04_lstm_eto_forecasting</td><td>LSTM</td></tr>
-      <tr><td>5</td><td>lab05_pix2pix_sar_to_optical</td><td>cGAN</td></tr>
-      <tr><td>6</td><td>lab06_vit_eurosat</td><td>Attention, ViT, temporal Transformer</td></tr>
-      <tr><td>7</td><td>lab07_prithvi_terratorch</td><td>GeoFM fine-tuning</td></tr>
-      <tr><td>8</td><td>lab08_alphaearth_embeddings</td><td>Embedding fields</td></tr>
-      <tr><td>9</td><td>lab09_rag_eo_documents</td><td>RAG</td></tr>
-      <tr><td>10</td><td>lab10_langgraph_eo_agent</td><td>Agent</td></tr>
+      <tr><td>1</td><td>lab01_classical_ml_landcover</td><td>Bayes, trees, RF, boosting, SVM</td></tr>
+      <tr><td>2</td><td>lab02_unsupervised_change</td><td>k-means, GMM, PCA, CVA</td></tr>
+      <tr><td>3</td><td>lab03_rl_irrigation_tasking</td><td>Value iteration, Q-learning, bandits</td></tr>
+      <tr><td>4</td><td>lab04_perceptron_mlp_sentinel2</td><td>Perceptron, MLP</td></tr>
+      <tr><td>5</td><td>lab05_cnn_eurosat_resnet</td><td>CNN transfer learning</td></tr>
+      <tr><td>6</td><td>lab06_unet_landcoverai</td><td>U-Net</td></tr>
+      <tr><td>7</td><td>lab07_lstm_eto_forecasting</td><td>LSTM</td></tr>
+      <tr><td>8</td><td>lab08_pix2pix_sar_to_optical</td><td>cGAN</td></tr>
+      <tr><td>9</td><td>lab09_vit_eurosat</td><td>Attention, ViT</td></tr>
+      <tr><td>10</td><td>lab10_rag_eo_documents</td><td>RAG</td></tr>
+      <tr><td>11</td><td>lab11_prithvi_terratorch</td><td>GeoFM fine-tuning</td></tr>
+      <tr><td>12</td><td>lab12_alphaearth_embeddings</td><td>Embeddings, tabular FM</td></tr>
+      <tr><td>13</td><td>lab13_langgraph_eo_agent</td><td>Agent</td></tr>
     </table>
     <div class="rows">
       <div class="card"><h4>Course books &amp; code</h4><ul class="list compact small">
@@ -46,7 +49,7 @@
         <li>Rothman — <i>Transformers for NLP and Computer Vision</i>, 3rd ed. · github.com/Denis2054/Transformers-for-NLP-and-Computer-Vision-3rd-Edition</li>
         <li>Rodriguez — <i>Generative AI Foundations in Python</i> · github.com/PacktPublishing/Generative-AI-Foundations-in-Python</li>
         <li>Danka — <i>Mathematics of Machine Learning</i> (linear algebra, calculus, probability)</li></ul></div>
-      <div class="card"><h4>Tools</h4><p class="small">PyTorch · TorchGeo · TerraTorch · segmentation-models-pytorch · timm · Hugging Face · Earth Engine · Planetary Computer · LangChain · LangGraph</p></div>
+      <div class="card"><h4>Tools</h4><p class="small">scikit-learn · PyTorch · TorchGeo · TerraTorch · segmentation-models-pytorch · timm · Hugging Face · Earth Engine · Planetary Computer · LangChain · LangGraph</p></div>
       <a class="lab-link" href="notebooks/">Open the notebooks folder →</a>
     </div>
   </div>

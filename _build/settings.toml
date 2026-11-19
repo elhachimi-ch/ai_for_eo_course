@@ -37,49 +37,54 @@ primary = "#C1272D"
 secondary = "#006233"
 
 # Optional teaching blocks. Switching one off removes its slides, its lines on the
-# course map and section slides, and its minutes from the schedule.
+# course map and section slides, and its minutes from the schedule. unsupervised and
+# reinforcement remove a whole part (III, IV); tabular_fm removes Chapter V.8.
 [modules]
-classical_ml = true      # Part I  · naive Bayes, decision trees, bagging & random forests, boosting, SVM (live demos)
-unsupervised = true      # Part I  · k-means, unsupervised image classification, Gaussian mixtures & EM, DBSCAN, PCA (live demos)
-reinforcement = true     # Part I  · MDPs & value iteration, Q-learning, bandits, deep RL & RLHF (live demos)
-cv_fundamentals = true   # Part IV · pixels, RGB / multispectral / hyperspectral, grayscale, thresholding,
-                         #           convolution step by step, filtering, SAR speckle filtering (live demos)
-eo_data = true           # Part IV  · analysis-ready data, clouds & compositing, tiles & normalisation, labels (2 demos)
-detection = true         # Part IV  · object detection: anchors, IoU, NMS, average precision, large scenes (1 demo)
-fusion = true            # Part IV  · SAR + optical fusion, mapping under clouds (1 demo)
-evaluation = true        # Part IV  · spatial cross-validation, rare-class metrics, area estimation, protocol (3 demos)
-physics_ml = true        # Part VIII · physics + ML, emulators and hybrid LAI retrieval (1 demo)
-tabular_fm = true        # Part VIII · tabular foundation models: in-context learning, TabArena, scoring rules (3 demos)
-trustworthy = true       # Part VIII · calibration, ensemble uncertainty, explanations, domain shift (4 demos)
-responsible_ai = true    # Part VIII · geographic bias, carbon footprint, privacy & documentation (2 demos)
+classical_ml = true      # Part II   · naive Bayes, decision trees, bagging & random forests, boosting, SVM (live demos)
+eo_data = true           # Part II   · analysis-ready data, clouds & compositing, labels; tiles & normalisation in V.2 (2 demos)
+evaluation = true        # Part II   · spatial cross-validation, rare-class metrics, area estimation, protocol (3 demos)
+unsupervised = true      # Part III  · k-means, image clustering, Gaussian mixtures & EM, DBSCAN, PCA, Lab 2 (live demos)
+reinforcement = true     # Part IV   · MDPs & value iteration, Q-learning, bandits, Lab 3, deep RL & RLHF (live demos)
+cv_fundamentals = true   # Ch. V.2   · pixels, RGB / multispectral / hyperspectral, grayscale, thresholding,
+                         #             convolution step by step, filtering, SAR speckle filtering (live demos)
+detection = true         # Ch. V.2   · object detection: anchors, IoU, NMS, average precision, large scenes (1 demo)
+fusion = true            # Ch. V.2   · SAR + optical fusion, mapping under clouds (1 demo)
+physics_ml = true        # Ch. V.7   · physics + ML, emulators and hybrid LAI retrieval (1 demo)
+tabular_fm = true        # Ch. V.8   · tabular foundation models: in-context learning, TabArena, scoring rules (3 demos)
+trustworthy = true       # Ch. V.9   · calibration, ensemble uncertainty, explanations, domain shift (4 demos)
+responsible_ai = true    # Ch. V.9   · geographic bias, carbon footprint, privacy & documentation (2 demos)
 
-# Minutes per part, in teaching order. Section-slide times, the course map and the
-# total duration ("3½-hour course") are computed from these numbers.
+# Minutes per part (and per chapter of Part V), in teaching order. Section-slide times,
+# the course map and the total duration ("6½-hour course") are computed from these numbers.
+# A part or chapter whose divider is switched off by a module does not count.
 [schedule]
-opening = 10
-I = 20
-II = 10
-III = 20
-IV = 25
-break = 10
-V = 15
-VI = 10
-VII = 15
-VIII = 20
-IX = 17
+opening = 5
+I = 25
+II = 25
+III = 25                 # whole part requires unsupervised
+IV = 25                  # whole part requires reinforcement
+break = 15
+V = 30                   # V.1 foundations: rise of deep learning, neuron, gradient descent, back-prop, MLP
+V2 = 20
+V3 = 12
+V4 = 10
+V5 = 15
+break2 = 10
+V6 = 20
+V7 = 15
+V8 = 20                  # whole chapter requires tabular_fm
+V9 = 0
+V10 = 15
 wrap = 3
 
 # Extra minutes added to a part when its optional block is switched on.
 [schedule.modules]
-classical_ml = 15        # added to Part I
-unsupervised = 15        # added to Part I
-reinforcement = 15       # added to Part I
-cv_fundamentals = 15     # added to Part IV
-eo_data = 15             # added to Part IV
-detection = 10           # added to Part IV
-fusion = 10              # added to Part IV
-evaluation = 20          # added to Part IV
-physics_ml = 10          # added to Part VIII
-tabular_fm = 20          # added to Part VIII
-trustworthy = 20         # added to Part VIII
-responsible_ai = 10      # added to Part VIII
+classical_ml = 15        # added to Part II
+eo_data = 10             # added to Part II
+evaluation = 15          # added to Part II
+cv_fundamentals = 15     # added to Chapter V.2
+detection = 10           # added to Chapter V.2
+fusion = 10              # added to Chapter V.2
+physics_ml = 10          # added to Chapter V.7
+trustworthy = 15         # added to Chapter V.9
+responsible_ai = 10      # added to Chapter V.9

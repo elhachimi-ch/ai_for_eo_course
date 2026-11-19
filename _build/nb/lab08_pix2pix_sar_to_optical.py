@@ -1,6 +1,6 @@
 # %% [markdown]
-# # Lab 5 — pix2pix: translating Sentinel-1 SAR into Sentinel-2 RGB
-# **Deep Learning for Earth Observation** · Part VI
+# # Lab 8 — pix2pix: translating Sentinel-1 SAR into Sentinel-2 RGB
+# **AI for Earth Observation** · Part V · Chapter V.4
 #
 # We build a small **paired** dataset ourselves from the Microsoft Planetary Computer:
 # a cloud-free Sentinel-2 L2A scene and the closest-in-time Sentinel-1 RTC scene over the same area,

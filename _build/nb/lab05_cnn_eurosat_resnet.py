@@ -1,9 +1,9 @@
 # %% [markdown]
-# # Lab 2 — CNN transfer learning on EuroSAT (ResNet-18)
-# **Deep Learning for Earth Observation** · Part IV
+# # Lab 5 — CNN transfer learning on EuroSAT (ResNet-18)
+# **AI for Earth Observation** · Part V · Chapter V.2
 #
 # 1. Fine-tune an ImageNet-pre-trained ResNet-18 on EuroSAT RGB (10 classes) in two stages: head only, then the whole network.
-# 2. Compare with the spectral MLP of Lab 1.
+# 2. Compare with the spectral MLP of Lab 4.
 # 3. Bonus: a 13-band ResNet-18 pre-trained on Sentinel-2 with self-supervision (SSL4EO-S12 MoCo weights, via TorchGeo).
 #
 # Runtime: **GPU** (Colab → Runtime → Change runtime type → T4 GPU).
@@ -129,5 +129,5 @@ print("13-band SSL ResNet-18, linear probe test accuracy:", (probe.predict(Fte) 
 #
 # ## Exercises
 # 1. Compare stage-1-only vs stage-1+2 accuracy. How much does unfreezing help?
-# 2. Which classes remain confused? Compare with the MLP confusion matrix from Lab 1.
+# 2. Which classes remain confused? Compare with the MLP confusion matrix from Lab 4.
 # 3. Replace the random split by a *spatial* split — why can't we do this easily with EuroSAT, and why would it matter for a real map?

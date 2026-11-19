@@ -1,0 +1,150 @@
+<section class="dark" data-title="Chapter V.10 — Agentic AI" data-module="V.10 · Agentic AI" data-part="V10">
+<div class="sec-wrap">
+  <div class="sec-arch" style="--sec-c:#B5502E"><div class="aw-outline"></div><div class="aw-inner"></div><div class="num ch"><small>Chapter</small>V.10</div></div>
+  <div class="sec-text">
+    <div class="time">{{slot:V10}} · 2022 → today</div>
+    <h2>From LLMs to agentic AI</h2>
+    <div class="ar" data-lang="ar">من النماذج اللغوية إلى الوكلاء الأذكياء</div>
+    <ul>
+      <li>Agents: reason → act → observe; tools and the Model Context Protocol</li>
+      <li>LangGraph: agents as state graphs with memory and human-in-the-loop</li>
+      <li>Lab 13 — a Sentinel-2 agent that searches, masks and computes NDVI</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<section data-title="Agentic AI" data-module="V.10 · Agentic AI" data-kind="theory" data-src="Yao et al. (2023) ReAct, ICLR · Schick et al. (2023) Toolformer · Shen et al. (2023) HuggingGPT; Rothman (2024), Ch. 19 · Anthropic (2024) Model Context Protocol · Singh et al. (2024) GeoLLM-Engine, CVPRW · Zhu et al. (2026) feature 11: AI assistants">
+<h2>Agents: LLMs that <em>reason, act and observe</em></h2>
+<div class="s-body">
+  <div class="cols c46">
+    <div class="center">
+      <svg viewBox="0 0 520 470" class="diagram" style="max-height:520px" font-family="Inter">
+        <circle cx="260" cy="235" r="165" fill="none" stroke="#E3D8C3" stroke-width="3" stroke-dasharray="6 8"/>
+        <g text-anchor="middle">
+          <circle cx="260" cy="70" r="62" fill="#14213D"/><text x="260" y="66" fill="#C99A2E" font-size="20" font-weight="700">Reason</text><text x="260" y="90" fill="#E5E9F4" font-size="13">plan next step</text>
+          <circle cx="403" cy="318" r="62" fill="#0F6B5C"/><text x="403" y="314" fill="#fff" font-size="20" font-weight="700">Act</text><text x="403" y="338" fill="#E2F1EC" font-size="13">call a tool</text>
+          <circle cx="117" cy="318" r="62" fill="#B5502E"/><text x="117" y="314" fill="#fff" font-size="20" font-weight="700">Observe</text><text x="117" y="338" fill="#F7E6DE" font-size="13">read result</text>
+          <rect x="185" y="200" width="150" height="70" rx="16" fill="#F8EED5" stroke="#C99A2E" stroke-width="2"/><text x="260" y="231" font-size="16" font-weight="700" fill="#14213D">State / memory</text><text x="260" y="252" font-size="13" fill="#5B6478">messages, results</text>
+        </g>
+        <g fill="#14213D" font-size="13" text-anchor="middle"><text x="400" y="160">STAC search · NDVI</text><text x="400" y="178">geocoder · model</text><text x="120" y="160">tool output</text><text x="120" y="178">errors, numbers</text></g>
+        <g stroke="#C99A2E" stroke-width="3" fill="none"><path d="M318 95 Q 400 150 410 252"/><path d="M340 340 Q 260 400 180 340"/><path d="M100 255 Q 110 150 200 92"/></g>
+      </svg>
+    </div>
+    <div class="rows">
+      <ul class="list small">
+        <li><b>Tool calling</b>: the model emits a structured call (<code>search_sentinel2(bbox, dates)</code>); <i>your code</i> executes it.</li>
+        <li><b>Memory</b>: conversation state + long-term stores; <b>planning</b>: decompose “map flood extent after the storm” into steps.</li>
+        <li><b>Multi-agent</b>: a supervisor routes to specialists (data, analysis, writing) — HuggingGPT orchestrated whole model zoos.</li>
+        <li><b>MCP</b> (Model Context Protocol, 2024): an open standard to plug tools and data sources into any agent.</li>
+        <li><b>EO copilots</b>: GeoLLM-Engine benchmarks geospatial agents; Zhu et al. list “AI assistants” among the ideal Earth-FM features.</li>
+      </ul>
+      <div class="callout clay small"><div>Risks: hallucinated tool arguments, silent errors, runaway costs, unsafe actions. Keep a human in the loop for anything consequential.</div></div>
+    </div>
+  </div>
+</div>
+<aside class="notes">An agent is a loop, not a model. The LLM decides; deterministic code acts. This separation is what makes agents auditable: every tool call and result is logged in the state.</aside>
+</section>
+
+<section data-title="LangGraph" data-module="V.10 · Agentic AI" data-kind="theory" data-src="LangGraph documentation (LangChain, v1.x): StateGraph, nodes, edges, conditional edges, ToolNode, tools_condition, checkpointers, interrupts">
+<h2>LangGraph: agents as <em>state machines</em></h2>
+<div class="s-body">
+  <div class="cols c55">
+    <div class="rows">
+      <table class="tbl small">
+        <tr><th>Concept</th><th>What it is</th></tr>
+        <tr><td>State</td><td>typed dict shared by all nodes (e.g. <code>messages</code>, <code>aoi</code>, <code>results</code>), with reducers to merge updates</td></tr>
+        <tr><td>Node</td><td>a Python function: LLM call, tool executor, validator</td></tr>
+        <tr><td>Edge</td><td>fixed transition A → B</td></tr>
+        <tr><td>Conditional edge</td><td>router function picks the next node (tools or END)</td></tr>
+        <tr><td>Checkpointer</td><td>persists state per thread: memory, resume, time-travel</td></tr>
+        <tr><td>Interrupt</td><td>pause for human approval before a costly step</td></tr>
+      </table>
+      <div class="callout green small"><div>Why a graph? Loops, branches and retries become <b>explicit and testable</b>, unlike a free-running prompt chain.</div></div>
+    </div>
+    <div class="center">
+      <svg viewBox="0 0 480 470" class="diagram" style="max-height:520px" font-family="Inter">
+        <g text-anchor="middle" font-size="17" font-weight="600">
+          <rect x="180" y="10" width="120" height="48" rx="24" fill="#14213D"/><text x="240" y="40" fill="#C99A2E">START</text>
+          <rect x="150" y="110" width="180" height="62" rx="14" fill="#E6EAFA" stroke="#2E4BC6" stroke-width="2.5"/><text x="240" y="140">agent</text><text x="240" y="160" font-size="12" font-weight="400">LLM with bound tools</text>
+          <rect x="20" y="260" width="180" height="62" rx="14" fill="#E2F1EC" stroke="#0F6B5C" stroke-width="2.5"/><text x="110" y="290">tools</text><text x="110" y="310" font-size="12" font-weight="400">ToolNode: STAC, NDVI…</text>
+          <rect x="300" y="260" width="140" height="62" rx="14" fill="#F8EED5" stroke="#C99A2E" stroke-width="2.5"/><text x="370" y="290">human check</text><text x="370" y="310" font-size="12" font-weight="400">interrupt (optional)</text>
+          <rect x="180" y="400" width="120" height="48" rx="24" fill="#B5502E"/><text x="240" y="430" fill="#fff">END</text>
+        </g>
+        <g stroke="#14213D" stroke-width="2.5" fill="none" marker-end="url(#ah)">
+          <path d="M240 58 L240 108"/><path d="M190 172 L130 258"/><path d="M95 260 Q 70 160 150 140"/><path d="M290 172 L350 258"/><path d="M350 322 L270 398"/><path d="M240 172 Q 250 300 240 398"/>
+        </g>
+        <g font-size="13" fill="#5B6478"><text x="105" y="210">tool call?</text><text x="20" y="190">results</text><text x="255" y="350">final answer</text></g>
+        <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#14213D"/></marker></defs>
+      </svg>
+    </div>
+  </div>
+</div>
+<aside class="notes">The minimal ReAct agent in LangGraph is exactly this graph: START → agent; agent → tools if the last message contains tool calls, otherwise END; tools → agent. The optional human-check node uses LangGraph's interrupt to pause before, e.g., launching a large download.</aside>
+</section>
+
+<section data-title="Lab 13 — LangGraph EO agent" data-module="V.10 · Agentic AI" data-kind="lab" data-src="Notebook <b>notebooks/lab13_langgraph_eo_agent.ipynb</b> · LangGraph · Microsoft Planetary Computer STAC (<code>sentinel-2-l2a</code>) · pystac-client, odc-stac · OpenStreetMap Nominatim geocoder (respect its usage policy)">
+<h2>Lab 13 · A <em>Sentinel-2 agent</em> in LangGraph</h2>
+<div class="s-body">
+  <div class="cols c55">
+    <pre class="py" data-file="lab13 — tools" data-size="xs">
+from langchain_core.tools import tool
+import pystac_client, planetary_computer, odc.stac, numpy as np
+
+STAC = "https://planetarycomputer.microsoft.com/api/stac/v1"
+cat = pystac_client.Client.open(
+    STAC, modifier=planetary_computer.sign_inplace)
+
+@tool
+def search_sentinel2(bbox: list[float], start: str, end: str,
+                     max_cloud: int = 20) -> str:
+    """List Sentinel-2 L2A scenes over bbox [W,S,E,N] between
+    start and end (YYYY-MM-DD) with cloud cover below max_cloud %."""
+    items = cat.search(
+        collections=["sentinel-2-l2a"], bbox=bbox,
+        datetime=f"{start}/{end}",
+        query={"eo:cloud_cover": {"lt": max_cloud}}).item_collection()
+    return "\n".join(
+        f"{i.id} {i.datetime:%Y-%m-%d} "
+        f"cloud={i.properties['eo:cloud_cover']:.0f}%" for i in items[:10])
+
+@tool
+def mean_ndvi(item_id: str, bbox: list[float]) -> float:
+    """Mean NDVI of one Sentinel-2 L2A scene inside bbox [W,S,E,N]."""
+    item = cat.get_collection("sentinel-2-l2a").get_item(item_id)
+    ds = odc.stac.load([item], bands=["B04", "B08", "SCL"], bbox=bbox,
+                       resolution=20, crs="EPSG:32629")
+    ok = ~ds.SCL.isin([3, 8, 9, 10])           # drop cloud &amp; shadow
+    red, nir = ds.B04.where(ok), ds.B08.where(ok)
+    return float(((nir - red) / (nir + red)).mean())
+</pre>
+    <pre class="py" data-file="lab13 — graph" data-size="sm">
+from langgraph.graph import StateGraph, MessagesState, START
+from langgraph.prebuilt import ToolNode, tools_condition
+from langgraph.checkpoint.memory import InMemorySaver
+from langchain.chat_models import init_chat_model
+
+tools = [geocode, search_sentinel2, mean_ndvi]
+llm = init_chat_model("openai:gpt-4o-mini").bind_tools(tools)
+
+def agent(state: MessagesState):
+    return {"messages": [llm.invoke(state["messages"])]}
+
+g = StateGraph(MessagesState)
+g.add_node("agent", agent)
+g.add_node("tools", ToolNode(tools))
+g.add_edge(START, "agent")
+g.add_conditional_edges("agent", tools_condition)  # tools | END
+g.add_edge("tools", "agent")
+app = g.compile(checkpointer=InMemorySaver())
+
+q = ("Compare mean NDVI over the Haouz plain near Marrakech in "
+     "mid-April 2024 vs mid-April 2025 using clear scenes.")
+out = app.invoke({"messages": [("user", q)]},
+                 {"configurable": {"thread_id": "haouz"}})
+print(out["messages"][-1].content)
+</pre>
+  </div>
+</div>
+<aside class="notes">The model only sees the tool docstrings and signatures — write them carefully, they are the agent's API documentation. Inspect out["messages"] to show the full reason → act → observe trace. Note: Sentinel-2 L2A products from processing baseline 04.00 (2022 onwards) carry a −1000 radiometric offset; the notebook removes it before computing NDVI. The notebook adds the geocode tool, error handling and an optional human-approval interrupt. Any tool-calling chat model works (a local Ollama model such as Qwen 2.5 also supports tools).</aside>
+</section>

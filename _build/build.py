@@ -9,7 +9,7 @@ src/slides/*.html  -> site/index.html
 Settings (settings.toml, or the file named by $COURSE_SETTINGS):
  - any element with data-lang="ar" is dropped when arabic = false
  - any element with data-require="flag" is dropped when [modules].flag is false
-   ("!flag" keeps the element only when the flag is false)
+   ("!flag" keeps the element only when the flag is false; "a,b" needs both, "a|b" either)
  - sections with data-part="I" (optionally data-extra="flag") drive the schedule; the
    placeholders {{slot:I}}, {{start:I}}, {{total_min}}, {{hours}}, {{duration}},
    {{instructor}}, {{title}} and {{title_html}} are filled in from it.
@@ -107,7 +107,8 @@ def make_keep(settings):
         if 'data-lang="ar"' in attrs and not settings["arabic"]:
             return False
         req = re.search(r'data-require="([^"]+)"', attrs)
-        return not req or all(flag_on(settings, f.strip()) for f in req.group(1).split(","))
+        # "a,b" = a and b; "a|b" = a or b; "!a" = not a
+        return not req or all(any(flag_on(settings, g.strip()) for g in f.split("|")) for f in req.group(1).split(","))
     return keep
 
 

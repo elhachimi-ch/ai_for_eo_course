@@ -1,6 +1,6 @@
 # %% [markdown]
-# # Lab 9 — A cited RAG assistant for Earth-observation documents
-# **Deep Learning for Earth Observation** · Part IX
+# # Lab 10 — A cited RAG assistant for Earth-observation documents
+# **AI for Earth Observation** · Part V · Chapter V.6
 #
 # Retrieval-augmented generation (Lewis et al., 2020): **ingest → chunk → embed → index → retrieve → generate with citations**.
 # Documents: open-access papers used in this course (arXiv). Replace them with your own handbooks, reports or theses.

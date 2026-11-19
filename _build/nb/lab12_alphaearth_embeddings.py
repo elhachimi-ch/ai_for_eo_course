@@ -1,6 +1,6 @@
 # %% [markdown]
-# # Lab 8 — AlphaEarth Foundations embeddings in Earth Engine
-# **Deep Learning for Earth Observation** · Part VIII
+# # Lab 12 — AlphaEarth Foundations embeddings in Earth Engine
+# **AI for Earth Observation** · Part V · Chapter V.7
 #
 # Google DeepMind's AlphaEarth Foundations model summarises one year of multi-sensor observations into a
 # **64-dimensional, unit-length embedding for every 10 m pixel** (Earth Engine collection
@@ -9,6 +9,7 @@
 # 1. **Similarity search** — find places that look like a reference place (cosine similarity = dot product).
 # 2. **Classify** with a few labels and a random forest (here: ESA WorldCover as a "teacher" to keep the lab self-contained).
 # 3. **Detect change** between two years.
+# 4. **Compare** a random forest with a **tabular foundation model** on the same sample table, scored with spatial blocks (Chapter V.8).
 #
 # Requirements: a Google Earth Engine account and a Cloud project (free for research/education). No GPU needed.
 
@@ -82,7 +83,42 @@ Map.addLayer(change, {"min": 0, "max": 0.6, "palette": ["FBF7F0", "C99A2E", "B55
 Map
 
 # %% [markdown]
+# ## 4 · Same table, two learners: random forest vs a tabular foundation model
+# The sampled points form a **table**: 64 embedding columns and a class. A tabular foundation model (Chapter V.8) predicts from that table in one forward pass, with no tuning. Score both learners with **random** and **spatially blocked** folds (≈ 2 km cells) — Part II showed why the second number is the honest one.
+#
+# TabPFN may ask you to accept its licence on Hugging Face and log in (`huggingface-cli login`) before its weights download; the newest weights are for non-commercial use. TabICL (`pip install tabicl`, `from tabicl import TabICLClassifier`) is a fully open alternative with the same interface. A GPU runtime makes TabPFN much faster but is not required for a table this size.
+
+# %%
+!pip -q install tabpfn
+
+# %%
+import numpy as np
+from sklearn.model_selection import KFold, GroupKFold
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import f1_score
+from tabpfn import TabPFNClassifier
+
+with_xy = samples.map(lambda f: f.set({"lon": f.geometry().coordinates().get(0), "lat": f.geometry().coordinates().get(1)}))
+df = geemap.ee_to_df(with_xy)
+X = df[bands.getInfo()].to_numpy("float32")
+y = df["lc"].to_numpy()
+block = (np.floor(df["lon"] / 0.02).astype(int) * 1000 + np.floor(df["lat"] / 0.02).astype(int)).to_numpy()   # ≈ 2 km cells
+print(X.shape, "classes:", np.unique(y), "blocks:", len(np.unique(block)))
+
+models = {"random forest": lambda: RandomForestClassifier(300, n_jobs=-1, random_state=0),
+          "TabPFN": lambda: TabPFNClassifier()}
+for name, make in models.items():
+    for cv_name, splits in {"random folds": KFold(5, shuffle=True, random_state=0).split(X),
+                            "spatial blocks": GroupKFold(5).split(X, y, block)}.items():
+        f1 = [f1_score(y[te], make().fit(X[tr], y[tr]).predict(X[te]), average="macro") for tr, te in splits]
+        print(f"{name:14s} {cv_name:15s} macro-F1 {np.mean(f1):.3f} ± {np.std(f1):.3f}")
+
+# %% [markdown]
+# Expect the foundation model to win clearly under random folds and the gap to shrink under spatial blocks — the BeyondArena result of Chapter V.8: grouped (here, spatial) splits are where tuned classical learners catch up.
+
+# %% [markdown]
 # ## Exercises
 # 1. Replace WorldCover by 50 points you digitise yourself (geemap draw tools → `Map.user_rois`). How many labels do you need?
 # 2. Compare the RF on embeddings with an RF on a Sentinel-2 median composite (10 bands + NDVI). Which is better with 20 labels per class?
 # 3. Export the change layer for your city and inspect the top-1 % pixels on VHR imagery. What kinds of change are they?
+# 4. Repeat section 4 with 20 labels per class (`numPoints=20`). Which learner degrades less with few labels — and does the answer change under spatial blocks?

@@ -4,7 +4,7 @@
     <div class="t-kicker">{{duration}} course · theory &amp; practice</div>
     <h1>{{title_html}}</h1>
     <div class="t-ar" data-lang="ar">التعلّم العميق لرصد الأرض</div>
-    <div class="t-sub">From Turing's learning machine, classical machine learning and the first perceptron to CNNs, LSTMs, GANs, Transformers, geospatial foundation models, LLMs and agentic AI — and the EO practice around them: data, evaluation, uncertainty and responsible use.</div>
+    <div class="t-sub">From Turing's learning machine through statistical, unsupervised and reinforcement learning to deep learning — CNNs, LSTMs, GANs, Transformers, foundation models, LLMs and agents — and the EO practice around them: data, evaluation, uncertainty and responsible use.</div>
     {{author_html}}
   </div>
   <div class="arch-window{{photo_class}}"><div class="aw-outline"></div><div class="aw-inner">{{photo_img}}</div><div class="aw-rose"></div></div>
@@ -13,126 +13,36 @@
 </section>
 
 <section data-title="Course map" data-module="Opening" data-kind="theory">
-<h2>Course map</h2>
+<h2>Course map: <em>the history of AI, in order</em></h2>
 <div class="s-body">
   <table class="tbl small dense">
     <tr><th>Part</th><th>Theory</th><th>Practice (EO)</th></tr>
-    <tr><td>Opening</td><td>Goals, roadmap, the four learning paradigms</td><td>Paradigms playground</td></tr>
-    <tr><td>I · History of AI<span data-require="classical_ml"> &amp; classical ML</span><span data-require="unsupervised">, unsupervised</span><span data-require="reinforcement"> &amp; RL</span></td><td>Turing's learning machine, AI winters, classical ML<span data-require="classical_ml"> (naive Bayes, trees, random forests, boosting, SVM)</span><span data-require="unsupervised">, clustering &amp; PCA</span><span data-require="reinforcement">, MDPs, Q-learning, bandits, RLHF</span>, chips</td><td>Random forest on Sentinel-2<span data-require="classical_ml"> · 6 ML playgrounds</span><span data-require="unsupervised"> · 5 clustering/PCA demos</span><span data-require="reinforcement"> · 3 RL demos</span></td></tr>
-    <tr><td>II · Learning maths</td><td>Loss, gradient descent, backprop, likelihood</td><td>Gradient-descent demo</td></tr>
-    <tr><td>III · Perceptron &amp; MLP</td><td>McCulloch–Pitts, Rosenblatt, XOR, universal approximation</td><td>Lab 1 · pixel classification</td></tr>
-    <tr><td>IV · <span data-require="cv_fundamentals">Vision &amp; </span>CNNs</td><td><span data-require="cv_fundamentals">RGB / multi- / hyperspectral images, thresholding, filtering, SAR speckle · </span>Convolution, ResNet, U-Net<span data-require="eo_data"> · ARD, clouds, tiles, labels</span><span data-require="detection"> · object detection</span><span data-require="fusion"> · SAR–optical fusion</span><span data-require="evaluation"> · spatial CV, metrics, area estimation</span></td><td><span data-require="cv_fundamentals">Vision demos · </span>Labs 2–3 · EuroSAT, LandCover.ai<span data-require="eo_data"> · compositing &amp; tiling demos</span><span data-require="detection"> · ship detection</span><span data-require="fusion"> · mapping under clouds</span><span data-require="evaluation"> · 3 evaluation demos</span></td></tr>
+    <tr><td>I · History &amp; paradigms</td><td>Turing's learning machine, symbolic AI and two winters, AI ⊃ ML ⊃ DL ⊃ GenAI, the four learning paradigms</td><td>Paradigms playground</td></tr>
+    <tr><td>II · Statistical ML</td><td>Data cube, empirical risk, likelihood, bias–variance<span data-require="classical_ml"> · naive Bayes, trees, forests, boosting, SVM</span><span data-require="eo_data"> · ARD, clouds, labels</span><span data-require="evaluation"> · spatial CV, rare-class metrics, area estimation</span></td><td><span data-require="classical_ml">6 learner playgrounds · </span>Lab 1 · land cover, spatial CV</td></tr>
+    <tr data-require="unsupervised"><td>III · Unsupervised learning</td><td>k-means, Gaussian mixtures &amp; EM, DBSCAN, PCA</td><td>Lab 2 · clusters, PCA, change detection</td></tr>
+    <tr data-require="reinforcement"><td>IV · Reinforcement learning</td><td>MDPs, value iteration, Q-learning, bandits → deep RL &amp; RLHF</td><td>Lab 3 · irrigation, satellite tasking</td></tr>
     <tr><td colspan="3" style="text-align:center;color:#8A6512;font-weight:600">Break<span data-lang="ar"> · <bdi class="ar">استراحة</bdi></span></td></tr>
-    <tr><td>V–VI · RNN/LSTM &amp; GANs</td><td>BPTT, gates, minimax game, pix2pix</td><td>Labs 4–5 · ETo forecast, SAR→optical</td></tr>
-    <tr><td>VII · Transformers</td><td>Attention, ViT, MAE</td><td>Lab 6 · ViT on EuroSAT</td></tr>
-    <tr><td>VIII · Geo foundation models</td><td>SSL, GeoFM generations, Earth-FM features<span data-require="physics_ml"> · physics + ML</span><span data-require="tabular_fm"> · tabular foundation models</span><span data-require="trustworthy"> · calibration, uncertainty, explanations, domain shift</span><span data-require="responsible_ai"> · bias, carbon, privacy</span></td><td>Labs 7–8 · Prithvi, AlphaEarth<span data-require="physics_ml"> · LAI retrieval demo</span><span data-require="tabular_fm"> · TabArena explorer</span><span data-require="trustworthy"> · 4 trust demos</span><span data-require="responsible_ai"> · bias &amp; carbon demos</span></td></tr>
-    <tr><td>IX · LLMs &amp; agentic AI</td><td>Scaling, RAG, agents, LangGraph</td><td>Labs 9–10 · EO RAG &amp; agent</td></tr>
+    <tr><td>V.1 · DL foundations</td><td>Why deep learning took off; neuron → perceptron, gradient descent, back-prop, MLP</td><td>Lab 4 · perceptron &amp; MLP</td></tr>
+    <tr><td>V.2 · Vision &amp; CNNs</td><td><span data-require="cv_fundamentals">Pixels to filters · </span>convolution, ResNet, U-Net<span data-require="detection"> · detection</span><span data-require="fusion"> · SAR–optical fusion</span></td><td>Labs 5–6 · EuroSAT, LandCover.ai</td></tr>
+    <tr><td>V.3–V.5 · Sequences, generation, attention</td><td>RNN/LSTM · GANs &amp; diffusion · Transformers, ViT</td><td>Labs 7–9 · ETo, SAR→optical, ViT</td></tr>
+    <tr><td colspan="3" style="text-align:center;color:#8A6512;font-weight:600">Break<span data-lang="ar"> · <bdi class="ar">استراحة</bdi></span></td></tr>
+    <tr><td>V.6–V.7 · Foundation models</td><td>Self-supervised learning, LLMs &amp; RAG · GeoFMs<span data-require="physics_ml">, physics + ML</span></td><td>Labs 10–12 · RAG, Prithvi, AlphaEarth</td></tr>
+    <tr data-require="tabular_fm"><td>V.8 · Tabular FMs</td><td>In-context learning, priors, TabArena, scoring rules</td><td>TabArena explorer</td></tr>
+    <tr><td>V.9–V.10 · Trust &amp; agents</td><td><span data-require="trustworthy">Calibration, uncertainty, explanations, domain shift · </span><span data-require="responsible_ai">bias, carbon, privacy · </span>agents, MCP, LangGraph</td><td>Lab 13 · Sentinel-2 agent</td></tr>
   </table>
 </div>
-<aside class="notes">Point out that each part closes with an EO application. The labs are shown on slides in condensed form; the full, runnable notebooks are in the notebooks/ folder of the site (Colab-ready).</aside>
+<aside class="notes">The course follows the history of AI. Part I sets out the four ways a machine can learn; Parts II–IV take the three classical ones in the order they matured — statistical learning from labels, structure without labels, learning from rewards — each with its history, theory, live demos and a lab. Part V is deep learning in chronological chapters, from the first artificial neuron to foundation models and agents. Every part ends with an EO lab; the full, runnable notebooks are in the notebooks/ folder of the site (Colab-ready).</aside>
 </section>
 
 <section data-title="Learning outcomes" data-module="Opening" data-kind="theory" data-src="<b>Course books</b> · De Marchi &amp; Mitchell, <i>Hands-On Neural Networks</i> (Packt 2019) · Danka, <i>Mathematics of Machine Learning</i> (Packt 2025) · Rothman, <i>Transformers for NLP and Computer Vision</i>, 3rd ed. (Packt 2024) · Rodriguez, <i>Generative AI Foundations in Python</i> (Packt 2024)">
 <h2>By the end of this course you will be able to…</h2>
 <div class="s-body">
   <div class="cols c3" style="height:auto">
-    <div class="card arch blue"><div class="icon">∑</div><h3>Explain</h3><p>how each family — classical learners (Bayes, trees, ensembles, SVM), MLP, CNN, RNN/LSTM, GAN, Transformer, foundation model, LLM agent — represents data and learns, with the key equation of each.</p></div>
+    <div class="card arch blue"><div class="icon">∑</div><h3>Explain</h3><p>how each family — statistical learners (Bayes, trees, ensembles, SVM), clustering and PCA, Q-learning and bandits, MLP, CNN, RNN/LSTM, GAN, Transformer, foundation model, LLM agent — represents data and learns, with the key equation of each.</p></div>
     <div class="card arch green"><div class="icon">⌘</div><h3>Choose</h3><p>the right architecture for an EO problem: pixels, scenes, segmentation, time series, image translation, multimodal cubes, documents or workflows.</p></div>
-    <div class="card arch clay"><div class="icon">▶</div><h3>Build</h3><p>working PyTorch, TerraTorch, Earth Engine, LangChain and LangGraph pipelines<span data-require="evaluation">, validated with spatial cross-validation and area estimates</span>.</p></div>
+    <div class="card arch clay"><div class="icon">▶</div><h3>Build</h3><p>working scikit-learn, PyTorch, TerraTorch, Earth Engine, LangChain and LangGraph pipelines<span data-require="evaluation">, validated with spatial cross-validation and area estimates</span>.</p></div>
   </div>
   <div class="callout mt2"><div><b>How to read the slides.</b> Every slide carries a tag: <span class="tag theory">Theory</span> concepts &amp; maths, <span class="tag practice">Practice</span> EO applications and <span class="tag lab">Lab</span> code you can run (notebook link on the slide).</div></div>
 </div>
 <aside class="notes">Set expectations: this is a survey course with depth on the core equations and runnable code. Nobody needs to memorise APIs; the goal is to know which tool fits which EO problem and why.</aside>
-</section>
-
-<section data-title="AI, ML, DL and generative AI" data-module="Opening" data-kind="theory" data-src="Definitions after Russell &amp; Norvig; Samuel (1959) coined “machine learning”; LeCun, Bengio &amp; Hinton (2015) <i>Nature</i> 521:436 for deep learning.">
-<h2>Four nested ideas, one arch</h2>
-<div class="s-body">
-  <div class="cols c55">
-    <figure><img src="assets/img/nested_arches.svg" alt="Nested arches: AI contains ML contains DL contains generative AI" style="background:none;max-height:600px"></figure>
-    <div class="vcenter">
-      <ul class="list">
-        <li><b>Artificial intelligence</b> — any technique that makes machines act intelligently: search, logic, rules <i>and</i> learning.</li>
-        <li><b>Machine learning</b> — performance at a task improves with experience (data) instead of explicit programming.</li>
-        <li><b>Deep learning</b> — ML with many stacked, differentiable layers that <span class="hl-b">learn their own features</span> from raw signals (pixels, spectra, time series, text).</li>
-        <li><b>Generative AI &amp; foundation models</b> — very large models, usually Transformers, pre-trained on broad data and adapted to many tasks.</li>
-      </ul>
-      <div class="callout green mt"><div>In EO terms: a classical model sees <b>NDVI you computed</b>; a deep model learns its own “indices” from the 13 Sentinel-2 bands.</div></div>
-    </div>
-  </div>
-</div>
-<aside class="notes">Use the arch metaphor: each inner arch is a special case of the outer one. Emphasise representation learning as the defining feature of deep learning.</aside>
-</section>
-
-<section data-title="Four ways a machine learns" data-module="Opening" data-kind="theory" data-src="Hastie, Tibshirani &amp; Friedman (2009) <i>Elements of Statistical Learning</i>, Ch. 1 &amp; 14 · Sutton &amp; Barto (2018) <i>Reinforcement Learning</i>, Ch. 1 · LeCun (2022) A path towards autonomous machine intelligence · Balestriero et al. (2023) A cookbook of self-supervised learning, arXiv:2304.12210 · Ouyang et al. (2022) InstructGPT">
-<h2>Four ways a machine learns: <em>what is the feedback?</em></h2>
-<div class="s-body">
-  <table class="tbl small dense">
-    <tr><th style="width:170px">Paradigm</th><th>Training data</th><th>Feedback signal</th><th>Learns to…</th><th>EO example</th><th style="width:230px">In this course</th></tr>
-    <tr><td style="color:#2E4BC6">Supervised</td><td>inputs <b>with labels</b> \((\mathbf{x}, y)\)</td><td>the correct answer for every sample</td><td>map \(\mathbf{x}\to y\): classify or regress</td><td>land-cover map from labelled Sentinel-2 pixels; yield regression</td><td><span data-require="classical_ml">I (classical ML) · </span>III–VII · Labs 1–6</td></tr>
-    <tr><td style="color:#0F6B5C">Unsupervised</td><td>inputs only \(\mathbf{x}\)</td><td>none — the structure is the result</td><td>find groups, directions, density</td><td>ISODATA / k-means classes, PCA of 13 bands, change detection</td><td><span data-require="unsupervised">I (clustering, PCA) · </span>VIII (embeddings)</td></tr>
-    <tr><td style="color:#8A6512">Self-supervised</td><td>inputs only, <b>at scale</b></td><td>labels made from the data itself: hide part, predict it</td><td>general-purpose representations</td><td>masked-band pre-training (Prithvi), AlphaEarth embeddings</td><td>VII (MAE) · VIII (GeoFMs) · Labs 7–8 · IX</td></tr>
-    <tr><td style="color:#B5502E">Reinforcement</td><td>experience the agent <b>collects by acting</b></td><td>a scalar reward, often delayed</td><td>a policy: which action in which state</td><td>satellite tasking, UAV survey paths, irrigation control</td><td><span data-require="reinforcement">I (MDPs, Q-learning, bandits) · </span>IX (RLHF, agents)</td></tr>
-  </table>
-  <div class="small mt" style="font-weight:600;color:var(--ink)">The phases of a modern model chain the paradigms together:</div>
-  <div class="flow" style="margin-top:10px">
-    <div class="step"><b>① Pre-train</b><span class="xs">self-supervised</span><br>on the whole unlabelled archive — petabytes of Sentinel/Landsat, or the web’s text</div>
-    <div class="arrow">→</div>
-    <div class="step"><b>② Fine-tune</b><span class="xs">supervised</span><br>on a few hundred labelled chips for <i>your</i> task — floods, crops, buildings</div>
-    <div class="arrow">→</div>
-    <div class="step"><b>③ Align</b><span class="xs">reinforcement</span><br>from human or task rewards (RLHF) — what turns an LLM into an assistant or agent</div>
-    <div class="arrow">→</div>
-    <div class="step"><b>④ Infer</b><span class="xs">no learning</span><br>frozen weights on new scenes; unsupervised tools to explore and check the outputs</div>
-  </div>
-  <div class="callout green mt"><div>Between the four sit <b>semi-supervised</b> (few labels + many unlabelled pixels) and <b>weakly supervised</b> learning (noisy or coarse labels, e.g. an old land-cover map) — the everyday reality of EO.</div></div>
-</div>
-<aside class="notes">This slide is the map for the rest of the course. Ask: what feedback does the learner get? A label per sample (supervised), nothing (unsupervised), a label it manufactures from the data itself (self-supervised), or a reward for its actions (reinforcement). Then the phases: foundation models are pre-trained self-supervised, fine-tuned supervised, and — for LLMs — aligned with RL. The next slide lets you play with all four on the same EO data before we go into each family's algorithms.</aside>
-</section>
-
-<section data-title="The four paradigms, side by side (interactive)" data-module="Opening" data-kind="practice" data-src="Toy data generated in the browser: (Red, NIR) samples of water, vegetation and soil · the synthetic 13-band Sentinel-2-like scene of Part IV · an 11 × 7 grid world for Q-learning (Watkins &amp; Dayan 1992) · classifier: k-nearest neighbours · clustering: k-means++ · pretext task: masked-band prediction, in the spirit of MAE (He et al. 2022)">
-<h2>One EO problem, <em>four kinds of feedback</em></h2>
-<div class="s-body">
-  <div class="cols c55">
-    <div class="demo" data-demo="paradigms" style="gap:10px">
-      <div class="ctrl">
-        <button class="btn sm" data-mode="sup">Supervised</button><button class="btn sm" data-mode="unsup">Unsupervised</button><button class="btn sm" data-mode="ssl">Self-supervised</button><button class="btn sm" data-mode="rl">Reinforcement</button>
-      </div>
-      <canvas width="660" height="396" style="width:660px;height:396px"></canvas>
-      <div class="ctrl" style="min-height:36px">
-        <span data-for="sup"><label>labels per class <input type="range" name="m" min="1" max="40" step="1" value="1" style="width:170px"> <b class="mv"></b></label></span>
-        <span data-for="unsup" style="display:none"><label>k <input type="range" name="k" min="2" max="6" step="1" value="3" style="width:130px"> <b class="kv"></b></label><button class="btn sm ghost" data-act="reinit">New start</button></span>
-        <span data-for="ssl" style="display:none"><label>hidden bands <input type="range" name="mask" min="1" max="9" step="1" value="4" style="width:110px"> <b class="mkv"></b></label><button class="btn sm ghost" data-act="pixel">New pixel</button><button class="btn sm gold" data-act="predict">Predict hidden bands</button></span>
-        <span data-for="rl" style="display:none"><button class="btn sm" data-act="ep">1 episode</button><button class="btn sm gold" data-act="ep100">+100 episodes</button><button class="btn sm ghost" data-act="rlreset">Reset</button></span>
-      </div>
-      <div class="readout" style="font-size:14.5px;min-height:40px"></div>
-    </div>
-    <div class="rows" style="gap:14px">
-      <div class="card blue" data-panel="sup">
-        <h4>Supervised · learn from answers</h4>
-        <p class="small">Each training pixel comes <b>with its label</b> \(y_i\) — water, vegetation or soil — drawn by an analyst or taken from field data. The model fits a function that reproduces those answers and generalises to new pixels.</p>
-        <div class="eqbox small">$$\min_\theta\ \frac1n\sum_{i=1}^{n}\mathcal{L}\big(f_\theta(\mathbf{x}_i),\,y_i\big)$$</div>
-        <p class="small mt">Filled points are labelled; hollow ones are what the map is scored on. <b>Try:</b> 1 label per class, then 40 — labels are the expensive part of EO.</p>
-      </div>
-      <div class="card green" data-panel="unsup" style="display:none">
-        <h4>Unsupervised · find structure</h4>
-        <p class="small">The same pixels <b>without labels</b>. The algorithm groups pixels that look alike; it never learns the words “water” or “crop” — an analyst names the clusters afterwards.</p>
-        <div class="eqbox small">$$\min_{\boldsymbol\mu_1,\dots,\boldsymbol\mu_k}\ \sum_{i=1}^{n}\min_{j}\big\lVert\mathbf{x}_i-\boldsymbol\mu_j\big\rVert^2\quad\text{(k-means)}$$</div>
-        <p class="small mt"><b>Try:</b> k = 3 recovers the cover types; k = 5 splits vegetation along its vigour gradient. Is that wrong? Only the analyst can tell.</p>
-      </div>
-      <div class="card sand" data-panel="ssl" style="display:none">
-        <h4>Self-supervised · the data labels itself</h4>
-        <p class="small">Hide some Sentinel-2 bands of a pixel and <b>predict them from the others</b>. The hidden values are the target, so millions of unlabelled pixels become training data. A model that solves this has learned how spectra behave — the idea behind MAE and geospatial foundation models.</p>
-        <div class="eqbox small">$$\min_\theta\ \sum_{i}\big\lVert\mathbf{x}_i^{\text{hidden}}-g_\theta\big(\mathbf{x}_i^{\text{visible}}\big)\big\rVert^2$$</div>
-        <p class="small mt"><b>Try:</b> hide 7–9 bands, then compare the learned guess with a naive straight line between visible bands.</p>
-      </div>
-      <div class="card clay" data-panel="rl" style="display:none">
-        <h4>Reinforcement · learn from rewards</h4>
-        <p class="small">A survey drone must reach a flooded village. No one shows it the route: it <b>acts</b>, gets a reward (−1 per move, −10 for flying into a storm cell, +20 at the village) and updates its action values by Q-learning.</p>
-        <div class="eqbox small">$$\max_\pi\ \mathbb{E}_\pi\Big[\sum_{t}\gamma^{t}r_{t}\Big],\quad Q(s,a)\leftarrow Q+\alpha\big[r+\gamma\max_{a'}Q(s',a')-Q\big]$$</div>
-        <p class="small mt"><b>Try:</b> run single episodes first — early flights wander or crash — then +100 and watch the arrows settle on a safe route.</p>
-      </div>
-    </div>
-  </div>
-</div>
-<aside class="notes">One demo, four modes. Supervised: k-NN on labelled (Red, NIR) pixels — slide the number of labels and watch accuracy on the unlabelled pixels. Unsupervised: k-means on the same pixels; colours are arbitrary cluster ids. Self-supervised: a pixel from the synthetic Sentinel-2 scene with some bands hidden; the “model” predicts them from the 5 most similar pixels in an unlabelled pool, compared with straight-line interpolation between visible bands — no human label anywhere. Reinforcement: tabular Q-learning in a grid world; shading is the learned state value, arrows the greedy policy, the red line the last flight. Each paradigm returns in depth later: classical ML, clustering and RL in Part I, SSL in Parts VII–VIII.</aside>
 </section>

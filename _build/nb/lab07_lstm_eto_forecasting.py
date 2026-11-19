@@ -1,6 +1,6 @@
 # %% [markdown]
-# # Lab 4 — Forecasting reference evapotranspiration (ETo) with an LSTM
-# **Deep Learning for Earth Observation** · Part V
+# # Lab 7 — Forecasting reference evapotranspiration (ETo) with an LSTM
+# **AI for Earth Observation** · Part V · Chapter V.3
 #
 # Task: from the last **30 days** of weather, forecast daily FAO-56 reference ETo for the **next 7 days** at Marrakech.
 #

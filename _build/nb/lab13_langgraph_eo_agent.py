@@ -1,6 +1,6 @@
 # %% [markdown]
-# # Lab 10 — A Sentinel-2 agent with LangGraph
-# **Deep Learning for Earth Observation** · Part IX
+# # Lab 13 — A Sentinel-2 agent with LangGraph
+# **AI for Earth Observation** · Part V · Chapter V.10
 #
 # An **agent** is a loop: the LLM *reasons* and decides to call a tool, *your code acts*, the result is *observed*, and the loop repeats until the model answers.
 # LangGraph makes this loop an explicit **state graph**: `START → agent ⇄ tools → END`, with memory (checkpointer) and optional human approval (interrupt).

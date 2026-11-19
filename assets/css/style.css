@@ -215,6 +215,7 @@ table.tbl.small{font-size:17px}
 .sec-arch .aw-outline{position:absolute;left:72px;width:376px;top:130px;bottom:0;border:3px solid var(--saffron);border-bottom:none;border-radius:188px 188px 0 0/210px 210px 0 0}
 .sec-arch .num{position:absolute;left:90px;width:340px;top:330px;text-align:center;font:600 150px/1 var(--serif);color:#fff;text-shadow:0 8px 30px rgba(0,0,0,.4)}
 .sec-arch .num small{display:block;font:600 16px/1 var(--sans);letter-spacing:.3em;color:var(--saffron);margin-bottom:16px;text-transform:uppercase}
+.sec-arch .num.ch{font-size:112px;top:350px;letter-spacing:-.02em}
 .sec-text{padding-right:110px}
 .sec-text .time{font:600 17px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--saffron)}
 .sec-text h2{font:600 70px/1.08 var(--serif);color:#fff;margin:20px 0 10px}

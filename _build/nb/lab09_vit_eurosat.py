@@ -1,9 +1,9 @@
 # %% [markdown]
-# # Lab 6 — Attention from scratch, a Vision Transformer, and a temporal Transformer
-# **Deep Learning for Earth Observation** · Part VII
+# # Lab 9 — Attention from scratch, a Vision Transformer, and a temporal Transformer
+# **AI for Earth Observation** · Part V · Chapter V.5
 #
 # 1. Implement scaled dot-product attention and check it against PyTorch.
-# 2. Fine-tune a pre-trained **ViT-Small/16** (timm) on EuroSAT RGB and compare with the ResNet of Lab 2.
+# 2. Fine-tune a pre-trained **ViT-Small/16** (timm) on EuroSAT RGB and compare with the ResNet of Lab 5.
 # 3. Train a small **temporal Transformer** on (synthetic) Sentinel-2-like pixel time series with irregular, cloudy dates.
 #
 # Runtime: **GPU** for part 2.
@@ -161,4 +161,4 @@ for ep in range(15):
 # ## Exercises
 # 1. Set the cloud mask to all-False (feed the cloudy values to the model). How much does accuracy drop?
 # 2. Replace the day-of-year embedding by plain index positions 0…T-1. Why does it hurt with irregular dates?
-# 3. Compare ViT and ResNet-18 (Lab 2) at equal epochs. Which needs more data?
+# 3. Compare ViT and ResNet-18 (Lab 5) at equal epochs. Which needs more data?

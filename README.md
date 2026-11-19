@@ -1,6 +1,6 @@
 # AI for Earth Observation
 
-**From Turing's learning machine, classical, unsupervised and reinforcement learning and the first perceptron to computer-vision fundamentals, CNNs, LSTMs, GANs, Transformers, geospatial foundation models, LLMs, RAG and LangGraph agents — with an Earth-observation application and code for every model family, and the EO practice around them: data preparation, object detection, SAR–optical fusion, honest evaluation, physics-aware ML, uncertainty, explainability and responsible use.**
+**From Turing's learning machine to agentic AI, in the order AI was invented: the history and the four learning paradigms, statistical machine learning, unsupervised learning and reinforcement learning, then deep learning from the first artificial neuron through CNNs, LSTMs, GANs and Transformers to self-supervised foundation models, LLMs, geospatial and tabular foundation models, trustworthy and responsible AI and agents — each part with its history, theory, live demos and an Earth-observation lab.**
 
 Slides are a static website (classic-modern Moroccan design: zellige stars, horseshoe arches, Majorelle blue, saffron and terracotta) that runs on GitHub Pages with no build step and no external dependencies.
 
@@ -8,19 +8,25 @@ Slides are a static website (classic-modern Moroccan design: zellige stars, hors
 
 | Part | Time | Theory | Practice / lab |
 |---|---|---|---|
-| Opening | 0:00 | Roadmap, AI ⊃ ML ⊃ DL ⊃ GenAI | — |
-| I · History of AI, classical ML, unsupervised & RL | 0:05 | Turing's learning machine (1950), symbolic AI and the winters, the classical-ML era: naive Bayes / maximum likelihood, decision trees, bagging & random forests, AdaBoost, gradient boosting, SVM; unsupervised learning: k-means, unsupervised classification, GMM & EM, DBSCAN, PCA; reinforcement learning: MDPs & value iteration, Q-learning, bandits, deep RL & RLHF (all with the maths); data × algorithms × chips | 6 ML + 5 unsupervised + 3 RL live demos · random forest on Sentinel-2 |
-| II · Learning maths | 1:10 | Tensors/data cubes, loss & ERM, gradient descent (live demo), backprop, likelihood | — |
-| III · Perceptron & MLP | 1:20 | McCulloch–Pitts, Rosenblatt, convergence theorem, XOR, universal approximation | Perceptron playground · **Lab 1** |
-| IV · Vision & CNNs | 1:40 | Vision fundamentals: pixels & RGB, multispectral vs hyperspectral, grayscale, thresholding (Otsu), convolution step by step, filtering, SAR speckle filtering (Lee); EO data preparation: analysis-ready data, clouds & compositing, tiles & normalisation, labels; convolution priors, ResNet, U-Net; object detection (anchors, IoU, NMS, AP, sliced inference); SAR–optical fusion; evaluating maps: spatial cross-validation, metrics for rare classes, stratified area estimation, an evaluation protocol | 7 vision + 2 data + 1 detection + 1 fusion + 3 evaluation demos · **Labs 2–3** EuroSAT, LandCover.ai |
-| Break | 3:15 | | |
-| V · RNN & LSTM | 3:25 | BPTT, vanishing gradients, LSTM gates | **Lab 4** ETo forecasting (Marrakech) |
-| VI · Generative models | 3:40 | GANs, pix2pix, CycleGAN, diffusion | **Lab 5** Sentinel-1 → Sentinel-2 |
-| VII · Transformers | 3:50 | Attention (live demo), ViT, SAM, CLIP, EO transformers | **Lab 6** ViT + temporal Transformer |
-| VIII · Geo foundation models | 4:05 | SSL, GeoFM generations, MAE vs JEPA, Zhu et al. (2026) 11 features, limitations, AtlasGeoFM; physics + ML (emulators, hybrid retrieval, physics-informed losses); tabular foundation models (prior-fitted in-context learning, synthetic vs real priors, TabArena / BeyondArena, proper scoring rules); trustworthy EO AI: calibration, ensemble uncertainty, explanations, domain shift; responsible EO AI: geographic bias, carbon cost, privacy, dual use, documentation | LAI-retrieval demo · 3 tabular-FM demos · 4 trust demos · bias & carbon demos · **Labs 7–8** Prithvi-EO-2.0, AlphaEarth |
-| IX · LLMs & agents | 5:25 | Pre-training, alignment, prompting, RAG, ReAct agents, MCP, LangGraph | **Labs 9–10** EO RAG, Sentinel-2 agent |
+| Opening | 0:00 | Course map, learning outcomes | — |
+| I · AI: history & paradigms | 0:05 | Timeline 1943–2026, Turing's learning machine (1950), symbolic AI and the winters, AI ⊃ ML ⊃ DL ⊃ GenAI, the four learning paradigms | Paradigms playground (supervised, unsupervised, self-supervised, RL on one EO problem) |
+| II · Statistical ML | 0:30 | The classical-ML era; the EO data cube, loss & empirical risk, likelihood & cross-entropy, bias–variance & ridge (live); naive Bayes / MLC, decision trees, bagging & random forests, AdaBoost, gradient boosting, SVM; analysis-ready data, clouds & compositing, labels; spatial CV, rare-class metrics, area estimation, evaluation protocol | 6 learner playgrounds · **Lab 1** land cover from Sentinel-2 + WorldCover, random vs spatial-block CV |
+| III · Unsupervised learning | 1:35 | The unsupervised era; k-means, unsupervised image classification, Gaussian mixtures & EM, DBSCAN, PCA | **Lab 2** PCA, k-means / GMM, DBSCAN, 2019 → 2024 change detection |
+| IV · Reinforcement learning | 2:00 | The RL era; MDPs & value iteration, Q-learning, bandits; deep RL & RLHF as the bridge to Part V | **Lab 3** FAO-56 irrigation MDP, Q-learning, bandits for satellite tasking |
+| Break | 2:25 | | |
+| V.1 · Deep-learning foundations | 2:40 | Why deep learning took off (features, data, chips, compute); McCulloch–Pitts and the perceptron, gradient descent, MLP, back-propagation, activations, training recipe | Perceptron playground · **Lab 4** perceptron & MLP |
+| V.2 · Vision & CNNs | 3:10 | Pixels & RGB, multi/hyperspectral, grayscale, thresholding, convolution, filtering, SAR speckle; convolution priors, ResNet, U-Net; tiles & normalisation; object detection; SAR–optical fusion | 7 vision demos · **Labs 5–6** EuroSAT, LandCover.ai |
+| V.3 · RNN & LSTM | 4:05 | BPTT, vanishing gradients, LSTM gates | **Lab 7** ETo forecasting (Marrakech) |
+| V.4 · Generative models | 4:17 | GANs, pix2pix, CycleGAN, diffusion | **Lab 8** Sentinel-1 → Sentinel-2 |
+| V.5 · Transformers | 4:27 | Attention (live demo), ViT, SAM, CLIP, EO transformers | **Lab 9** ViT + temporal Transformer |
+| Break | 4:42 | | |
+| V.6 · Self-supervised learning & LLMs | 4:52 | The paradigms revisited, what makes a foundation model, SSL families; how LLMs are made, prompting, embeddings, RAG | **Lab 10** cited RAG over EO documents |
+| V.7 · Geo foundation models | 5:12 | GeoFM generations, MAE vs JEPA, Zhu et al. (2026) 11 features, limitations, AtlasGeoFM; physics + ML; adapting FMs (embeddings, probes, LoRA, fine-tuning) | LAI-retrieval demo · **Labs 11–12** Prithvi-EO-2.0, AlphaEarth (+ a tabular FM) |
+| V.8 · Tabular foundation models | 5:37 | In-context learning as Bayesian inference, synthetic vs real priors, architectures, the 2023–2026 landscape, TabArena / BeyondArena, proper scoring rules | 3 demos incl. a live leaderboard explorer |
+| V.9 · Trustworthy & responsible AI | 5:57 | Calibration, ensemble uncertainty, explanations, domain shift; geographic bias, carbon cost, privacy, dual use, documentation | 6 demos |
+| V.10 · Agentic AI | 6:22 | ReAct agents, tools, MCP, LangGraph | **Lab 13** Sentinel-2 agent |
 
-130 slides · 234 equations · 41 interactive demos · 10 Colab-ready notebooks · speaker notes on every slide. Times are for the default settings (all blocks on, ≈ 5¾ hours); see [Settings](#settings) to switch blocks off or hide single slides for a given audience (the 3-hour deep-learning original is every `[modules]` flag = false).
+142 slides · 244 equations · 43 interactive demos · 13 Colab-ready notebooks · speaker notes on every slide. Times are for the default settings (all blocks on, ≈ 6¾ hours with two breaks); see [Settings](#settings) to switch blocks off — `unsupervised` and `reinforcement` remove whole parts, `tabular_fm` a whole chapter — or to hide single slides for a given audience.
 
 ## Publish on GitHub Pages
 
@@ -30,7 +36,7 @@ Slides are a static website (classic-modern Moroccan design: zellige stars, hors
 
 The `.nojekyll` file tells GitHub Pages to serve every file as-is. The **Open in Colab** buttons on `notebooks/` detect your user and repository name automatically from the Pages URL (branch `main`).
 
-> Large files: the pre-built `downloads/DL4EO_course.pdf` and `.pptx` are ~28 MB and ~37 MB — below GitHub's 100 MB file limit, so no Git LFS is needed.
+> Large files: the pre-built `downloads/DL4EO_course.pdf` and `.pptx` are ~32 MB and ~39 MB — below GitHub's 100 MB file limit, so no Git LFS is needed.
 
 ## Using the deck
 
@@ -57,7 +63,7 @@ python -m http.server 8000      # then open http://localhost:8000
 
 ## Settings
 
-`_build/settings.toml` controls the build — edit it, then run `python build.py` (and `export.py` + `make_pptx.js` to refresh the PDF/PPTX):
+`_build/settings.toml` controls the build. For the complete edit and build workflow, see [Editing and building the course](#editing-and-building-the-course).
 
 | Setting | Default | Effect |
 |---|---|---|
@@ -69,57 +75,97 @@ python -m http.server 8000      # then open http://localhost:8000
 | `photo` | `"assets/img/instructor.jpg"` | portrait shown in the title-slide arch (path from the site root; `""` = zellige rosette) |
 | `[theme] primary` / `secondary` | `"#C1272D"` / `"#006233"` (Moroccan flag red and green) | the two main accent colours; they replace the terracotta red and zellige green in the CSS, slides, live demos (`window.THEME`) and SVG figures (themed copies in `assets/img/themed/`). The original palette was `#B5502E` / `#0F6B5C` |
 | `hide_pages` | `[]` | slides to leave out of the site, PDF and PPTX, e.g. `[1, 2, 14]`, `"1,2,14"` or `["20-25", "Break"]` (numbers as shown with `hide_pages = []`; ranges and exact slide titles allowed; the rest is renumbered) |
-| `[modules] classical_ml` | `true` | Part I block: era timeline, naive Bayes / MLC, decision trees, bagging & RF, AdaBoost, gradient boosting, SVM, comparison (8 slides, 6 demos) |
-| `[modules] unsupervised` | `true` | Part I block: era timeline, k-means, unsupervised classification of an image, GMM & EM, DBSCAN, PCA (6 slides, 5 demos) |
-| `[modules] reinforcement` | `true` | Part I block: era timeline, MDPs & value iteration, Q-learning, bandits (ε-greedy / UCB1 / Thompson), deep RL & RLHF (5 slides, 3 demos) |
-| `[modules] cv_fundamentals` | `true` | Part IV block: pixels & RGB, multi/hyperspectral, grayscale, thresholding, convolution step by step, SAR speckle filtering (6 slides, 6 demos) |
-| `[modules] eo_data` | `true` | Part IV block: analysis-ready data and STAC code, clouds & compositing, tiles / padding / normalisation, where labels come from (4 slides, 2 demos) |
-| `[modules] detection` | `true` | Part IV block: detector families and losses, IoU / NMS / precision–recall / AP, oriented boxes and sliced inference (3 slides, 1 demo) |
-| `[modules] fusion` | `true` | Part IV block: why fuse SAR and optical (early / mid / late), mapping under clouds (2 slides, 1 demo) |
-| `[modules] evaluation` | `true` | Part IV block: spatial autocorrelation & cross-validation, metrics under class imbalance, stratified area estimation, evaluation protocol (4 slides, 3 demos) |
-| `[modules] physics_ml` | `true` | Part VIII block: four ways to put physics into ML, emulators and hybrid LAI retrieval (2 slides, 1 demo) |
-| `[modules] tabular_fm` | `true` | Part VIII block, after Lab 8: tabular foundation models — in-context learning as Bayesian averaging, priors and architectures, the 2023–2026 model landscape, a TabArena / BeyondArena leaderboard explorer (snapshot 17 Nov 2026), proper scoring rules, EO practice with spatial CV (7 slides, 3 demos) |
-| `[modules] trustworthy` | `true` | Part VIII block: calibration & temperature scaling, ensemble uncertainty, explanations, domain shift (4 slides, 4 demos) |
-| `[modules] responsible_ai` | `true` | Part VIII block: geographic bias, carbon footprint, privacy / dual use / documentation (3 slides, 2 demos) |
-| `[schedule]` | minutes per part | section-slide times, the course map and the total duration (“5.9-hour course”) are computed from these; `[schedule.modules]` adds minutes when a block is on |
+| `[modules] classical_ml` | `true` | Part II block: era timeline, naive Bayes / MLC, decision trees, bagging & RF, AdaBoost, gradient boosting, SVM, comparison (8 slides, 6 demos) |
+| `[modules] eo_data` | `true` | Part II block: analysis-ready data and STAC code, clouds & compositing, where labels come from; Chapter V.2: tiles / padding / normalisation (4 slides, 2 demos) |
+| `[modules] evaluation` | `true` | Part II block: spatial autocorrelation & cross-validation, metrics under class imbalance, stratified area estimation, evaluation protocol (4 slides, 3 demos) |
+| `[modules] unsupervised` | `true` | the whole of Part III: era timeline, k-means, unsupervised classification of an image, GMM & EM, DBSCAN, PCA, Lab 2 (8 slides, 5 demos) |
+| `[modules] reinforcement` | `true` | the whole of Part IV: era timeline, MDPs & value iteration, Q-learning, bandits, Lab 3, deep RL & RLHF (7 slides, 3 demos) |
+| `[modules] cv_fundamentals` | `true` | Chapter V.2 block: pixels & RGB, multi/hyperspectral, grayscale, thresholding, convolution step by step, SAR speckle filtering (6 slides, 6 demos) |
+| `[modules] detection` | `true` | Chapter V.2 block: detector families and losses, IoU / NMS / precision–recall / AP, oriented boxes and sliced inference (3 slides, 1 demo) |
+| `[modules] fusion` | `true` | Chapter V.2 block: why fuse SAR and optical (early / mid / late), mapping under clouds (2 slides, 1 demo) |
+| `[modules] physics_ml` | `true` | Chapter V.7 block: four ways to put physics into ML, emulators and hybrid LAI retrieval (2 slides, 1 demo) |
+| `[modules] tabular_fm` | `true` | the whole of Chapter V.8: in-context learning as Bayesian averaging, priors and architectures, the 2023–2026 landscape, a TabArena / BeyondArena leaderboard explorer, proper scoring rules, EO practice (8 slides, 3 demos) |
+| `[modules] trustworthy` | `true` | Chapter V.9 block: calibration & temperature scaling, ensemble uncertainty, explanations, domain shift (4 slides, 4 demos) |
+| `[modules] responsible_ai` | `true` | Chapter V.9 block: geographic bias, carbon footprint, privacy / dual use / documentation (3 slides, 2 demos) |
+| `[schedule]` | minutes per part, and per chapter of Part V (`V`, `V2` … `V10`), plus `break` and `break2` | section-slide times and the total duration (“6.7-hour course”) are computed from these; `[schedule.modules]` adds minutes when a block is on; a part or chapter switched off by a module does not count |
 
-In slide sources, `data-lang="ar"` marks Arabic-only elements and `data-require="flag"` (or `"!flag"`) marks elements shown only when a module is on (or off); `{{slot:IV}}`, `{{start:IV}}`, `{{total_min}}`, `{{hours}}`, `{{duration}}`, `{{instructor}}` and `{{title}}` are filled in at build time.
+In slide sources, `data-lang="ar"` marks Arabic-only elements and `data-require="flag"` (or `"!flag"`) marks elements shown only when a module is on (or off); `"a,b"` needs both modules, `"a|b"` either; `{{slot:IV}}`, `{{start:IV}}`, `{{total_min}}`, `{{hours}}`, `{{duration}}`, `{{instructor}}` and `{{title}}` are filled in at build time.
 
-## Editing the slides
+## Editing and building the course
 
-Sources live in `_build/`:
+### 1. Edit the source files
+
+Make changes to the source files, not the generated outputs:
 
 ```
-_build/settings.toml              course settings (title, Arabic, instructor, hidden slides, optional blocks, schedule)
+_build/settings.toml              course settings (title, theme, modules, schedule, hidden slides)
 _build/src/template.html          page shell (toolbar, contents, notes panel)
-_build/src/slides/*.html          one file per part — edit content here
-_build/nb/*.py                    notebook sources ("# %%" cells)
-_build/build.py                   assembles index.html (KaTeX maths + Pygments code, rendered at build time)
-assets/js/deck.js                 slide engine + original demos
-assets/js/demos_ml.js             classical-ML demos (naive Bayes, tree, forest, AdaBoost, boosting, SVM)
-assets/js/demos_vision.js         vision demos (pixels, spectra, grayscale, threshold, convolution, SAR)
-assets/js/demos_unsup.js          unsupervised demos (k-means, scene clustering, GMM/EM, DBSCAN, PCA)
-assets/js/demos_rl.js             RL demos (value iteration, Q-learning, bandits)
-assets/js/demos_eo.js             EO-practice demos (compositing, tiling, NMS/AP, fusion, spatial CV, metrics, area)
-assets/js/demos_trust.js          trust & responsibility demos (calibration, ensembles, attributions, domain shift,
-                                  LAI retrieval, geographic bias, carbon)
-assets/js/demos_tfm.js            tabular-FM demos (in-context learning under a prior, TabArena explorer with an
-                                  embedded leaderboard snapshot, scoring rules)
-_build/charts.py, motifs.py       SVG charts and zellige motifs in assets/img/
-_build/export.py, make_pptx.js    regenerate downloads/ (PDF + PPTX)
+_build/src/slides/*.html          slide content in teaching order: 00 opening, 01–04 Parts I–IV,
+                                  05–13 the Part V chapters V.1–V.10, 14 wrap-up
+_build/nb/*.py                    notebook sources, using "# %%" cell markers
+assets/css/style.css              site and slide styles
+assets/js/                          slide engine and interactive demos
+assets/img/                         images, diagrams, and motifs
 ```
+
+For slides, edit the relevant `_build/src/slides/*.html` file. A slide is a `<section>` with an `<h2>` title and a `<div class="s-body">`; use `data-lang="ar"` for Arabic-only content and `data-require="module_name"` for optional module content. Maths can be written as `$$…$$` or `\( … \)`, and highlighted code as `<pre class="py|js|bash|yaml|json" data-file="filename">…</pre>`. Put speaker notes in `<aside class="notes">`.
+
+Edit `_build/settings.toml` to change the title, instructor, theme, schedule, hidden slides, or optional modules. Edit `_build/nb/*.py` to change notebook content. The generated `index.html`, `notebooks/*.ipynb`, and files in `downloads/` are build outputs; rebuild them after changing their sources.
+
+### 2. Install build tools (once)
+
+The site build requires Python 3.11 or newer, Node.js, and the Python package Pygments. PDF/PPTX export additionally requires Playwright, its Chromium browser, and Pillow.
+
+From the repository root:
 
 ```bash
-pip install pygments playwright && playwright install chromium   # Python ≥ 3.11 (tomllib)
-npm install katex pptxgenjs
+python -m pip install pygments playwright pillow
+python -m playwright install chromium
 cd _build
-python build.py                                   # -> ../index.html
-python py2nb.py nb ../notebooks                   # -> ../notebooks/*.ipynb
-python export.py && node make_pptx.js             # -> ../downloads/*.pdf, *.pptx
-# EXPORT_BROWSER=msedge (or chrome) python export.py   uses an installed browser instead
+npm install katex pptxgenjs
 ```
 
-Slide syntax: `<section data-title=".." data-module=".." data-kind="theory|practice|lab|case" data-src="sources">` with an `<h2>` title and a `<div class="s-body">`; maths in `$$…$$` or `\( … \)`; code in `<pre class="py" data-file="name">…</pre>`; notes in `<aside class="notes">`.
+### 3. Build the site
+
+From the repository root:
+
+```bash
+cd _build
+python build.py
+```
+
+This writes the generated site to `index.html` in the repository root and updates themed SVGs in `assets/img/themed/`. Re-run it whenever you change slide sources or settings.
+
+### 4. Regenerate notebooks (when notebook sources change)
+
+From `_build/`:
+
+```bash
+python py2nb.py nb ../notebooks
+```
+
+This converts each `_build/nb/*.py` source into a corresponding `notebooks/*.ipynb` file.
+
+### 5. Export the PDF and PowerPoint (optional)
+
+Build the site first, then from `_build/` run:
+
+```bash
+python export.py
+node make_pptx.js
+```
+
+The PDF is written to `downloads/DL4EO_course.pdf` by `export.py`; the PPTX is written to `downloads/DL4EO_course.pptx` by `make_pptx.js`. `export.py` uses Playwright's Chromium by default. To use an installed browser instead, set `EXPORT_BROWSER` to `msedge` or `chrome` before running it.
+
+### 6. Preview locally
+
+From the repository root, start a static server and open the URL in your browser:
+
+```bash
+python -m http.server 8000
+```
+
+Open `http://localhost:8000`. Stop the server with Ctrl+C.
 
 ## Sources
 
