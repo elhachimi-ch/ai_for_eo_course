@@ -26,7 +26,7 @@ photo = "assets/img/instructor.jpg"
 # see in the deck built with hide_pages = [] (after the [modules] below are applied); the
 # remaining slides are renumbered. Ranges and exact slide titles also work:
 #   hide_pages = [1, 2, 14]      hide_pages = "1,2,14"      hide_pages = ["20-25", "Break"]
-hide_pages = []
+hide_pages = ["109", "98", "119-140", "7", "14-16", "26", "29-32", "45-46", "48", "60-62", "66-67", "75-80", "113-115"]
 
 # The two main accent colours (hex). They replace the terracotta red and the zellige green
 # everywhere: headings, tags, cards, code cards, the live demos and the SVG figures and motifs.

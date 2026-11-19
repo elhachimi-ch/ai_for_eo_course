@@ -211,6 +211,20 @@ def tint(hexc, w):
     return "#" + "".join(f"{round(c + (255 - c) * w):02X}" for c in rgb(hexc))
 
 
+def shade(hexc, w):
+    """Mix a colour with black (w = share of black)."""
+    return "#" + "".join(f"{round(c * (1 - w)):02X}" for c in rgb(hexc))
+
+
+def theme_sections(text, theme):
+    """Part-section arches alternate between the two theme colours, in deck order."""
+    cols, k = (theme["primary"].upper(), theme["secondary"].upper()), [0]
+    def rep(m):
+        c = cols[k[0] % 2]; k[0] += 1
+        return f"--sec-c:{c}"
+    return re.sub(r"--sec-c:#[0-9A-Fa-f]{6}", rep, text)
+
+
 def recolor(text, theme):
     """Swap the base red/green (hex and "r, g, b" forms) for the theme colours."""
     for base, new in ((BASE_PRIMARY, theme["primary"]), (BASE_SECONDARY, theme["secondary"])):
@@ -229,7 +243,7 @@ def theme_assets(settings):
     for name in THEMED_SVG:
         with open(os.path.join(src, name + ".svg"), encoding="utf-8") as f:
             svg = recolor(f.read(), th)
-        if name == "frieze":   # the belt at the foot of every slide: primary + secondary only
+        if name in ("frieze", "rosette"):   # the foot belt and the star motif: primary + secondary only
             svg = re.sub("#1F3A93", th["primary"].upper(), svg, flags=re.I)
         with open(os.path.join(dst, name + ".svg"), "w", encoding="utf-8", newline="\n") as f:
             f.write(svg)
@@ -239,7 +253,8 @@ def theme_assets(settings):
            f".card.clay{{border-color:{tint(p, .72)}}}"
            f".code .bar .dots i{{background:{p}}}.code .bar .dots i:nth-child(2){{background:var(--saffron)}}"
            f".code .bar .dots i:nth-child(3){{background:{s}}}"
-           f'.slide:not(.dark)::before,.arch-window .aw-rose{{background-image:url("assets/img/themed/rosette.svg")}}')
+           f'.slide:not(.dark)::before,.arch-window .aw-rose{{background-image:url("assets/img/themed/rosette.svg")}}'
+           f".arch-window .aw-inner{{background:linear-gradient(180deg,{s} 0%,{shade(s, .45)} 100%)}}")
     js = "window.THEME=" + json.dumps({"p": p, "s": s, "pRgb": rgb(p), "sRgb": rgb(s)}) + ";"
     return f'<style id="theme">{css}</style>\n<script>{js}</script>'
 
@@ -293,6 +308,7 @@ def build():
     vals = schedule(raw, settings)
     vals.update(title_block(settings))
     raw = recolor(raw, settings["theme"])
+    raw = theme_sections(raw, settings["theme"])
     raw = re.sub(r"assets/img/(%s)\.svg" % "|".join(THEMED_SVG), r"assets/img/themed/\1.svg", raw)
 
     # 1) protect code
